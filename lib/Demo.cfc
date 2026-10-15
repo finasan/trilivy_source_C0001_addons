@@ -137,6 +137,35 @@ component output="false" {
         session.ur_resources = 0;
     }
 
+    /**
+     * Guided <-> Full platform for one prospect; used by the operator (prospect
+     * page) and by the prospect (the switch in the DEMO bar). Full platform makes
+     * the prospect admin of the OWN sandbox grant only, never of any other assistant.
+     */
+    public string function setMode(required string pid, required string mode, any by = "") {
+        var nm = arguments.mode == "explorer" ? "explorer" : "guided";
+        var p = prospectBy("pid", arguments.pid);
+        if (structIsEmpty(p)) throw(message="no such prospect");
+        queryExecute("UPDATE cx_demo_prospects SET mode = :m WHERE pid = :p", {m: nm, p: arguments.pid}, {datasource: variables.dsn});
+        if (val(p.oid ?: 0)) {
+            queryExecute("UPDATE ai_orbitix_user_instances SET access_level = :l WHERE oid = :o AND instance_code = :i",
+                {l: nm == "explorer" ? "admin" : "standard", o: p.oid, i: names(arguments.pid).instance}, {datasource: "ai_data"});
+        }
+        logEvent(arguments.pid, "mode_changed", {detail: {mode: nm, by: arguments.by}});
+        return nm;
+    }
+
+    /** The prospect's Guided | Full platform switch (a tiny POST form to p=switch). */
+    public string function switchHtml(required string mode, string cls = "demo-sw") {
+        if (!len(session.demo_swtok ?: "")) session.demo_swtok = lCase(replace(createUUID(), "-", "", "all"));
+        var full = arguments.mode == "explorer";
+        return '<form method="post" action="/ain5py/addon.cfm?a=demo&p=switch" class="' & arguments.cls & '">'
+             & '<input type="hidden" name="t" value="' & session.demo_swtok & '">'
+             & '<button name="mode" value="guided" class="' & (full ? "" : "on") & '"' & (full ? "" : " disabled") & '>Guided</button>'
+             & '<button name="mode" value="explorer" class="' & (full ? "on" : "") & '"' & (full ? " disabled" : "") & '>Full platform</button>'
+             & '</form>';
+    }
+
     public string function nextPid() {
         var q = queryExecute("SELECT COALESCE(MAX(seq), 0) + 1 AS n FROM cx_demo_prospects", {}, {datasource: variables.dsn});
         return "p" & numberFormat(q.n, "0000");

@@ -50,15 +50,7 @@
             <cfset msg = "Password set" & ((form.mustchange ?: "") EQ "1" ? "; the prospect must choose a new one at first sign-in." : ".")>
         </cfcase>
         <cfcase value="mode">
-            <cfset nm = (form.mode ?: "") EQ "explorer" ? "explorer" : "guided">
-            <cfset queryExecute("UPDATE cx_demo_prospects SET mode = :m WHERE pid = :p", {m: nm, p: pid}, {datasource: "addon_demo"})>
-            <!--- Full platform: admin of the OWN sandbox (the platform's assistant
-                  admin pages require it); never of any other assistant. --->
-            <cfif val(p.oid)>
-                <cfset queryExecute("UPDATE ai_orbitix_user_instances SET access_level = :l WHERE oid = :o AND instance_code = :i",
-                    {l: nm EQ "explorer" ? "admin" : "standard", o: p.oid, i: demo.names(pid).instance}, {datasource: "ai_data"})>
-            </cfif>
-            <cfset demo.logEvent(pid, "mode_changed", {detail: {mode: nm, by: op.oid}})>
+            <cfset nm = demo.setMode(pid, form.mode ?: "", op.oid)>
             <cfset msg = nm EQ "explorer" ? "Full platform switched on. The prospect sees the real platform within a minute (or at the next sign-in)." : "Back to Guided.">
         </cfcase>
         <cfcase value="refresh">

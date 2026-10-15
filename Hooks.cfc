@@ -197,6 +197,7 @@ component output="false" {
              & '<div id="demoBar" class="demo-bar"><span class="demo-tag">DEMO</span> '
              & '<span class="demo-co">' & encodeForHTML(d.company) & '</span>'
              & '<span class="demo-left">' & encodeForHTML(left_) & '</span>'
+             & demo.switchHtml(d.mode)
              & '<span class="demo-locks">' & locked & '</span>'
              & '<a href="##" class="demo-talk" data-demo-action="talk">Talk to a person</a></div>'
              & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'

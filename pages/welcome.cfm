@@ -29,6 +29,10 @@
     <div class="hero">
         <h1>Welcome#len(d.fname) ? ", " & encodeForHTML(d.fname) : ""#</h1>
         <p>This is your private Trilivy demo#len(d.company) ? " for " & encodeForHTML(d.company) : ""#. Everything you do here stays in your own sandbox. #d.daysLeft# days left.</p>
+        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-weight:600">Experience:</span> #demo.switchHtml(d.mode, "demo-sw demo-sw-big")#
+            <span style="opacity:.85;font-size:13.5px">#d.mode EQ "explorer" ? "The real Trilivy menus on your own copy." : "Switch to Full platform to use the real Trilivy menus on your own copy."#</span>
+        </div>
     </div>
     <div class="grid">
         <div class="card"><h3>💬 Ask the assistant</h3><p>An HR and IT service-desk assistant for a sample company, Orvane Group, built on its policies. Answers show their sources.</p>
