@@ -57,9 +57,9 @@
                 <cfdirectory action="create" directory="#dir#" recurse="true">
                 <cfset data = exportData()>
                 <cfloop list="features,pitch,settings,operators" item="k">
-                    <cffile action="write" file="#dir#/#k#.json" output="#serializeJSON(data[k])#" charset="utf-8">
+                    <cffile action="write" file="#dir#/#k#.json" output="#demo.toJson(data[k])#" charset="utf-8">
                 </cfloop>
-                <cffile action="write" file="#dir#/EXPORT.json" output="#serializeJSON({addon: 'demo', from_version: meta.version, at: dateTimeFormat(now(), 'yyyy-mm-dd HH:nn:ss'), by: op.email ?: op.oid, host: cgi.server_name})#">
+                <cffile action="write" file="#dir#/EXPORT.json" output="#demo.toJson({addon: 'demo', from_version: meta.version, at: dateTimeFormat(now(), 'yyyy-mm-dd HH:nn:ss'), by: op.email ?: op.oid, host: cgi.server_name})#">
                 <cfset demo.setSetting("state_last_export", dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss"), op.email ?: "")>
                 <cfset msg = "Exported to #dir#. On the fleet box run: trlv_addon.py seed-pull demo #lCase(application.env.OBTX_COMPANY_CODE ?: '')# - it commits this export to the add-on source, and the next package carries it.">
             </cfcase>

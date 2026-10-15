@@ -174,7 +174,7 @@ component output="false" {
              & '<span class="demo-co">' & encodeForHTML(d.company) & '</span>'
              & '<span class="demo-left">' & encodeForHTML(left_) & '</span>'
              & '<a href="##" class="demo-talk" data-demo-action="talk">Talk to a person</a></div>'
-             & '<script>window.TRLV_DEMO = ' & serializeJSON(cfg) & ';</script>'
+             & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'
              & '<script src="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.js" defer></script>';
     }
 

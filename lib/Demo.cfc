@@ -190,7 +190,7 @@ component output="false" {
                 type: left(arguments.type, 40),
                 fk: {value: left(opts.feature ?: "", 60), null: !len(opts.feature ?: "")},
                 page: {value: left(opts.page ?: "", 255), null: !len(opts.page ?: "")},
-                detail: {value: serializeJSON(detail), cfsqltype: "cf_sql_longvarchar"},
+                detail: {value: toJson(detail), cfsqltype: "cf_sql_longvarchar"},   // keys lower case: SQL reads $.raghits, $.text ...
                 dur: {value: val(opts.duration ?: 0), cfsqltype: "cf_sql_integer", null: !structKeyExists(opts, "duration")},
                 ip: {value: left(application.clientIP ?: cgi.remote_addr, 45)},
                 ua: {value: len(ua) ? left(lCase(hash(ua, "SHA-256")), 16) : "", null: !len(ua)}
@@ -356,7 +356,27 @@ component output="false" {
     public void function json(required any data, numeric status = 200) {
         cfheader(statuscode = arguments.status);
         cfcontent(type = "application/json; charset=utf-8", reset = true);
-        writeOutput(serializeJSON(arguments.data));
+        writeOutput(toJson(arguments.data));
         abort;
+    }
+
+    /** JSON with lower-case keys. Lucee upper-cases unquoted struct keys
+        ("ok" -> "OK"); the browser side always reads lower case. */
+    public string function toJson(required any data) {
+        return serializeJSON(lowerKeys(arguments.data));
+    }
+
+    private any function lowerKeys(any v) {
+        if (isStruct(arguments.v)) {
+            var o = [:];
+            for (var k in arguments.v) o[lCase(k)] = lowerKeys(arguments.v[k] ?: "");
+            return o;
+        }
+        if (isArray(arguments.v)) {
+            var a = [];
+            for (var x in arguments.v) arrayAppend(a, lowerKeys(x ?: ""));
+            return a;
+        }
+        return arguments.v;
     }
 }

@@ -67,7 +67,7 @@
             <cfelseif structKeyExists(tr, "event")>
                 <cfset sql = "SELECT COUNT(*) AS n FROM cx_demo_events WHERE pid = :p AND type = :t">
                 <cfif structKeyExists(tr, "min_rag_hits")>
-                    <cfset sql &= " AND CAST(JSON_EXTRACT(detail, '$.ragHits') AS SIGNED) >= #int(tr.min_rag_hits)#">
+                    <cfset sql &= " AND CAST(JSON_EXTRACT(detail, '$.raghits') AS SIGNED) >= #int(tr.min_rag_hits)#">
                 </cfif>
                 <cfset c = queryExecute(sql, {p: d.pid, t: tr.event}, {datasource: "addon_demo"})>
                 <cfif c.n GTE val(tr.count ?: tr.nth ?: 1)><cfset due = ms.feature_key><cfbreak></cfif>

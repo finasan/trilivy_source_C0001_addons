@@ -21,8 +21,8 @@
         <cfset aud = listFind("business,it,finance,hr,exec", form.audience ?: "") ? form.audience : "business">
         <cfset lang = reReplace(lCase(form.lang ?: "en"), "[^a-z]", "", "all")>
         <cfset prm = {fk: fk, aud: aud, lang: left(lang, 2), st: st, kicker: left(form.kicker ?: "", 120), headline: left(form.headline ?: "", 200),
-                      why: form.why_html ?: "", how: form.how_html ?: "", objs: serializeJSON(objs), proof: form.proof_html ?: "",
-                      cta: serializeJSON(cta), by: op.name ?: op.oid, ver: listFind("verified,live", st) ? 1 : 0}>
+                      why: form.why_html ?: "", how: form.how_html ?: "", objs: demo.toJson(objs), proof: form.proof_html ?: "",
+                      cta: demo.toJson(cta), by: op.name ?: op.oid, ver: listFind("verified,live", st) ? 1 : 0}>
         <cfif NOT len(fk) OR NOT len(prm.headline)><cfthrow message="Feature and headline are required."></cfif>
         <cfif val(form.id ?: 0)>
             <cfset prm.id = val(form.id)>

@@ -94,7 +94,7 @@
         } else {
           body.innerHTML = t[2] || ""; // card HTML is written and verified by operators (cx_demo_pitch)
         }
-        if (c.canAsk) {
+        if (c.canask) {
           var a = document.createElement("div");
           a.className = "dp-ask";
           a.innerHTML = '<input type="text" maxlength="300" placeholder="Ask anything about this feature…"><button class="dp-btn">Ask</button>';
@@ -111,7 +111,7 @@
         tabBar.appendChild(b);
       });
       show("why");
-      ctas(ov.querySelector(".dp-cta"), feature, c.cta || [], c.inWishlist);
+      ctas(ov.querySelector(".dp-cta"), feature, c.cta || [], c.inwishlist);
     });
   }
 

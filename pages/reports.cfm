@@ -21,7 +21,7 @@
 <cfset weak = queryExecute("SELECT a.ts, a.pid, JSON_UNQUOTE(JSON_EXTRACT(a.detail, '$.text')) AS q FROM cx_demo_events a
     WHERE a.type = 'chat_question' AND a.ts > NOW() - INTERVAL :d DAY AND EXISTS (
       SELECT 1 FROM cx_demo_events b WHERE b.pid = a.pid AND b.type = 'chat_answer' AND b.ts BETWEEN a.ts AND a.ts + INTERVAL 3 MINUTE
-        AND CAST(JSON_EXTRACT(b.detail, '$.ragHits') AS SIGNED) = 0)
+        AND CAST(JSON_EXTRACT(b.detail, '$.raghits') AS SIGNED) = 0)
     ORDER BY a.ts DESC LIMIT 40", prm, {datasource: "addon_demo"})>
 <cfset firstQ = queryExecute("SELECT ROUND(AVG(TIMESTAMPDIFF(MINUTE, p.first_login_at, (SELECT MIN(e.ts) FROM cx_demo_events e WHERE e.pid = p.pid AND e.type = 'chat_question')))) AS m
     FROM cx_demo_prospects p WHERE p.first_login_at IS NOT NULL AND p.created_at > NOW() - INTERVAL :d DAY", prm, {datasource: "addon_demo"})>
