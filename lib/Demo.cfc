@@ -148,9 +148,10 @@ component output="false" {
             try { pats = deserializeJSON(r.path_patterns); } catch (any e) {}
             r.rx = [];
             for (var p in pats) {
-                p = lCase(trim(p));
-                var rx = "^" & reReplace(reReplace(p, "([.\[\]()^$+?{}|\\])", "\\\1", "all"), "\*", ".*", "all") & "$";
-                arrayAppend(r.rx, rx);
+                // Paths hold letters, digits, / _ - . and the * wildcard only (anything
+                // else is dropped), so escaping the dot is all the regex needs.
+                p = reReplace(lCase(trim(p)), "[^a-z0-9/_.*-]", "", "all");
+                arrayAppend(r.rx, "^" & replace(replace(p, ".", "\.", "all"), "*", ".*", "all") & "$");
             }
             arrayAppend(list, r);
         }

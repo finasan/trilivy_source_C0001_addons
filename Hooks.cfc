@@ -64,6 +64,8 @@ component output="false" {
         if (d.missing ?: true) {
             return onLogin ? {action: "continue"} : {action: "deny", message: "This demo account is not set up."};
         }
+        // The temporary-keys notice is for administrators; a prospect goes on to the demo.
+        if (path == "/ain5py/login/keys_notice.cfm") return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=welcome"};
         if (onLogin) return {action: "continue"};                       // sign out / passwords always work
 
         var isAddon = path == "/ain5py/addon.cfm" || path == "/ain5py/addon_api.cfm";
