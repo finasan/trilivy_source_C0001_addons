@@ -183,10 +183,11 @@ component output="false" {
         if (!isProspect()) return {allow: true};
         var d = demo.sessionDemo();
         if (d.missing ?: true) return {allow: false, message: "This demo account is not set up."};
-        var ws = lCase(ctx.wsDsn ?: "");
+        var ws = dbOf(ctx.wsDsn ?: "");
         var isSe = len(d.seInstance) && ws == lCase(seDb());
-        if (ws != d.dbLower && !isSe) {
-            tamper(d, "/chat", "instance", ws);
+        var rt = lCase(ctx.ragTable ?: "");
+        if ((ws != d.dbLower && !isSe) || (!isSe && len(rt) && left(rt, len(d.base)) != d.base)) {
+            tamper(d, "/chat", "instance", ws & " / " & rt);
             return {allow: false, message: "This assistant is not part of your demo."};
         }
         if (demo.paused()) return {allow: false, message: "The demo is being updated and will be back in a few minutes."};
@@ -218,7 +219,7 @@ component output="false" {
         if (!isProspect()) return;
         var d = demo.sessionDemo();
         if (d.missing ?: true) return;
-        var isSe = len(d.seInstance) && lCase(data.wsDsn ?: "") == lCase(seDb());
+        var isSe = len(d.seInstance) && dbOf(data.wsDsn ?: "") == lCase(seDb());
         switch (t) {
             case "login_ok":
                 demo.logEvent(d.pid, "login_ok");
@@ -243,6 +244,16 @@ component output="false" {
     }
 
     // ------------------------------------------------------------- helpers
+    /** The database name of a chat's instance: the core passes either a name or
+        the inline datasource struct (jdbc:mysql://host:3306/<db>?...). Lower case. */
+    private string function dbOf(any v) {
+        if (isStruct(arguments.v)) {
+            var cs = arguments.v.connectionString ?: "";
+            return lCase(reReplace(cs, "^jdbc:mysql://[^/]+/([^?;]+).*$", "\1"));
+        }
+        return isSimpleValue(arguments.v) ? lCase(trim(arguments.v)) : "";
+    }
+
     private string function seDb() {
         var se = demo.setting("sales_engineer_instance", "");
         if (!len(se)) return "";
