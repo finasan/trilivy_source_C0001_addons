@@ -41,14 +41,15 @@
   var API = "/ain5py/addon_api.cfm?a=demo&p=docs_api";
   var rows = document.getElementById("rows"), msg = document.getElementById("msg"), timer = null;
   function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function plural(n, w){ return n + " " + w + (n === 1 ? "" : "s"); }
   function say(t, ok){ msg.textContent = t; msg.className = "msg " + (ok ? "ok" : "err"); }
-  var label = {queued: "waiting", running: "loading…", ready: "ready", failed: "failed"};
+  var label = {queued: "waiting", running: "loading…", ready: "ready", failed: "could not be loaded (our team has been told)"};
   function load(){
     fetch(API + "&op=list", {credentials: "same-origin"}).then(function(r){ return r.json(); }).then(function(j){
       if (!j.ok) { rows.innerHTML = '<tr><td colspan="5">' + esc(j.error || "error") + '</td></tr>'; return; }
       var L = j.limits;
       document.getElementById("limits").textContent = j.types.replace(/,/g, ", ") + " · up to " + L.file_mb + " MB each · "
-        + L.used_files + " of " + L.files_total + " documents · " + (L.ingests_day - L.used_today) + " loads left today";
+        + L.used_files + " of " + L.files_total + " documents · " + plural(Math.max(0, L.ingests_day - L.used_today), "load") + " left today";
       if (!j.docs.length) { rows.innerHTML = '<tr><td colspan="5" class="muted">No documents yet.</td></tr>'; }
       else rows.innerHTML = j.docs.map(function(d){
         return '<tr><td>' + esc(d.name) + '</td><td>' + d.kb + ' KB</td><td>' + esc(d.at) + '</td><td><span class="st ' + d.state + '">'

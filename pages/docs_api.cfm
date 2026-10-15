@@ -11,6 +11,16 @@
 <cfset upDir = n.dir & "/demo_uploads">
 <cfset api = reReplace(application.env.OBTX_FASTAPI_BASE_URL ?: "http://127.0.0.1:5006", "/+$", "")>
 
+<!--- A load that fails is not the prospect's fault: it gives the day's load
+      back, is logged, and tells the owner (once per document). --->
+<cffunction name="loadFailed" returntype="void">
+    <cfargument name="name" type="string" required="true">
+    <cfargument name="message" type="string" required="false" default="">
+    <cfset demo.addUsage(d.pid, "ingests", -1)>
+    <cfset demo.logEvent(d.pid, "ingest_failed", {feature: "my_docs", detail: {name: arguments.name, message: left(arguments.message, 300)}})>
+    <cfset demo.alert(p, "Document could not be loaded", "#arguments.name#: " & left(arguments.message, 400))>
+</cffunction>
+
 <cffunction name="refreshStates" returntype="void">
     <cfset var q = queryExecute("SELECT id, orig_name, ingest_note FROM cx_demo_docs WHERE pid = :p AND deleted_at IS NULL
                                  AND ingest_state IN ('queued','running')", {p: d.pid}, {datasource: "addon_demo"})>
@@ -28,10 +38,9 @@
             <cfset queryExecute("UPDATE cx_demo_docs SET ingest_state = :s, ingest_note = :m WHERE id = :i",
                 {s: ns, m: left("log:#logId# " & (ns EQ "failed" ? (s.message ?: "") : (s.chunks ?: "") & " passages"), 500), i: q.id}, {datasource: "addon_demo"})>
             <cfif ns EQ "ready">
-                <cfset demo.addUsage(d.pid, "ingests", 0)>
                 <cfset demo.logEvent(d.pid, "ingest_done", {feature: "my_docs", detail: {name: q.orig_name}})>
             <cfelse>
-                <cfset demo.logEvent(d.pid, "ingest_failed", {feature: "my_docs", detail: {name: q.orig_name, message: left(s.message ?: "", 300)}})>
+                <cfset loadFailed(q.orig_name, s.message ?: "")>
             </cfif>
         </cfif>
     </cfloop>
@@ -100,8 +109,8 @@
         <cfset queryExecute("UPDATE cx_demo_docs SET ingest_state = 'running', ingest_note = :n WHERE id = :i", {n: "log:#logId#", i: docId}, {datasource: "addon_demo"})>
         <cfcatch>
             <cfset queryExecute("UPDATE cx_demo_docs SET ingest_state = 'failed', ingest_note = :n WHERE id = :i", {n: left(cfcatch.message, 500), i: docId}, {datasource: "addon_demo"})>
-            <cfset demo.logEvent(d.pid, "ingest_failed", {feature: "my_docs", detail: {name: origName, message: left(cfcatch.message, 300)}})>
-            <cfset demo.json({ok: false, error: "The document was saved but could not be loaded. Our team has been told."})>
+            <cfset loadFailed(origName, cfcatch.message)>
+            <cfset demo.json({ok: false, error: "The document could not be loaded. Our team has been told, and it does not count against your daily limit."})>
         </cfcatch>
     </cftry>
     <cfset demo.json({ok: true, id: docId, message: "Uploaded. Loading it into your knowledge base takes a minute or two."})>
