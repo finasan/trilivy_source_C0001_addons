@@ -1,6 +1,7 @@
 /* Trilivy Demo add-on - banner and pitch popup. Everything is prefixed so the
    platform's own styles are never touched. */
-.demo-bar{position:sticky;top:0;z-index:9000;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+/* Under the platform header (z-index 9000), so its drop-down menus open over this bar. */
+.demo-bar{position:relative;z-index:1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
   padding:6px 14px;background:#0d47a1;color:#fff;font:13px/1.4 var(--fs,'IBM Plex Sans','Segoe UI',sans-serif)}
 .demo-bar .demo-tag{background:#ffb300;color:#1b2333;font-weight:800;letter-spacing:.08em;padding:1px 8px;border-radius:4px}
 .demo-bar .demo-left{opacity:.85}

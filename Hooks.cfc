@@ -143,10 +143,10 @@ component output="false" {
             {on: 1, label: "My documents", emoji: "📄", href: "/ain5py/addon.cfm?a=demo&p=my_docs", target: "", attrs: ""},
             {on: 1, label: "Courses", emoji: "📚", href: "/ain5py/lms_workshop/player/player_launch.cfm?wsDsn=" & ws, target: "", attrs: ""}
         ];
-        for (var f in demo.navPitchItems()) {
-            arrayAppend(nav, {on: 1, label: f.nav_label, emoji: "🔒", href: "/ain5py/addon.cfm?a=demo&p=pitch_page&arg=" & f.feature_key,
-                              target: "", attrs: 'data-demo-feature="' & encodeForHTMLAttribute(f.feature_key) & '" style="opacity:.55"'});
-        }
+        // ONE entry for everything locked (nine buttons wrapped the bar onto two
+        // lines and pushed the account menu off screen): the full list with its
+        // explanations is on the demo home page.
+        arrayAppend(nav, {on: 1, label: "🔒 Full platform", emoji: "🔒", href: "/ain5py/addon.cfm?a=demo&p=welcome##platform", target: "", attrs: ""});
         ctx.nav = nav;
         ctx.res = [];
         ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
