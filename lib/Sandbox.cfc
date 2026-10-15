@@ -152,7 +152,7 @@ component output="false" {
                 if (arrayLen(out.leftovers)) throw(message="left behind: " & arrayToList(out.leftovers, "; "));
                 queryExecute("UPDATE cx_demo_prospects SET status = 'purged', oid = NULL, email = CONCAT('purged-', pid),
                                 fname = NULL, lname = NULL, notes = NULL, purged_summary_json = :s WHERE pid = :p",
-                    {s: serializeJSON(summary), p: n.pid}, {datasource: variables.dsn});
+                    {s: demo.toJson(summary), p: n.pid}, {datasource: variables.dsn});
                 out.ok = true;
             } catch (any e) {
                 out.error = e.message;

@@ -14,8 +14,10 @@
                         "/ain5py/boty/support/agentsup_*"] },
     { "feature_key": "courses", "title": "Courses (learner)", "mode": "open", "sort": 20,
       "path_patterns": ["/ain5py/lms_workshop/player/*", "/ain5py/lms_workshop/api/*"] },
+    { "feature_key": "internal_docs", "title": "Internal audits and reviews", "mode": "hidden", "sort": 29,
+      "path_patterns": ["/ain5py/ai_docs/deprecated_auditrep/*", "/ain5py/ai_docs/xray/*"] },
     { "feature_key": "knowledge_docs", "title": "Trilivy knowledge pages", "mode": "open", "sort": 30,
-      "path_patterns": ["/ain5py/kb/*", "/ain5py/ai_docs/*"] },
+      "path_patterns": ["/ain5py/kb/*", "/ain5py/ai_docs/kbn/*", "/ain5py/ai_docs/ugc/*"] },
 
     { "feature_key": "lms_authoring", "title": "Course authoring", "mode": "pitch", "sort": 40, "nav_group": "Build", "nav_label": "Course Maker",
       "path_patterns": ["/ain5py/lms_workshop/*", "/ain5py/coursemaker/*"] },
