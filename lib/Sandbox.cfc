@@ -400,9 +400,11 @@ component output="false" {
         var se = trim(demo.setting("sales_engineer_instance", ""));
         if (len(se)) arrayAppend(grants, se);
         for (var g in grants) {
+            // Full platform: admin of the OWN sandbox only (the SE assistant stays standard)
+            var lvl = (g == n.instance && (p.mode ?: "guided") == "explorer") ? "admin" : "standard";
             queryExecute("INSERT INTO ai_orbitix_user_instances (oid, instance_code, access_level, clearance, is_operator, granted_by, granted_at, expires_at, flag_active)
-                          VALUES (:o, :i, 'standard', 'internal', 0, :by, NOW(), :exp, 1)",
-                {o: oid, i: g, by: {value: arguments.byOid, null: arguments.byOid LTE 0}, exp: {value: p.expires_at, cfsqltype: "cf_sql_timestamp"}},
+                          VALUES (:o, :i, :lvl, 'internal', 0, :by, NOW(), :exp, 1)",
+                {o: oid, i: g, lvl: lvl, by: {value: arguments.byOid, null: arguments.byOid LTE 0}, exp: {value: p.expires_at, cfsqltype: "cf_sql_timestamp"}},
                 {datasource: "ai_data"});
         }
         return oid;

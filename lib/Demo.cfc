@@ -117,9 +117,24 @@ component output="false" {
             fname: p.fname ?: "", audience: p.audience, language: p.language,
             expires_at: p.expires_at, daysLeft: p.daysLeft, consent: isDate(p.consent_at ?: ""),
             instance: n.instance, db: n.db, dbLower: n.dbLower, base: n.base,
-            seInstance: se
+            seInstance: se, mode: p.mode ?: "guided",
+            audit: setting("explorer_audit_pid", "") == p.pid
         };
+        applyRights(session.demo.mode);
         return session.demo;
+    }
+
+    /**
+     * Session rights of a prospect (never stored in ai_orbitix_users). Guided:
+     * chat, knowledge pages, courses. Full platform: the platform's own areas
+     * too, so its real menus and pages work; request_gate still decides page
+     * by page (cx_demo_features.explorer_mode), so box-wide pages stay locked.
+     */
+    public void function applyRights(required string mode) {
+        var full = arguments.mode == "explorer";
+        session.ur_bot = 1; session.ur_kb = 1; session.ur_courses = 1;
+        for (var k in ["ur_panel", "ur_rag", "ur_jumpstart", "ur_manage", "ur_quick", "ur_tips"]) session[k] = full ? 1 : 0;
+        session.ur_resources = 0;
     }
 
     public string function nextPid() {
@@ -140,7 +155,7 @@ component output="false" {
     public array function features() {
         var c = application.demo_features ?: {};
         if (structKeyExists(c, "at") && dateDiff("s", c.at, now()) LT 120) return c.list;
-        var q = queryExecute("SELECT feature_key, title, mode, path_patterns, nav_group, nav_label, sort
+        var q = queryExecute("SELECT feature_key, title, mode, COALESCE(explorer_mode, mode) AS explorer_mode, path_patterns, nav_group, nav_label, sort
                               FROM cx_demo_features ORDER BY sort, feature_key", {}, {datasource: variables.dsn});
         var list = [];
         for (var r in q) {
@@ -159,21 +174,24 @@ component output="false" {
         return list;
     }
 
-    /** {key, mode, title} for a lower-case path. Nothing matched = pitch "platform". */
-    public struct function classify(required string path) {
+    /** {key, mode, title} for a lower-case path, for the prospect's experience
+        (guided | explorer = Full platform). Nothing matched = pitch "platform". */
+    public struct function classify(required string path, string experience = "guided") {
         var p = lCase(arguments.path);
+        var ex = arguments.experience == "explorer";
         for (var f in features()) {
             for (var rx in f.rx) {
-                if (reFind(rx, p)) return {key: f.feature_key, mode: f.mode, title: f.title};
+                if (reFind(rx, p)) return {key: f.feature_key, mode: ex ? f.explorer_mode : f.mode, title: f.title};
             }
         }
         return {key: "platform", mode: "pitch", title: "Everything else in the full platform"};
     }
 
-    public array function navPitchItems() {
+    public array function navPitchItems(string experience = "guided") {
         var out = [];
+        var ex = arguments.experience == "explorer";
         for (var f in features()) {
-            if (f.mode == "pitch" && len(f.nav_label ?: "")) arrayAppend(out, f);
+            if ((ex ? f.explorer_mode : f.mode) == "pitch" && len(f.nav_label ?: "")) arrayAppend(out, f);
         }
         return out;
     }

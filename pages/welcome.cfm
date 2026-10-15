@@ -8,7 +8,7 @@
     <cfexit>
 </cfif>
 <cfset ws = urlEncodedFormat(d.db)>
-<cfset pitches = demo.navPitchItems()>
+<cfset pitches = demo.navPitchItems(d.mode)>
 <cfoutput>
 <style>
 .dw{font:15px/1.55 var(--fs);color:##1b2333;max-width:1080px;margin:18px auto 60px;padding:0 16px}
@@ -38,6 +38,10 @@
         <div class="card"><h3>📚 Courses</h3><p>See the learner side: short lessons, quizzes and certificates built from company content.</p>
             <a class="go" href="/ain5py/lms_workshop/player/player_launch.cfm?wsDsn=#ws#" data-demo-nav="courses">Open courses</a></div>
     </div>
+    <cfif d.mode EQ "explorer">
+    <div class="try" style="background:##e3f5ee"><b>You have the full platform.</b> Use the menus at the top (JumpStart, Main AI, RAG, Manage):
+        they work on your own private copy. A few server-wide screens stay locked and explain themselves when you open them.</div>
+    </cfif>
     <div class="try"><b>Good first questions:</b> <code>How many days of annual leave do I get?</code> · <code>My VPN keeps disconnecting, what should I do?</code> · <code>What do I do if my laptop is stolen?</code> · <code>Can I claim a taxi to the airport?</code></div>
 
     <h2>In the full platform</h2>

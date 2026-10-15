@@ -109,7 +109,14 @@ component output="false" {
             return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=welcome"};
         }
 
-        var f = demo.classify(path);
+        var f = demo.classify(path, d.mode);
+        // Safety audit of the Full platform map (setting explorer_audit_pid, set
+        // only while an operator runs it): that one prospect may OPEN any page,
+        // read-only, so the crawl can see what each page would show.
+        if (d.audit && cgi.request_method == "GET" && f.mode != "hidden") {
+            demo.logEvent(d.pid, "audit_view", {feature: f.key, page: left(path, 255)});
+            return {action: "continue"};
+        }
         if (f.mode == "open" || f.mode == "capped") {
             if (!isAddon && !isApiPath(path) && cgi.request_method == "GET") {
                 demo.logEvent(d.pid, "page_view", {feature: f.key, page: left(path & (len(cgi.query_string) ? "?" & cgi.query_string : ""), 255)});
@@ -137,6 +144,19 @@ component output="false" {
         var d = demo.sessionDemo();
         if (d.missing ?: true) return;
         var ws = urlEncodedFormat(d.db);
+        if (d.mode == "explorer") {
+            // Full platform: the platform's own menu (its items follow the session
+            // rights), with the demo home in front and the account menu trimmed.
+            arrayPrepend(ctx.nav, {on: 1, label: "Demo home", emoji: "🏠", href: "/ain5py/addon.cfm?a=demo&p=welcome", target: "", attrs: ""});
+            for (var it in ctx.nav) {
+                if (findNoCase("wsDsn=", it.href ?: "")) it.href = reReplaceNoCase(it.href, "wsDsn=[^&]*", "wsDsn=" & ws);
+            }
+            ctx.res = [];
+            ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
+            ctx.flags.resources = 0;
+            ctx.flags.supportChat = 0;
+            return;
+        }
         var nav = [
             {on: 1, label: "Home", emoji: "🏠", href: "/ain5py/addon.cfm?a=demo&p=welcome", target: "", attrs: ""},
             {on: 1, label: "Assistant", emoji: "💬", href: "/ain5py/boty/boty_full.cfm?wsDsn=" & ws, target: "_blank", attrs: ""},
@@ -169,8 +189,8 @@ component output="false" {
         };
         var left_ = d.daysLeft == 1 ? "1 day left" : d.daysLeft & " days left";
         var locked = "";
-        for (var f in demo.navPitchItems()) {
-            locked &= '<a href="/ain5py/addon.cfm?a=demo&p=pitch_page&arg=' & encodeForURL(f.feature_key) & '" class="demo-lock" data-demo-feature="'
+        for (var f in demo.navPitchItems(d.mode)) {
+            locked &='<a href="/ain5py/addon.cfm?a=demo&p=pitch_page&arg=' & encodeForURL(f.feature_key) & '" class="demo-lock" data-demo-feature="'
                     & encodeForHTMLAttribute(f.feature_key) & '">🔒 ' & encodeForHTML(f.nav_label) & '</a>';
         }
         return '<link rel="stylesheet" href="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.css">'

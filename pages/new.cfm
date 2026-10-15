@@ -13,6 +13,7 @@
 <cfparam name="form.days" default="#demo.setting('default_days', '14')#">
 <cfparam name="form.caps" default="standard">
 <cfparam name="form.notes" default="">
+<cfparam name="form.mode" default="guided">
 <cfparam name="form.access" default="invite"><!--- invite = e-mail with a set-password link; password = typed here --->
 <cfparam name="form.password" default="">
 <cfparam name="form.mustchange" default="">
@@ -38,8 +39,9 @@
             <cfset pid = demo.nextPid()>
             <cfset queryExecute("
                 INSERT INTO cx_demo_prospects (pid, email, fname, lname, company, audience, industry, language, owner_oid,
-                                               status, expires_at, caps_preset, notes, created_by)
-                VALUES (:pid, :e, :f, :l, :c, :a, :i, :lang, :ow, 'building', DATE_ADD(NOW(), INTERVAL :d DAY), :caps, :n, :by)", {
+                                               status, expires_at, caps_preset, mode, notes, created_by)
+                VALUES (:pid, :e, :f, :l, :c, :a, :i, :lang, :ow, 'building', DATE_ADD(NOW(), INTERVAL :d DAY), :caps, :mode, :n, :by)", {
+                mode: form.mode EQ "explorer" ? "explorer" : "guided",
                 pid: pid, e: em, f: left(trim(form.fname), 50), l: left(trim(form.lname), 50), c: left(trim(form.company), 100),
                 a: form.audience, i: left(trim(form.industry), 80), lang: left(form.language, 2),
                 ow: {value: val(form.owner_oid), null: NOT val(form.owner_oid)}, d: {value: int(form.days), cfsqltype: "cf_sql_integer"},
@@ -105,6 +107,9 @@
         <div><label>Days</label><input type="number" name="days" value="#encodeForHTMLAttribute(form.days)#" min="1" max="90"></div>
         <div><label>Limits</label><select name="caps"><option value="standard" #form.caps EQ "standard" ? "selected" : ""#>standard</option><option value="generous" #form.caps EQ "generous" ? "selected" : ""#>generous</option></select></div>
     </div>
+    <label>Experience</label>
+    <label style="font-weight:400"><input type="radio" name="mode" value="guided" #form.mode NEQ "explorer" ? "checked" : ""#> Guided (demo home + popups)</label>
+    <label style="font-weight:400"><input type="radio" name="mode" value="explorer" #form.mode EQ "explorer" ? "checked" : ""#> Full platform (the real Trilivy menus on their own copy)</label>
     <label>Notes (only operators see these)</label><textarea name="notes" rows="2">#encodeForHTML(form.notes)#</textarea>
     <label>How the prospect gets in</label>
     <label style="font-weight:400"><input type="radio" name="access" value="invite" #form.access EQ "invite" ? "checked" : ""# onclick="document.getElementById('pwbox').style.display='none'">

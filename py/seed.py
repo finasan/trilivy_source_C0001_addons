@@ -50,9 +50,9 @@ def main():
     if feats:
         cur.execute("DELETE FROM cx_demo_features")
         for f in feats:
-            cur.execute("INSERT INTO cx_demo_features (feature_key, title, mode, path_patterns, nav_group, nav_label, sort, notes) "
-                        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
-                        (f["feature_key"], f["title"], f["mode"], json.dumps(f.get("path_patterns", [])),
+            cur.execute("INSERT INTO cx_demo_features (feature_key, title, mode, explorer_mode, path_patterns, nav_group, nav_label, sort, notes) "
+                        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                        (f["feature_key"], f["title"], f["mode"], f.get("explorer_mode"), json.dumps(f.get("path_patterns", [])),
                          f.get("nav_group"), f.get("nav_label"), int(f.get("sort", 100)), f.get("notes")))
     out["features"] = len(feats)
 

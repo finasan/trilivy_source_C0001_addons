@@ -49,6 +49,18 @@
             <cfset demo.logEvent(pid, "password_set_by_operator", {detail: {by: op.oid, must_change: (form.mustchange ?: "") EQ "1"}})>
             <cfset msg = "Password set" & ((form.mustchange ?: "") EQ "1" ? "; the prospect must choose a new one at first sign-in." : ".")>
         </cfcase>
+        <cfcase value="mode">
+            <cfset nm = (form.mode ?: "") EQ "explorer" ? "explorer" : "guided">
+            <cfset queryExecute("UPDATE cx_demo_prospects SET mode = :m WHERE pid = :p", {m: nm, p: pid}, {datasource: "addon_demo"})>
+            <!--- Full platform: admin of the OWN sandbox (the platform's assistant
+                  admin pages require it); never of any other assistant. --->
+            <cfif val(p.oid)>
+                <cfset queryExecute("UPDATE ai_orbitix_user_instances SET access_level = :l WHERE oid = :o AND instance_code = :i",
+                    {l: nm EQ "explorer" ? "admin" : "standard", o: p.oid, i: demo.names(pid).instance}, {datasource: "ai_data"})>
+            </cfif>
+            <cfset demo.logEvent(pid, "mode_changed", {detail: {mode: nm, by: op.oid}})>
+            <cfset msg = nm EQ "explorer" ? "Full platform switched on. The prospect sees the real platform within a minute (or at the next sign-in)." : "Back to Guided.">
+        </cfcase>
         <cfcase value="refresh">
             <cfset r = new trlvaddons.demo.lib.Sandbox().refreshContent(pid)>
             <cfset msg = r.ok ? "Content updated: " & r.message : "Could not update: " & r.message>
@@ -150,7 +162,13 @@
 </div>
 
 <div class="card">
-    <h3 style="margin-top:0">Access</h3>
+    <h3 style="margin-top:0">Experience</h3>
+    <form method="post" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><input type="hidden" name="action" value="mode">
+        <label style="font-weight:400;margin:0"><input type="radio" name="mode" value="guided" #(p.mode ?: "guided") EQ "guided" ? "checked" : ""#> <b>Guided</b>: the demo home, assistant, documents, courses; the rest explained by popups</label>
+        <label style="font-weight:400;margin:0"><input type="radio" name="mode" value="explorer" #(p.mode ?: "") EQ "explorer" ? "checked" : ""#> <b>Full platform</b>: the real Trilivy menus and pages on their own copy; server-wide screens stay locked</label>
+        <button class="btn primary">Save</button>
+    </form>
+    <h3>Access</h3>
     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
         <cfif p.status EQ "suspended">
             <form method="post"><input type="hidden" name="action" value="resume"><button class="btn primary">Restore access</button></form>

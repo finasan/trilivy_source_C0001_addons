@@ -14,10 +14,11 @@
 <cfscript>
     function exportData() {
         var out = {};
-        var f = queryExecute("SELECT feature_key, title, mode, path_patterns, nav_group, nav_label, sort FROM cx_demo_features ORDER BY sort, feature_key", {}, {datasource: "addon_demo"});
+        var f = queryExecute("SELECT feature_key, title, mode, explorer_mode, path_patterns, nav_group, nav_label, sort FROM cx_demo_features ORDER BY sort, feature_key", {}, {datasource: "addon_demo"});
         var feats = [];
         for (var r in f) {
             var row = {feature_key: r.feature_key, title: r.title, mode: r.mode, sort: r.sort, path_patterns: deserializeJSON(r.path_patterns)};
+            if (len(r.explorer_mode ?: "")) row.explorer_mode = r.explorer_mode;
             if (len(r.nav_group ?: "")) row.nav_group = r.nav_group;
             if (len(r.nav_label ?: "")) row.nav_label = r.nav_label;
             arrayAppend(feats, row);
