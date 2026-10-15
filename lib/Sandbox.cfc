@@ -288,7 +288,13 @@ component output="false" {
         for (var c2 in codes) if (!listFindNoCase(valueList(have.course_id), c2)) arrayAppend(todo, c2);
         var root = reReplace(application.env.OBTX_PATH_INSTANCES ?: "/home/trilivyapp/containers/instances", "[/\\]+$", "");
         var fromDir = root & "/" & lCase(sdb) & "/";
-        if (!arrayLen(todo)) return "courses already there; " & copyCourseFolders(n, sdb, fromDir, codes);
+        // The chosen courses are for prospects: publish the sandbox's copies even
+        // where the source still has them as drafts (inst_basic keeps its own flags).
+        var pubList = "'" & arrayToList(codes, "','") & "'";
+        if (!arrayLen(todo)) {
+            queryExecute("UPDATE `#n.db#`.ws_courses SET flag_published = 1 WHERE course_id IN (#pubList#)", {}, {datasource: ds});
+            return "courses already there, published; " & copyCourseFolders(n, sdb, fromDir, codes);
+        }
         var inList = "'" & arrayToList(todo, "','") & "'";
         // course-keyed tables, then the ones keyed through quizzes / assessments
         for (var tbl in ["ws_courses", "ws_modules", "ws_lessons", "ws_topics", "ws_quizzes", "ws_handson", "ws_assessments"]) {
@@ -304,7 +310,8 @@ component output="false" {
             queryExecute("UPDATE `#n.db#`.`#pc[1]#` SET `#pc[2]#` = REPLACE(`#pc[2]#`, :f, :t) WHERE course_id IN (#inList#)",
                 {f: fromDir, t: toDir}, {datasource: ds});
         }
-        return arrayLen(todo) & " course(s) " & arrayToList(todo) & "; " & copyCourseFolders(n, sdb, fromDir, codes);
+        queryExecute("UPDATE `#n.db#`.ws_courses SET flag_published = 1 WHERE course_id IN (#pubList#)", {}, {datasource: ds});
+        return arrayLen(todo) & " course(s) " & arrayToList(todo) & ", published; " & copyCourseFolders(n, sdb, fromDir, codes);
     }
 
     /** The course folders (LMS/courses/<folder>): folder_name, or the last part of course_url when it is empty. */
