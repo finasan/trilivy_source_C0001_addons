@@ -266,11 +266,13 @@ component output="false" {
     private numeric function makeAccount(required struct n, required struct p, numeric byOid = 0) {
         var salt = lCase(hash(createUUID() & rand("SHA1PRNG"), "SHA-256"));
         var pw = hash(createUUID() & createUUID(), "SHA-512");        // unusable; the prospect sets one by link
+        // Clearance "internal": the template's passages are internal; without a
+        // clearance the search caps the prospect at "public" and finds nothing.
         queryExecute("INSERT INTO ai_orbitix_users (email, fname, lname, password_hash, password_salt, password_must_reset, company,
-                        account_type, default_instance_code, account_expires_at,
+                        account_type, default_instance_code, default_clearance, account_expires_at,
                         ur_bot, ur_panel, ur_kb, ur_tips, ur_courses, ur_quick, ur_manage, ur_jumpstart, ur_rag, ur_resources, ur_support,
                         date_in, active)
-                      VALUES (:e, :f, :l, :h, :s, 0, :c, 'demo_user', :inst, :exp, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, NOW(), 1)", {
+                      VALUES (:e, :f, :l, :h, :s, 0, :c, 'demo_user', :inst, 'internal', :exp, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, NOW(), 1)", {
             e: p.email, f: left(p.fname ?: "", 50), l: left(p.lname ?: "", 50),
             h: lCase(hash(pw & ":" & salt, "SHA-256")), s: salt, c: left(p.company ?: "", 100),
             inst: n.instance, exp: {value: p.expires_at, cfsqltype: "cf_sql_timestamp"}
@@ -281,7 +283,7 @@ component output="false" {
         if (len(se)) arrayAppend(grants, se);
         for (var g in grants) {
             queryExecute("INSERT INTO ai_orbitix_user_instances (oid, instance_code, access_level, clearance, is_operator, granted_by, granted_at, expires_at, flag_active)
-                          VALUES (:o, :i, 'standard', NULL, 0, :by, NOW(), :exp, 1)",
+                          VALUES (:o, :i, 'standard', 'internal', 0, :by, NOW(), :exp, 1)",
                 {o: oid, i: g, by: {value: arguments.byOid, null: arguments.byOid LTE 0}, exp: {value: p.expires_at, cfsqltype: "cf_sql_timestamp"}},
                 {datasource: "ai_data"});
         }
