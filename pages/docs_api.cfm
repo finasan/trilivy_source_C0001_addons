@@ -17,7 +17,7 @@
     <cfloop query="q">
         <cfset var logId = val(listLast(q.ingest_note, ":"))>
         <cfif logId LTE 0><cfcontinue></cfif>
-        <cfset var s = queryExecute("SELECT status, message, chunks FROM ingest_log WHERE id = :i", {i: logId}, {datasource: "airrag2"})>
+        <cfset var s = queryExecute("SELECT status, message, chunks FROM ingest_log WHERE id = :i", {i: {value: logId, cfsqltype: "cf_sql_integer"}}, {datasource: "airrag2"})>
         <cfif NOT s.recordCount><cfcontinue></cfif>
         <cfset var st = uCase(s.status ?: "")>
         <cfset var ns = "running">
@@ -119,11 +119,11 @@
                                     AND c.column_name = 'ingest_log_id' AND c.table_name LIKE :l",
             {l: replace(n.base, "_", "\_", "all") & "\_%"}, {datasource: "airrag2"})>
         <cfloop query="tabs">
-            <cfset queryExecute("DELETE FROM #tabs.table_name# WHERE ingest_log_id = :i", {i: logId}, {datasource: "airrag2", result: "dr"})>
+            <cfset queryExecute("DELETE FROM #tabs.table_name# WHERE ingest_log_id = :i", {i: {value: logId, cfsqltype: "cf_sql_integer"}}, {datasource: "airrag2", result: "dr"})>
             <cfset removed += dr.recordCount>
         </cfloop>
         <cftry>
-            <cfset queryExecute("DELETE FROM rag_docvault WHERE target_rag_table = :b AND ingest_log_id = :i", {b: n.base, i: logId}, {datasource: "airrag2"})>
+            <cfset queryExecute("DELETE FROM rag_docvault WHERE target_rag_table = :b AND ingest_log_id = :i", {b: n.base, i: {value: logId, cfsqltype: "cf_sql_integer"}}, {datasource: "airrag2"})>
             <cfcatch></cfcatch>
         </cftry>
     </cfif>
