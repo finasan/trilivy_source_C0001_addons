@@ -59,7 +59,7 @@
     <cfset arguments.ctx.flags.supportChat = 0>
 </cffunction>
 
-<cffunction name="page_top" access="public" returntype="string" output="false">
+<cffunction name="page_top_renamed" access="public" returntype="string" output="false">
     <cfargument name="ctx" type="struct" required="true">
     <cfif mode() EQ "throw_top"><cfthrow message="hello: deliberate page_top failure"></cfif>
     <cfreturn on() ? '<div id="hello-top" data-where="#encodeForHTMLAttribute(arguments.ctx.where ?: "")#">HELLO-TOP</div>' : "">

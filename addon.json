@@ -12,7 +12,9 @@
     "page_top",
     "menu_filter",
     "chat_pre",
-    "event"
+    "event",
+    "event_missing_fn",
+    "chat_pre2"
   ],
   "pages": {
     "ping": {
