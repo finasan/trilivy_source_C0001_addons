@@ -191,9 +191,12 @@ component output="false" {
         // Make it the prospect's own assistant.
         var owner = len(p.owner_oid ?: "") ? queryExecute("SELECT email FROM cx_demo_operators WHERE oid = :o", {o: p.owner_oid}, {datasource: variables.dsn}) : {email: ""};
         var title = left((len(p.company ?: "") ? p.company & " · " : "") & "Trilivy demo", 200);
-        queryExecute("UPDATE `#n.db#`.ai_instance_look SET rag_table = :b, rag_background_tables = '', web_search_enabled = 0,
-                        upload_enabled = 0, bot_title = :title, handoff_email_to = :he", {
-            b: n.base, title: title, he: {value: owner.email ?: "", null: !len(owner.email ?: "")}
+        // instance_name: the platform looks the user's clearance up by it
+        // (AgentSup_config -> getUserClearance); left as the template's name,
+        // the prospect has no grant on it and is capped at "public".
+        queryExecute("UPDATE `#n.db#`.ai_instance_look SET instance_name = :inst, rag_table = :b, rag_background_tables = '',
+                        web_search_enabled = 0, upload_enabled = 0, bot_title = :title, handoff_email_to = :he", {
+            inst: n.instance, b: n.base, title: title, he: {value: owner.email ?: "", null: !len(owner.email ?: "")}
         }, {datasource: ds});
         return "#tabs.recordCount# tables, #copied# with rows";
     }
