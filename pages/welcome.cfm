@@ -1,3 +1,4 @@
+<cfinclude template="_brand.cfm">
 <cfset demo = new trlvaddons.demo.lib.Demo()>
 <cfset d = demo.sessionDemo()>
 <cfif structIsEmpty(d) OR (d.missing ?: true)>
@@ -10,7 +11,7 @@
 <cfset pitches = demo.navPitchItems()>
 <cfoutput>
 <style>
-.dw{font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:##1b2333;max-width:1080px;margin:18px auto 60px;padding:0 16px}
+.dw{font:15px/1.55 var(--fs);color:##1b2333;max-width:1080px;margin:18px auto 60px;padding:0 16px}
 .dw .hero{background:linear-gradient(135deg,##0d47a1,##2457d6);color:##fff;border-radius:16px;padding:28px 28px 24px;margin-bottom:18px}
 .dw .hero h1{margin:0 0 6px;font-size:28px;line-height:1.2}.dw .hero p{margin:0;opacity:.92}
 .dw .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}

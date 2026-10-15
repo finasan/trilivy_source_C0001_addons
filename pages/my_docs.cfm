@@ -1,3 +1,4 @@
+<cfinclude template="_brand.cfm">
 <cfset demo = new trlvaddons.demo.lib.Demo()>
 <cfset d = demo.sessionDemo()>
 <cfif structIsEmpty(d) OR (d.missing ?: true)>
@@ -8,7 +9,7 @@
     {a: demo.names(d.pid).base, b: "public." & demo.names(d.pid).base}, {datasource: "airrag2"})>
 <cfoutput>
 <style>
-.md{font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:##1b2333;max-width:900px;margin:18px auto 60px;padding:0 16px}
+.md{font:15px/1.55 var(--fs);color:##1b2333;max-width:900px;margin:18px auto 60px;padding:0 16px}
 .md h1{font-size:24px;margin:6px 0 6px}.md .muted{color:##5d6779}
 .md .drop{border:2px dashed ##c9d2e3;border-radius:14px;padding:26px;text-align:center;background:##fafbfe;margin:14px 0}
 .md .drop.over{border-color:##2457d6;background:##f3f6fe}

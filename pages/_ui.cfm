@@ -1,4 +1,5 @@
 <!--- Demo Console - shared look and helpers for the operator pages. --->
+<cfinclude template="_brand.cfm">
 <cfset demo = new trlvaddons.demo.lib.Demo()>
 <cfset op = demo.operator()>
 <cfparam name="pageTitle" default="Demo Console">
@@ -22,7 +23,7 @@
 </cfscript>
 <cfoutput>
 <style>
-.dc{font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:##1b2333;max-width:1180px;margin:18px auto;padding:0 16px}
+.dc{font:14px/1.5 var(--fs);color:##1b2333;max-width:1180px;margin:18px auto;padding:0 16px}
 .dc h1{font-size:24px;margin:4px 0 14px}.dc h2{font-size:18px;margin:22px 0 8px}.dc h3{font-size:15px;margin:16px 0 6px}
 .dc .tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px;border-bottom:1px solid ##e3e7ef;padding-bottom:8px}
 .dc .tabs a{padding:6px 12px;border-radius:8px;text-decoration:none;color:##2457d6;font-weight:600}

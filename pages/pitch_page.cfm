@@ -1,13 +1,14 @@
 <!--- pitch_page - a locked feature opened by its address: the card as a full page.
       The popup (assets/demo.js) renders the same card; this page asks it to open
       the card at once and keeps a plain version for no-JS. --->
+<cfinclude template="_brand.cfm">
 <cfset demo = new trlvaddons.demo.lib.Demo()>
 <cfset d = demo.sessionDemo()>
 <cfset feature = reReplace(lCase(request.addon.arg), "[^a-z0-9_]", "", "all")>
 <cfif NOT len(feature)><cfset feature = "platform"></cfif>
 <cfset c = demo.card(feature, d.audience ?: "business", d.language ?: "en")>
 <cfoutput>
-<div style="font:15px/1.6 system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:##1b2333;max-width:760px;margin:30px auto;padding:0 16px">
+<div style="font:15px/1.6 var(--fs);color:##1b2333;max-width:760px;margin:30px auto;padding:0 16px">
 <cfif structIsEmpty(c)>
     <h1>Part of the full platform</h1><p>This part of Trilivy is not open in the demo. Ask us for a walkthrough.</p>
 <cfelse>

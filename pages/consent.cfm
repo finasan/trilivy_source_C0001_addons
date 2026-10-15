@@ -1,3 +1,4 @@
+<cfinclude template="_brand.cfm">
 <cfset demo = new trlvaddons.demo.lib.Demo()>
 <cfset d = demo.sessionDemo(true)>
 <cfif structIsEmpty(d) OR (d.missing ?: true)><cflocation url="/ain5py/index.cfm" addtoken="false"></cfif>
@@ -15,7 +16,7 @@
     </cfif>
 </cfif>
 <cfoutput>
-<div style="font:15px/1.6 system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:##1b2333;max-width:640px;margin:40px auto;padding:26px 28px;border:1px solid ##e3e7ef;border-radius:14px;background:##fff">
+<div style="font:15px/1.6 var(--fs);color:##1b2333;max-width:640px;margin:40px auto;padding:26px 28px;border:1px solid ##e3e7ef;border-radius:14px;background:##fff">
     <h1 style="font-size:24px;margin:0 0 12px">Before you start#len(d.fname) ? ", " & encodeForHTML(d.fname) : ""#</h1>
     #demo.setting("consent_html", "<p>This demo records your activity so our team can help you.</p>")#
     <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
