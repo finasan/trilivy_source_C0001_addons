@@ -40,7 +40,7 @@
     </div>
     <div class="try"><b>Good first questions:</b> <code>How many days of annual leave do I get?</code> · <code>My VPN keeps disconnecting, what should I do?</code> · <code>What do I do if my laptop is stolen?</code> · <code>Can I claim a taxi to the airport?</code></div>
 
-    <h2 id="platform">In the full platform</h2>
+    <h2>In the full platform</h2>
     <p class="muted" style="margin-top:-4px;color:##5d6779">Not open in the demo, but each one explains what it does for you. Click any of them.</p>
     <div class="grid">
     <cfloop array="#pitches#" item="f">

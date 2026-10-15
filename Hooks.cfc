@@ -143,10 +143,9 @@ component output="false" {
             {on: 1, label: "My documents", emoji: "📄", href: "/ain5py/addon.cfm?a=demo&p=my_docs", target: "", attrs: ""},
             {on: 1, label: "Courses", emoji: "📚", href: "/ain5py/lms_workshop/player/player_launch.cfm?wsDsn=" & ws, target: "", attrs: ""}
         ];
-        // ONE entry for everything locked (nine buttons wrapped the bar onto two
-        // lines and pushed the account menu off screen): the full list with its
-        // explanations is on the demo home page.
-        arrayAppend(nav, {on: 1, label: "🔒 Full platform", emoji: "🔒", href: "/ain5py/addon.cfm?a=demo&p=welcome##platform", target: "", attrs: ""});
+        // The locked (greyed) features are NOT in this header row: nine extra
+        // buttons wrapped it onto two lines and hid the account menu. They are
+        // drawn in the DEMO bar under the header (page_top), each opening its popup.
         ctx.nav = nav;
         ctx.res = [];
         ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
@@ -169,10 +168,16 @@ component output="false" {
             api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon"
         };
         var left_ = d.daysLeft == 1 ? "1 day left" : d.daysLeft & " days left";
+        var locked = "";
+        for (var f in demo.navPitchItems()) {
+            locked &= '<a href="/ain5py/addon.cfm?a=demo&p=pitch_page&arg=' & encodeForURL(f.feature_key) & '" class="demo-lock" data-demo-feature="'
+                    & encodeForHTMLAttribute(f.feature_key) & '">🔒 ' & encodeForHTML(f.nav_label) & '</a>';
+        }
         return '<link rel="stylesheet" href="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.css">'
              & '<div id="demoBar" class="demo-bar"><span class="demo-tag">DEMO</span> '
              & '<span class="demo-co">' & encodeForHTML(d.company) & '</span>'
              & '<span class="demo-left">' & encodeForHTML(left_) & '</span>'
+             & '<span class="demo-locks">' & locked & '</span>'
              & '<a href="##" class="demo-talk" data-demo-action="talk">Talk to a person</a></div>'
              & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'
              & '<script src="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.js" defer></script>';
