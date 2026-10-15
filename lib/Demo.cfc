@@ -265,6 +265,9 @@ component output="false" {
 
     // ------------------------------------------------------------------ alerts
     public void function alert(required struct prospect, required string what, string detail = "") {
+        // Off by default (2026-10-15): the only demo e-mails are the invitation
+        // and the platform's own Talk to a Person mails. Setting mail_alerts=1 restores them.
+        if (setting("mail_alerts", "0") != "1") return;
         try {
             var to = "";
             if (val(prospect.owner_oid ?: 0)) {
@@ -348,6 +351,75 @@ component output="false" {
         logEvent(p.pid, "mail_sent", {detail: {template: "welcome", ok: r.ok}});
         r.link = vars.link;
         return r;
+    }
+
+    // ------------------------------------------------------------------ talk to a person
+    /** The inline datasource of an instance database, the way the platform builds it (ai_data account). */
+    public struct function instanceDsn(required string db) {
+        var sys = createObject("java", "java.lang.System");
+        var host = sys.getenv("OBTX_DB_HOST") ?: "";
+        if (!len(trim(host))) host = "localhost";
+        return {
+            class: "com.mysql.cj.jdbc.Driver", bundleName: "com.mysql.cj", bundleVersion: "8.0.33",
+            connectionString: "jdbc:mysql://#host#:3306/#arguments.db#?characterEncoding=UTF-8&serverTimezone=America/Chicago&maxReconnects=3",
+            username: "ai_data", password: application.env.OBTX_DB_MYSQL_PASS
+        };
+    }
+
+    /**
+     * "Talk to a person" from the demo, through the PLATFORM's own Talk to a
+     * Person: a ticket in the sandbox's ai_handoff_requests (it shows in the
+     * platform's handoff inbox of that assistant) and the platform's "new
+     * ticket" e-mail (HandoffMail staff_new, edited in Talk to a Person >
+     * Configuration) to the assistant's staff - the owner, via handoff_email_to.
+     * No confirmation e-mail to the prospect (handoff_notify_user = 0).
+     */
+    public struct function talkToPerson(required string pid, string message = "", string about = "") {
+        var p = prospectBy("pid", arguments.pid);
+        var n = names(arguments.pid);
+        var dsn = instanceDsn(n.db);
+        var recent = queryExecute("SELECT COUNT(*) AS c FROM ai_handoff_requests WHERE contact_email = :e AND created_at > NOW() - INTERVAL 1 HOUR",
+            {e: p.email}, {datasource: dsn});
+        if (recent.c GTE 5) return {ok: false, message: "You have sent several messages in the last hour. Please try again later."};
+        var look = queryExecute("SELECT bot_title, handoff_email_to FROM ai_instance_look LIMIT 1", {}, {datasource: dsn});
+        var summary = left("Message from the demo" & (len(arguments.about) ? " (" & arguments.about & ")" : "") & ": "
+                         & (len(trim(arguments.message)) ? trim(arguments.message) : "(no text, the prospect asked to talk to a person)"), 2000);
+        var name = trim((p.fname ?: "") & " " & (p.lname ?: ""));
+        queryExecute("INSERT INTO ai_handoff_requests (conversation_id, user_id, contact_name, contact_email, summary, trigger_source, status)
+                      VALUES (:c, :u, :n, :e, :s, 'button', 'open')", {
+            c: "demo-" & lCase(createUUID()), u: p.email, n: {value: left(name, 200), null: !len(name)}, e: p.email,
+            s: {value: summary, cfsqltype: "cf_sql_longvarchar"}
+        }, {datasource: dsn, result: "local.ins"});
+        var id = local.ins.generatedKey;
+        // staff = the assistant's operators + handoff_email_to, as the platform does
+        var to = [];
+        try {
+            var ops = application.auth.getInstanceOperators(n.db);
+            for (var o in ops) if (len(o.email ?: "") && !arrayFindNoCase(to, o.email)) arrayAppend(to, o.email);
+        } catch (any e) {}
+        for (var a in listToArray(look.handoff_email_to ?: "", ",;")) if (len(trim(a)) && !arrayFindNoCase(to, trim(a))) arrayAppend(to, trim(a));
+        var sent = 0;
+        if (arrayLen(to)) {
+            try {
+                var base = len(trim(application.env.OBTX_DOMAIN ?: "")) ? reReplace(trim(application.env.OBTX_DOMAIN), "/+$", "") : publicHost();
+                var botName = len(trim(look.bot_title ?: "")) ? trim(look.bot_title) : n.db;
+                var vars = {
+                    "ticket": "H-" & id, "name": len(name) ? name : "(not given)", "email": p.email, "summary": summary,
+                    "summary_short": left(reReplace(summary, "\s+", " ", "all"), 60),
+                    "opened": dateTimeFormat(now(), "d mmm yyyy, HH:nn"), "bot_name": botName, "instance": n.db,
+                    "link": base & "/ain5py/botinstances/handoff_inbox.cfm?wsDsn=" & urlEncodedFormat(n.db) & "&ticket=" & id,
+                    "button_label": "Open the ticket", "transcript": [], "trigger": "Talk to a person (demo)"
+                };
+                var hm = createObject("component", "ain5py.platform.services.HandoffMail").init(dsn);
+                savecontent variable="local.junk" { sent = hm.send("staff_new", arrayToList(to), vars, botName) == "sent" ? 1 : 0; }
+            } catch (any e) {
+                cflog(file="addons", type="error", text="demo talk #arguments.pid# H-#id#: #e.message#");
+            }
+        }
+        queryExecute("UPDATE ai_handoff_requests SET staff_email_sent = :s, user_email_sent = 0 WHERE id = :i",
+            {s: sent, i: id}, {datasource: dsn});
+        logEvent(arguments.pid, "talk_request", {feature: arguments.about, detail: {message: left(arguments.message, 1000), ticket: "H-" & id, mailed: sent}});
+        return {ok: true, ticket: "H-" & id, message: "Your message has been sent."};
     }
 
     // ------------------------------------------------------------------ helpers

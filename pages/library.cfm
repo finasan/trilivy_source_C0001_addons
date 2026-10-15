@@ -12,7 +12,8 @@
             <cfif len(q) AND len(a)><cfset arrayAppend(objs, {q: q, a: a})></cfif>
         </cfloop>
         <cfset cta = []>
-        <cfloop list="talk,book,wishlist" item="c"><cfif listFind(form.cta ?: "", c)><cfset arrayAppend(cta, c)></cfif></cfloop>
+        <cfset cta = ["talk"]><!--- the only button (2026-10-15) --->
+        <cfloop list="#form.cta ?: ''#" item="c"></cfloop>
         <cfset st = form.status ?: "draft">
         <cfif NOT listFind("draft,verified,live,retired", st)><cfset st = "draft"></cfif>
         <cfif listFind("verified,live", st) AND NOT canVerify><cfthrow message="Only operators with role admin or se can verify or publish a card."></cfif>
@@ -57,7 +58,7 @@
 </cfif>
 
 <cfif editId OR structKeyExists(url, "new")>
-    <cfset c = {id: 0, feature_key: url.feature ?: "", audience: "business", lang: "en", status: "draft", kicker: "", headline: "", why_html: "", how_html: "", objections: "[]", proof_html: "", cta: '["talk","wishlist"]'}>
+    <cfset c = {id: 0, feature_key: url.feature ?: "", audience: "business", lang: "en", status: "draft", kicker: "", headline: "", why_html: "", how_html: "", objections: "[]", proof_html: "", cta: '["talk"]'}>
     <cfif editId>
         <cfset q = queryExecute("SELECT * FROM cx_demo_pitch WHERE id = :i", {i: editId}, {datasource: "addon_demo"})>
         <cfif q.recordCount><cfset c = queryGetRow(q, 1)></cfif>
@@ -86,8 +87,7 @@
             <input type="text" name="oa#i#" placeholder="Answer" value="#encodeForHTMLAttribute(arrayLen(objs) GTE i ? objs[i].a : "")#"></div>
         </cfloop>
         <label>Proof (HTML, only verifiable claims)</label><textarea name="proof_html" rows="2">#encodeForHTML(c.proof_html ?: "")#</textarea>
-        <label>Buttons</label>
-        <cfloop list="talk,book,wishlist" item="b"><label style="display:inline;font-weight:400;margin-right:14px"><input type="checkbox" name="cta" value="#b#" #arrayFind(ctas, b) ? "checked" : ""#> #b#</label></cfloop>
+        <p class="small muted" style="margin-top:10px">Every card has one button: <b>Talk to a person</b> (it opens a ticket in the platform's Talk to a Person).</p>
         <label style="font-weight:400;margin-top:12px"><input type="checkbox" name="checked" value="1"> Every claim on this card has been checked (needed for verified / live)</label>
         <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary">Save</button><a class="btn" href="/ain5py/addon.cfm?a=demo&p=library">Back to the list</a></div>
     </form>

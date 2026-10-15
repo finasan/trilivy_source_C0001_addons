@@ -69,8 +69,10 @@ def main():
     # pitch cards
     added = updated = 0
     for k in pitch.get("cards", []):
+        # Only "talk" exists (2026-10-15: no booking, no wish list).
+        cta = [c for c in k.get("cta", []) if c == "talk"]
         vals = (k.get("kicker", ""), k["headline"], k.get("why_html", ""), k.get("how_html", ""),
-                json.dumps(k.get("objections", [])), k.get("proof_html", ""), json.dumps(k.get("cta", [])),
+                json.dumps(k.get("objections", [])), k.get("proof_html", ""), json.dumps(cta),
                 k.get("status", "draft"))
         key = (k["feature_key"], k.get("audience", "business"), k.get("lang", "en"))
         cur.execute("SELECT id, updated_by FROM cx_demo_pitch WHERE feature_key=%s AND audience=%s AND lang=%s", key)

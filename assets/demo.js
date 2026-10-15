@@ -1,7 +1,7 @@
 /* Trilivy Demo add-on - the prospect side (2026-10-15).
  *
  *  - locked features ([data-demo-feature]) open a pitch popup instead of navigating
- *  - "Talk to a person" / "Book 30 minutes" / "Add to my pilot wish list"
+ *  - one action everywhere: "Talk to a person" (a ticket in the platform's Talk to a Person)
  *  - "Ask about this" opens the Sales Engineer assistant, when one is configured
  *  - moments: one event-triggered tip at a time, never while typing or reading
  *  - beacon: time on page and the welcome tour, via navigator.sendBeacon
@@ -111,31 +111,17 @@
         tabBar.appendChild(b);
       });
       show("why");
-      ctas(ov.querySelector(".dp-cta"), feature, c.cta || [], c.inwishlist);
+      ctas(ov.querySelector(".dp-cta"), feature);
     });
   }
 
-  function ctas(bar, feature, list, inWish) {
-    var defs = {
-      talk: ["Talk to a person now", true],
-      book: ["Book 30 minutes", false],
-      wishlist: [inWish ? "On your pilot wish list ✓" : "Add to my pilot wish list", false]
-    };
-    list.forEach(function (k) {
-      if (!defs[k]) return;
-      var b = document.createElement("button");
-      b.className = "dp-btn" + (defs[k][1] ? " p" : "");
-      b.textContent = defs[k][0];
-      if (k === "wishlist" && inWish) b.disabled = true;
-      b.onclick = function () {
-        ev("cta_click", feature, { cta: k });
-        if (k === "wishlist") {
-          b.disabled = true;
-          post("wishlist", { feature: feature }).then(function (j) { b.textContent = "On your pilot wish list ✓"; if (j.message) note(j.message); });
-        } else talk(feature, k === "book" ? "I would like to book a 30-minute call." : "");
-      };
-      bar.appendChild(b);
-    });
+  // One action only: Talk to a person (2026-10-15: no booking, no wish list).
+  function ctas(bar, feature) {
+    var b = document.createElement("button");
+    b.className = "dp-btn p";
+    b.textContent = "Talk to a person";
+    b.onclick = function () { ev("cta_click", feature, { cta: "talk" }); talk(feature, ""); };
+    bar.appendChild(b);
     var back = document.createElement("button");
     back.className = "dp-btn"; back.style.marginLeft = "auto"; back.textContent = "Close";
     back.onclick = close; bar.appendChild(back);
@@ -150,19 +136,19 @@
   }
 
   function talk(feature, prefill) {
-    var ov = shell("We are here to help", "Talk to a person", false);
+    var ov = shell("Trilivy", "Talk to a person", false);
     current = { feature: feature || "talk" };
     ov.querySelector(".dp-tabs").style.display = "none";
     var body = ov.querySelector(".dp-body");
-    body.innerHTML = "<p>Tell us what you would like to see or ask. Your Trilivy contact gets it right away and answers by e-mail or phone.</p>"
-      + '<textarea maxlength="1000" placeholder="Your message (optional)">' + esc(prefill || "") + "</textarea>";
+    body.innerHTML = "<p>Write your question or what you would like to know. It is sent to the Trilivy team.</p>"
+      + '<textarea maxlength="1000" placeholder="Your message">' + esc(prefill || "") + "</textarea>";
     var bar = ov.querySelector(".dp-cta");
     var send = document.createElement("button");
     send.className = "dp-btn p"; send.textContent = "Send";
     send.onclick = function () {
       send.disabled = true;
       post("talk", { feature: feature || "", message: body.querySelector("textarea").value }).then(function (j) {
-        body.innerHTML = '<div class="dp-ok">' + esc(j.message || "Thank you, we will be in touch.") + "</div>";
+        body.innerHTML = '<div class="dp-ok">' + esc(j.message || "Your message has been sent.") + "</div>";
         send.remove();
       });
     };
@@ -188,11 +174,6 @@
     if (!el || el.closest("#demoOv")) return;
     var action = el.getAttribute("data-demo-action"), feature = el.getAttribute("data-demo-feature");
     if (action === "talk") { e.preventDefault(); talk(feature || ""); return; }
-    if (action === "wishlist" && feature) {
-      e.preventDefault();
-      post("wishlist", { feature: feature }).then(function (j) { el.textContent = "On your pilot wish list ✓"; });
-      return;
-    }
     if (feature && !action) { e.preventDefault(); openCard(feature, "click"); }
   }, true);
 

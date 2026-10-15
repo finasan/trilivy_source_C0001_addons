@@ -22,8 +22,7 @@
 <cfset rows = queryExecute("
     SELECT p.*, o.display_name AS owner_name,
            (SELECT COUNT(*) FROM cx_demo_events e WHERE e.pid = p.pid AND e.type = 'chat_question') AS questions,
-           (SELECT COUNT(*) FROM cx_demo_events e WHERE e.pid = p.pid AND e.type = 'gate_shown') AS gates,
-           (SELECT COUNT(*) FROM cx_demo_wishlist w WHERE w.pid = p.pid) AS wishes
+           (SELECT COUNT(*) FROM cx_demo_events e WHERE e.pid = p.pid AND e.type = 'gate_shown') AS gates
     FROM cx_demo_prospects p LEFT JOIN cx_demo_operators o ON o.oid = p.owner_oid
     WHERE #where# ORDER BY FIELD(p.score_band,'hot','warm','cold'), p.last_seen_at DESC, p.seq DESC LIMIT 300", prm, {datasource: "addon_demo"})>
 <cfset stats = queryExecute("SELECT status, COUNT(*) AS n FROM cx_demo_prospects GROUP BY status", {}, {datasource: "addon_demo"})>
@@ -49,7 +48,7 @@
     <a class="btn primary" href="/ain5py/addon.cfm?a=demo&p=new">+ New prospect</a>
 </form>
 <table>
-<thead><tr><th>Prospect</th><th>Company</th><th>Status</th><th>Score</th><th>Days left</th><th>Last seen</th><th>Questions</th><th>Locked clicks</th><th>Wish list</th><th>Owner</th></tr></thead>
+<thead><tr><th>Prospect</th><th>Company</th><th>Status</th><th>Score</th><th>Days left</th><th>Last seen</th><th>Questions</th><th>Locked clicks</th><th>Owner</th><th></th></tr></thead>
 <tbody>
 <cfloop query="rows">
     <cfset daysLeft = isDate(rows.expires_at) ? max(0, ceiling(dateDiff("h", now(), rows.expires_at) / 24)) : "">
@@ -60,11 +59,19 @@
         <td>#badge(rows.score_band)# <span class="small">#rows.score#</span></td>
         <td>#listFind("invited,active,expiring", rows.status) ? daysLeft : "-"#</td>
         <td>#ago(rows.last_seen_at)#</td>
-        <td>#rows.questions#</td><td>#rows.gates#</td><td>#rows.wishes#</td>
+        <td>#rows.questions#</td><td>#rows.gates#</td>
         <td class="small">#encodeForHTML(rows.owner_name)#</td>
+        <td style="white-space:nowrap">
+            <cfif rows.status EQ "suspended">
+                <form method="post" action="/ain5py/addon.cfm?a=demo&p=prospect&arg=#rows.pid#" style="display:inline"><input type="hidden" name="action" value="resume"><button class="btn" title="Give access back">Restore</button></form>
+            <cfelseif listFind("invited,active,expiring,converted", rows.status)>
+                <form method="post" action="/ain5py/addon.cfm?a=demo&p=prospect&arg=#rows.pid#" style="display:inline" onsubmit="return confirm('Revoke access for #encodeForJavaScript(rows.email)#? Nothing is deleted.')"><input type="hidden" name="action" value="suspend"><button class="btn danger" title="Sign out and block now, keep everything">Revoke</button></form>
+            </cfif>
+            <cfif rows.status NEQ "purged"><a class="btn" href="/ain5py/addon.cfm?a=demo&p=prospect&arg=#rows.pid###delete" title="Reset or delete">Delete…</a></cfif>
+        </td>
     </tr>
 </cfloop>
-<cfif NOT rows.recordCount><tr><td colspan="10" class="muted">No prospects here yet. Create one with <b>+ New prospect</b>.</td></tr></cfif>
+<cfif NOT rows.recordCount><tr><td colspan="10" class="muted" data-x="1">No prospects here yet. Create one with <b>+ New prospect</b>.</td></tr></cfif>
 </tbody></table>
 </div>
 </cfoutput>

@@ -27,7 +27,6 @@
         </div>
         <div style="padding:12px 20px;border-top:1px solid ##e3e7ef;display:flex;gap:8px;flex-wrap:wrap">
             <a href="##" data-demo-action="talk" data-demo-feature="#encodeForHTMLAttribute(feature)#" style="background:##2457d6;color:##fff;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600">Talk to a person</a>
-            <a href="##" data-demo-action="wishlist" data-demo-feature="#encodeForHTMLAttribute(feature)#" style="border:1px solid ##c9d2e3;padding:7px 14px;border-radius:8px;text-decoration:none;color:##1b2333;font-weight:600">Add to my pilot wish list</a>
             <a href="/ain5py/addon.cfm?a=demo&p=welcome" style="margin-left:auto;padding:7px 4px;color:##5d6779">Back to your demo</a>
         </div>
     </div>

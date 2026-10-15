@@ -17,10 +17,10 @@
         </cfif>
         <cfset queryExecute("INSERT INTO cx_demo_pitch_seen (pid, card_key) VALUES (:p, :k)
                              ON DUPLICATE KEY UPDATE last_at = NOW(), times = times + 1", {p: d.pid, k: c.key}, {datasource: "addon_demo"})>
-        <cfset inWish = queryExecute("SELECT 1 FROM cx_demo_wishlist WHERE pid = :p AND feature_key = :f", {p: d.pid, f: feature}, {datasource: "addon_demo"}).recordCount GT 0>
+        <!--- the only button is Talk to a person (2026-10-15) --->
         <cfset demo.json({ok: true, card: {
             feature: feature, kicker: c.kicker ?: "", headline: c.headline, why: c.why_html ?: "", how: c.how_html ?: "",
-            objections: c.objections, proof: c.proof_html ?: "", cta: c.cta, draft: c.isDraft, inWishlist: inWish,
+            objections: c.objections, proof: c.proof_html ?: "", cta: ["talk"], draft: c.isDraft,
             canAsk: len(trim(demo.setting("sales_engineer_instance", ""))) GT 0
         }})>
     </cfcase>
@@ -36,20 +36,15 @@
         <cfset demo.json({ok: true})>
     </cfcase>
 
-    <cfcase value="wishlist">
-        <cfset queryExecute("INSERT IGNORE INTO cx_demo_wishlist (pid, feature_key, note) VALUES (:p, :f, :n)",
-            {p: d.pid, f: feature, n: left(form.note ?: "", 500)}, {datasource: "addon_demo", result: "wr"})>
-        <cfif wr.recordCount><cfset demo.logEvent(d.pid, "wishlist_add", {feature: feature})></cfif>
-        <cfset demo.json({ok: true, message: "Added to your pilot wish list. We will cover it when we talk."})>
-    </cfcase>
-
     <cfcase value="talk">
-        <cfset note = left(trim(form.message ?: ""), 1000)>
-        <cfset demo.logEvent(d.pid, "talk_request", {feature: feature, detail: {message: note}})>
-        <cfset p = demo.prospectBy("pid", d.pid)>
-        <cfset v = demo.mailVars(p)>
-        <cfset demo.alert(p, "Talk to a person", "Asked from: #len(feature) ? feature : 'the demo'#." & (len(note) ? chr(10) & "Message: " & note : "") & chr(10) & "Reply to: " & p.email)>
-        <cfset demo.json({ok: true, message: "Thank you. " & v.owner_name & " will get back to you shortly" & (len(v.owner_email) ? " (" & v.owner_email & ")" : "") & "."})>
+        <cfif cgi.request_method NEQ "POST"><cfset demo.json({ok: false, error: "POST"}, 405)></cfif>
+        <cfset about = "">
+        <cfif len(feature)>
+            <cfset fq = queryExecute("SELECT title FROM cx_demo_features WHERE feature_key = :f", {f: feature}, {datasource: "addon_demo"})>
+            <cfset about = fq.recordCount ? fq.title : feature>
+        </cfif>
+        <cfset r = demo.talkToPerson(d.pid, left(trim(form.message ?: ""), 1000), about)>
+        <cfset demo.json({ok: r.ok, message: r.message})>
     </cfcase>
 
     <cfcase value="moment">

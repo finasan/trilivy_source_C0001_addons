@@ -20,7 +20,7 @@
         <cfset sent = queryExecute("SELECT 1 FROM cx_demo_mail_log WHERE pid = :p AND template = 'expiring' AND status = 'sent'", {p: q.pid}, {datasource: "addon_demo"})>
         <cfif NOT sent.recordCount>
             <cfset p = demo.prospectBy("pid", q.pid)>
-            <cfif isDate(p.first_login_at)>
+            <cfif isDate(p.first_login_at) AND demo.setting("mail_expiring", "0") EQ "1">
                 <cfset mailer.sendTemplate("expiring", p.email, demo.mailVars(p), p.pid)>
             </cfif>
             <cfset demo.alert(p, "Demo ends soon", "The demo ends on #dateFormat(p.expires_at, 'd mmm yyyy')#. Extend it or follow up.")>
@@ -33,7 +33,7 @@
         <cfset queryExecute("UPDATE cx_demo_prospects SET status = 'expired', purge_after = NOW() + INTERVAL :k DAY WHERE pid = :p",
             {k: {value: keepDays, cfsqltype: "cf_sql_integer"}, p: q.pid}, {datasource: "addon_demo"})>
         <cfset p = demo.prospectBy("pid", q.pid)>
-        <cfif isDate(p.first_login_at)>
+        <cfif isDate(p.first_login_at) AND demo.setting("mail_ended", "0") EQ "1">
             <cfset mailer.sendTemplate("ended", p.email, demo.mailVars(p), p.pid)>
         </cfif>
         <cfset demo.logEvent(q.pid, "expired")>
@@ -60,7 +60,7 @@
         <cfset demo.setSetting("state_last_decay", dateFormat(now(), "yyyy-mm-dd"), "cron")>
     </cfif>
     <!--- digest per owner: yesterday's activity of their prospects --->
-    <cfif demo.setting("state_last_digest", "") NEQ dateFormat(now(), "yyyy-mm-dd")>
+    <cfif demo.setting("mail_digest", "0") EQ "1" AND demo.setting("state_last_digest", "") NEQ dateFormat(now(), "yyyy-mm-dd")>
         <cfset owners = queryExecute("SELECT DISTINCT o.oid, o.email, o.display_name FROM cx_demo_operators o
                                       JOIN cx_demo_prospects p ON p.owner_oid = o.oid
                                       WHERE o.active = 1 AND o.email <> '' AND p.status IN ('invited','active','expiring','converted')", {}, {datasource: "addon_demo"})>

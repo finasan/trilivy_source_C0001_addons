@@ -73,6 +73,7 @@ component output="false" {
                 arrayAppend(done, "postgres");
                 run(n.pid, "create", "files", function() { return cloneFiles(t, n); });
                 arrayAppend(done, "files");
+                run(n.pid, "create", "courses", function() { return copyCourses(n); });
                 run(n.pid, "create", "register", function() { return register(t, n, p); });
                 arrayAppend(done, "register");
                 run(n.pid, "create", "account", function() { ctx.oid = makeAccount(n, p, ctx.byOid); return "oid #ctx.oid#"; });
@@ -118,6 +119,7 @@ component output="false" {
                 run(n.pid, "reset", "mysql", function() { return cloneMysql(t, n, p); });
                 run(n.pid, "reset", "postgres", function() { return clonePg(t, n); });
                 run(n.pid, "reset", "files", function() { return cloneFiles(t, n); });
+                run(n.pid, "reset", "courses", function() { return copyCourses(n); });
                 run(n.pid, "reset", "register", function() { return register(t, n, p); });
                 queryExecute("UPDATE cx_demo_docs SET deleted_at = NOW() WHERE pid = :p AND deleted_at IS NULL", {p: n.pid}, {datasource: variables.dsn});
                 out.ok = true;
@@ -194,9 +196,15 @@ component output="false" {
         // instance_name: the platform looks the user's clearance up by it
         // (AgentSup_config -> getUserClearance); left as the template's name,
         // the prospect has no grant on it and is capped at "public".
-        queryExecute("UPDATE `#n.db#`.ai_instance_look SET instance_name = :inst, rag_table = :b, rag_background_tables = '',
-                        web_search_enabled = 0, upload_enabled = 0, bot_title = :title, handoff_email_to = :he", {
-            inst: n.instance, b: n.base, title: title, he: {value: owner.email ?: "", null: !len(owner.email ?: "")}
+        // Background knowledge (setting background_kbs, e.g. ragt_trilivy): the
+        // assistant also answers from the Trilivy corpus, read-only and shared.
+        // handoff_notify_user = 0: Talk to a person mails the owner, never a
+        // "we will contact you" confirmation to the prospect.
+        queryExecute("UPDATE `#n.db#`.ai_instance_look SET instance_name = :inst, rag_table = :b, rag_background_tables = :bg,
+                        web_search_enabled = 0, upload_enabled = 0, bot_title = :title, handoff_email_to = :he,
+                        handoff_notify_user = 0", {
+            inst: n.instance, b: n.base, bg: backgroundKbs(), title: title,
+            he: {value: owner.email ?: "", null: !len(owner.email ?: "")}
         }, {datasource: ds});
         return "#tabs.recordCount# tables, #copied# with rows";
     }
@@ -242,6 +250,100 @@ component output="false" {
             cflog(file="addons", type="warning", text="demo sandbox #n.pid#: document vault rows not copied: #e.message#");
         }
         return arrayLen(made) & " knowledge tables, #vault# vault rows";
+    }
+
+    /** The background knowledge bases from the setting that really exist (max 3, comma list). */
+    public string function backgroundKbs() {
+        var out = [];
+        for (var b in listToArray(demo.setting("background_kbs", ""), ",")) {
+            b = lCase(trim(b));
+            if (!reFind("^ragt_[a-z0-9_]{1,60}$", b) || arrayLen(out) GTE 3) continue;
+            var q = queryExecute("SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = :t", {t: b & "_doc"}, {datasource: "airrag2"});
+            if (q.recordCount) arrayAppend(out, b);
+        }
+        return arrayToList(out);
+    }
+
+    /**
+     * The standard courses (setting courses_list, from courses_source_instance,
+     * normally "basic") copied into the sandbox: rows of every course table plus
+     * the course folders, paths rewritten to the sandbox. Each prospect gets its
+     * own copy, so progress and certificates stay private. Courses already there
+     * are skipped, so it can run again on an existing sandbox.
+     */
+    public string function copyCourses(required struct n) {
+        var codes = [];
+        for (var c in listToArray(demo.setting("courses_list", ""), ",")) {
+            c = uCase(trim(c));
+            if (reFind("^[A-Z0-9_]{2,20}$", c)) arrayAppend(codes, c);
+        }
+        if (!arrayLen(codes)) return "no courses configured";
+        var srcName = demo.setting("courses_source_instance", "basic");
+        var src = queryExecute("SELECT db_name FROM ai_instance WHERE instance_name = :n", {n: srcName}, {datasource: "ai_data"});
+        if (!src.recordCount) throw(message="courses_source_instance '#srcName#' does not exist");
+        var sdb = src.db_name;
+        var ds = adminDS();
+        var have = queryExecute("SELECT course_id FROM `#n.db#`.ws_courses", {}, {datasource: ds});
+        var todo = [];
+        for (var c2 in codes) if (!listFindNoCase(valueList(have.course_id), c2)) arrayAppend(todo, c2);
+        if (!arrayLen(todo)) return "courses already there";
+        var inList = "'" & arrayToList(todo, "','") & "'";
+        // course-keyed tables, then the ones keyed through quizzes / assessments
+        for (var tbl in ["ws_courses", "ws_modules", "ws_lessons", "ws_topics", "ws_quizzes", "ws_handson", "ws_assessments"]) {
+            queryExecute("INSERT INTO `#n.db#`.`#tbl#` SELECT * FROM `#sdb#`.`#tbl#` WHERE course_id IN (#inList#)", {}, {datasource: ds});
+        }
+        queryExecute("INSERT INTO `#n.db#`.ws_quiz_questions SELECT q.* FROM `#sdb#`.ws_quiz_questions q
+                      WHERE q.quiz_id IN (SELECT quiz_id FROM `#sdb#`.ws_quizzes WHERE course_id IN (#inList#))", {}, {datasource: ds});
+        queryExecute("INSERT INTO `#n.db#`.ws_assessment_questions SELECT q.* FROM `#sdb#`.ws_assessment_questions q
+                      WHERE q.assessment_id IN (SELECT assessment_id FROM `#sdb#`.ws_assessments WHERE course_id IN (#inList#))", {}, {datasource: ds});
+        // absolute content paths point at the source instance's folder
+        var root = reReplace(application.env.OBTX_PATH_INSTANCES ?: "/home/trilivyapp/containers/instances", "[/\\]+$", "");
+        var fromDir = root & "/" & lCase(sdb) & "/";
+        var toDir = n.dir & "/";
+        for (var pc in [["ws_courses", "course_url"], ["ws_modules", "content_path"], ["ws_lessons", "content_path"]]) {
+            queryExecute("UPDATE `#n.db#`.`#pc[1]#` SET `#pc[2]#` = REPLACE(`#pc[2]#`, :f, :t) WHERE course_id IN (#inList#)",
+                {f: fromDir, t: toDir}, {datasource: ds});
+        }
+        // folders
+        var folders = queryExecute("SELECT folder_name FROM `#n.db#`.ws_courses WHERE course_id IN (#inList#)", {}, {datasource: ds});
+        var copied = 0;
+        directoryCreate(n.dir & "/LMS/courses", true, true);
+        for (var r in folders) {
+            if (!len(r.folder_name ?: "") || find("..", r.folder_name) || find("/", r.folder_name)) continue;
+            var s = fromDir & "LMS/courses/" & r.folder_name;
+            var d = n.dir & "/LMS/courses/" & r.folder_name;
+            if (directoryExists(s) && !directoryExists(d)) { directoryCopy(s, d, true); copied++; }
+        }
+        return arrayLen(todo) & " course(s) " & arrayToList(todo) & ", " & copied & " folder(s)";
+    }
+
+    /** Courses + background knowledge for a sandbox made before they existed. */
+    public struct function refreshContent(required string pid) {
+        var n = demo.names(arguments.pid);
+        var out = {ok: false, message: ""};
+        lock name="demo_sandbox" type="exclusive" timeout="120" {
+            try {
+                var c = copyCourses(n);
+                queryExecute("UPDATE `#n.db#`.ai_instance_look SET rag_background_tables = :bg, handoff_notify_user = 0",
+                    {bg: backgroundKbs()}, {datasource: adminDS()});
+                out = {ok: true, message: c & "; background knowledge: " & (len(backgroundKbs()) ? backgroundKbs() : "none")};
+            } catch (any e) {
+                out.message = e.message;
+            }
+        }
+        return out;
+    }
+
+    /** Operator-typed password. mustChange = the prospect chooses a new one at first sign-in. */
+    public void function setPassword(required string pid, required string password, boolean mustChange = true) {
+        if (len(arguments.password) LT 8) throw(message="The password needs at least 8 characters.");
+        var p = demo.prospectBy("pid", arguments.pid);
+        if (!val(p.oid ?: 0)) throw(message="This prospect has no account.");
+        var salt = lCase(hash(createUUID() & rand("SHA1PRNG"), "SHA-256"));
+        queryExecute("UPDATE ai_orbitix_users SET password_hash = :h, password_salt = :s, password_must_reset = :m
+                      WHERE oid = :o AND account_type = 'demo_user'", {
+            h: lCase(hash(arguments.password & ":" & salt, "SHA-256")), s: salt, m: arguments.mustChange ? 1 : 0, o: p.oid
+        }, {datasource: "ai_data"});
     }
 
     private string function cloneFiles(required struct t, required struct n) {

@@ -42,7 +42,17 @@
             <cfset ns = form.action EQ "suspend" ? "suspended" : (isDate(p.first_login_at) ? "active" : "invited")>
             <cfset queryExecute("UPDATE cx_demo_prospects SET status = :s WHERE pid = :p", {s: ns, p: pid}, {datasource: "addon_demo"})>
             <cfset demo.logEvent(pid, form.action EQ "suspend" ? "suspended" : "resumed", {detail: {by: op.oid}})>
-            <cfset msg = form.action EQ "suspend" ? "Suspended: the prospect is signed out within a minute and cannot sign in." : "Resumed.">
+            <cfset msg = form.action EQ "suspend" ? "Access revoked: the prospect is signed out within a minute and cannot sign in. Everything is kept; Restore access gives it back." : "Access restored.">
+        </cfcase>
+        <cfcase value="setpassword">
+            <cfset new trlvaddons.demo.lib.Sandbox().setPassword(pid, form.password ?: "", (form.mustchange ?: "") EQ "1")>
+            <cfset demo.logEvent(pid, "password_set_by_operator", {detail: {by: op.oid, must_change: (form.mustchange ?: "") EQ "1"}})>
+            <cfset msg = "Password set" & ((form.mustchange ?: "") EQ "1" ? "; the prospect must choose a new one at first sign-in." : ".")>
+        </cfcase>
+        <cfcase value="refresh">
+            <cfset r = new trlvaddons.demo.lib.Sandbox().refreshContent(pid)>
+            <cfset msg = r.ok ? "Content updated: " & r.message : "Could not update: " & r.message>
+            <cfset msgKind = r.ok ? "ok" : "err">
         </cfcase>
         <cfcase value="settings">
             <cfif NOT listFind("standard,generous", form.caps ?: "")><cfthrow message="bad limits"></cfif>
@@ -119,7 +129,15 @@
     }
 </cfscript>
 <cfoutput>
-<cfif structKeyExists(url, "created")><div class="note ok">The demo for <b>#encodeForHTML(p.fname)#</b> is ready and the welcome e-mail was sent.</div></cfif>
+<cfset flash = session.demo_flash ?: {}>
+<cfif NOT structIsEmpty(flash) AND (flash.pid ?: "") EQ pid>
+    <cfset structDelete(session, "demo_flash")>
+    <div class="note ok"><b>The demo is ready. Give these login details to the prospect</b> (shown only now):<br>
+        Address: <span class="mono">#encodeForHTML(demo.publicHost())#/ain5py/login/login.cfm</span><br>
+        E-mail: <span class="mono">#encodeForHTML(flash.email)#</span><br>
+        Password: <span class="mono">#encodeForHTML(flash.password)#</span>
+        #flash.mustChange ? "<br><span class='small'>They will be asked to choose a new password at first sign-in.</span>" : ""#</div>
+<cfelseif structKeyExists(url, "created")><div class="note ok">The demo for <b>#encodeForHTML(p.fname)#</b> is ready and the invitation e-mail was sent.</div></cfif>
 <cfif len(msg)><div class="note #msgKind#">#encodeForHTML(msg)#</div></cfif>
 <cfif len(shownLink)><div class="note"><b>Set-password link:</b><br><span class="mono">#encodeForHTML(shownLink)#</span></div></cfif>
 
@@ -132,17 +150,29 @@
 </div>
 
 <div class="card">
-    <h3 style="margin-top:0">Actions</h3>
+    <h3 style="margin-top:0">Access</h3>
     <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-        <form method="post"><input type="hidden" name="action" value="resend"><button class="btn">Resend welcome e-mail</button></form>
-        <form method="post"><input type="hidden" name="action" value="link"><button class="btn">Show a set-password link</button></form>
+        <cfif p.status EQ "suspended">
+            <form method="post"><input type="hidden" name="action" value="resume"><button class="btn primary">Restore access</button></form>
+        <cfelseif listFind("invited,active,expiring,converted", p.status)>
+            <form method="post" onsubmit="return confirm('Revoke access now? The prospect is signed out within a minute. Nothing is deleted.')"><input type="hidden" name="action" value="suspend"><button class="btn danger">Revoke access</button></form>
+        </cfif>
         <form method="post" style="display:flex;gap:6px"><input type="hidden" name="action" value="extend">
             <select name="days" style="width:auto"><option value="7">+7 days</option><option value="14">+14 days</option><option value="30">+30 days</option></select><button class="btn">Extend</button></form>
-        <cfif p.status EQ "suspended">
-            <form method="post"><input type="hidden" name="action" value="resume"><button class="btn">Resume</button></form>
-        <cfelseif listFind("invited,active,expiring", p.status)>
-            <form method="post"><input type="hidden" name="action" value="suspend"><button class="btn">Suspend now</button></form>
-        </cfif>
+        <a class="btn danger" href="##delete">Delete prospect…</a>
+    </div>
+    <h3>Password</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <form method="post" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="hidden" name="action" value="setpassword">
+            <input type="text" name="password" placeholder="new password (8+ characters)" autocomplete="new-password" style="width:240px">
+            <label style="font-weight:400;margin:0"><input type="checkbox" name="mustchange" value="1"> must change at first sign-in</label>
+            <button class="btn">Set password</button></form>
+        <form method="post"><input type="hidden" name="action" value="link"><button class="btn">Show a set-password link</button></form>
+        <form method="post"><input type="hidden" name="action" value="resend"><button class="btn">Send the invitation e-mail again</button></form>
+    </div>
+    <h3>Sandbox</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <form method="post"><input type="hidden" name="action" value="refresh"><button class="btn">Add standard courses + Trilivy knowledge</button></form>
         <cfif p.status NEQ "converted" AND p.status NEQ "purged">
             <form method="post" style="display:flex;gap:6px"><input type="hidden" name="action" value="convert">
                 <input type="number" name="company_id" placeholder="fleet company id" style="width:150px"><button class="btn">Mark converted</button></form>
@@ -155,19 +185,22 @@
         <div style="grid-column:1/-1"><label>Notes</label><textarea name="notes" rows="2">#encodeForHTML(p.notes ?: "")#</textarea></div>
         <div><button class="btn">Save</button></div>
     </form>
-    <details style="margin-top:10px"><summary class="muted">Reset or purge</summary>
-        <form method="post" style="display:flex;gap:6px;margin-top:8px" onsubmit="return confirm('Rebuild the sandbox? The prospect\'s uploads are deleted.')">
-            <input type="hidden" name="action" value="reset"><input type="text" name="confirm" placeholder="type #p.pid#" style="width:160px"><button class="btn">Reset sandbox</button></form>
-        <form method="post" style="display:flex;gap:6px;margin-top:8px" onsubmit="return confirm('Delete EVERYTHING of this prospect? This cannot be undone.')">
-            <input type="hidden" name="action" value="purge"><input type="text" name="confirm" placeholder="type the prospect's e-mail" style="width:260px"><button class="btn danger">Purge now</button></form>
-    </details>
 </div>
 
-<h2>Pitch interest</h2>
-<cfif gates.recordCount OR wish.recordCount>
-<table><tr><th>Feature</th><th>Opened</th><th>Objections read</th><th>Questions asked</th><th>Buttons</th><th>Wish list</th></tr>
-<cfset wl = valueList(wish.feature_key)>
-<cfloop query="gates"><tr><td><b>#encodeForHTML(gates.feature_key)#</b></td><td>#gates.gates#</td><td>#gates.objections#</td><td>#gates.asks#</td><td>#gates.ctas#</td><td>#listFind(wl, gates.feature_key) ? "★" : ""#</td></tr></cfloop>
+<div class="card" id="delete" style="border-color:##f3c7c1">
+    <h3 style="margin-top:0">Reset or delete</h3>
+    <form method="post" style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap" onsubmit="return confirm('Rebuild the sandbox? The prospect\'s uploads are deleted.')">
+        <input type="hidden" name="action" value="reset"><input type="text" name="confirm" placeholder="type #p.pid#" style="width:160px"><button class="btn">Reset sandbox</button>
+        <span class="small muted" style="align-self:center">fresh copy of the demo; account and history kept</span></form>
+    <form method="post" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap" onsubmit="return confirm('Delete EVERYTHING of this prospect? This cannot be undone.')">
+        <input type="hidden" name="action" value="purge"><input type="text" name="confirm" placeholder="type the prospect's e-mail" style="width:260px"><button class="btn danger">Delete prospect</button>
+        <span class="small muted" style="align-self:center">account, sandbox, documents and history; only an anonymous summary stays</span></form>
+</div>
+
+<h2>Interest in locked features</h2>
+<cfif gates.recordCount>
+<table><tr><th>Feature</th><th>Opened</th><th>Objections read</th><th>Questions asked</th><th>Talk to a person</th></tr>
+<cfloop query="gates"><tr><td><b>#encodeForHTML(gates.feature_key)#</b></td><td>#gates.gates#</td><td>#gates.objections#</td><td>#gates.asks#</td><td>#gates.ctas#</td></tr></cfloop>
 </table>
 <cfelse><p class="muted">No locked feature opened yet.</p></cfif>
 

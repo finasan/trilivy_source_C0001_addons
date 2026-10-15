@@ -13,7 +13,7 @@
     FROM cx_demo_prospects p WHERE p.created_at > NOW() - INTERVAL :d DAY AND p.status <> 'failed'", prm, {datasource: "addon_demo"})>
 <cfset gates = queryExecute("SELECT feature_key, COUNT(*) AS n, COUNT(DISTINCT pid) AS people FROM cx_demo_events
     WHERE type = 'gate_shown' AND ts > NOW() - INTERVAL :d DAY GROUP BY feature_key ORDER BY people DESC, n DESC LIMIT 20", prm, {datasource: "addon_demo"})>
-<cfset wishes = queryExecute("SELECT feature_key, COUNT(*) AS n FROM cx_demo_wishlist WHERE added_at > NOW() - INTERVAL :d DAY GROUP BY feature_key ORDER BY n DESC", prm, {datasource: "addon_demo"})>
+<cfset talks = queryExecute("SELECT feature_key, COUNT(*) AS n FROM cx_demo_events WHERE type = 'talk_request' AND ts > NOW() - INTERVAL :d DAY GROUP BY feature_key ORDER BY n DESC", prm, {datasource: "addon_demo"})>
 <cfset objs = queryExecute("SELECT feature_key, JSON_UNQUOTE(JSON_EXTRACT(detail, '$.q')) AS q, COUNT(*) AS n FROM cx_demo_events
     WHERE type = 'objection_open' AND ts > NOW() - INTERVAL :d DAY GROUP BY feature_key, q ORDER BY n DESC LIMIT 25", prm, {datasource: "addon_demo"})>
 <cfset asks = queryExecute("SELECT ts, pid, feature_key, JSON_UNQUOTE(JSON_EXTRACT(detail, '$.text')) AS q FROM cx_demo_events
@@ -42,8 +42,8 @@
 <div class="grid">
     <div class="card"><h3 style="margin-top:0">What prospects wanted that the demo did not open</h3>
         <table><tr><th>Feature</th><th>People</th><th>Opens</th></tr><cfloop query="gates"><tr><td>#gates.feature_key#</td><td>#gates.people#</td><td>#gates.n#</td></tr></cfloop></table></div>
-    <div class="card"><h3 style="margin-top:0">Pilot wish list</h3>
-        <table><tr><th>Feature</th><th>Prospects</th></tr><cfloop query="wishes"><tr><td>#wishes.feature_key#</td><td>#wishes.n#</td></tr></cfloop></table></div>
+    <div class="card"><h3 style="margin-top:0">Talk to a person, by feature</h3>
+        <table><tr><th>Asked from</th><th>Messages</th></tr><cfloop query="talks"><tr><td>#len(talks.feature_key) ? encodeForHTML(talks.feature_key) : "the demo bar"#</td><td>#talks.n#</td></tr></cfloop></table></div>
 </div>
 <h2>Objections read most</h2>
 <table><tr><th>Feature</th><th>Objection</th><th>Opened</th></tr><cfloop query="objs"><tr><td>#objs.feature_key#</td><td>#encodeForHTML(objs.q)#</td><td>#objs.n#</td></tr></cfloop></table>

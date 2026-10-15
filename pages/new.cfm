@@ -13,8 +13,10 @@
 <cfparam name="form.days" default="#demo.setting('default_days', '14')#">
 <cfparam name="form.caps" default="standard">
 <cfparam name="form.notes" default="">
-<cfparam name="form.send" default=""><!--- unticked box = not posted at all --->
-<cfset doSend = (cgi.request_method EQ "GET") OR (form.send EQ "1")>
+<cfparam name="form.access" default="invite"><!--- invite = e-mail with a set-password link; password = typed here --->
+<cfparam name="form.password" default="">
+<cfparam name="form.mustchange" default="">
+<cfset doSend = form.access EQ "invite">
 
 <cfif cgi.request_method EQ "POST">
     <cfset em = lCase(trim(form.email))>
@@ -24,6 +26,8 @@
     <cfelseif NOT listFind("business,it,finance,hr,exec", form.audience)><cfset err = "Choose an audience.">
     <cfelseif NOT isNumeric(form.days) OR form.days LT 1 OR form.days GT 90><cfset err = "Days must be between 1 and 90.">
     <cfelseif NOT listFind("standard,generous", form.caps)><cfset err = "Choose limits.">
+    <cfelseif NOT listFind("invite,password", form.access)><cfset err = "Choose how the prospect gets in.">
+    <cfelseif form.access EQ "password" AND len(form.password) LT 8><cfset err = "Type a password of at least 8 characters.">
     </cfif>
     <cfif NOT len(err)>
         <cfset dup = queryExecute("SELECT pid, status FROM cx_demo_prospects WHERE email = :e AND status NOT IN ('purged','failed')", {e: em}, {datasource: "addon_demo"})>
@@ -45,6 +49,15 @@
         <cfset sb = new trlvaddons.demo.lib.Sandbox()>
         <cfset result = sb.create(pid, op.oid)>
         <cfset result.mail = {}>
+        <cfif result.ok AND form.access EQ "password">
+            <cftry>
+                <cfset sb.setPassword(pid, form.password, form.mustchange EQ "1")>
+                <cfset demo.logEvent(pid, "password_set_by_operator", {detail: {by: op.oid, must_change: form.mustchange EQ "1"}})>
+                <!--- shown once on the prospect page, never in a URL or a log --->
+                <cfset session.demo_flash = {pid: pid, email: lCase(trim(form.email)), password: form.password, mustChange: form.mustchange EQ "1"}>
+                <cfcatch><cfset result.ok = false><cfset result.error = "The demo was built but the password could not be set: " & cfcatch.message></cfcatch>
+            </cftry>
+        </cfif>
         <cfif result.ok AND doSend>
             <cftry>
                 <cfset result.mail = demo.sendWelcome(pid)>
@@ -62,7 +75,7 @@
 <cfif len(err)><div class="note err">#encodeForHTML(err)#</div></cfif>
 <cfif NOT structIsEmpty(result)>
     <cfif result.ok>
-        <div class="note warn">The sandbox was built, but the welcome e-mail was not sent: #encodeForHTML(result.mail.error ?: "")#.
+        <div class="note warn">The sandbox was built, but the invitation e-mail was not sent: #encodeForHTML(result.mail.error ?: "")#.
             Open the <a href="/ain5py/addon.cfm?a=demo&p=prospect&arg=#result.pid#">prospect</a> and use <b>Resend welcome</b> or copy the link.</div>
     <cfelse>
         <div class="note err"><b>The sandbox could not be built, and everything was undone.</b><br>#encodeForHTML(result.error)#</div>
@@ -93,7 +106,15 @@
         <div><label>Limits</label><select name="caps"><option value="standard" #form.caps EQ "standard" ? "selected" : ""#>standard</option><option value="generous" #form.caps EQ "generous" ? "selected" : ""#>generous</option></select></div>
     </div>
     <label>Notes (only operators see these)</label><textarea name="notes" rows="2">#encodeForHTML(form.notes)#</textarea>
-    <label style="font-weight:400"><input type="checkbox" name="send" value="1" #doSend ? "checked" : ""#> Send the welcome e-mail with a set-password link now</label>
+    <label>How the prospect gets in</label>
+    <label style="font-weight:400"><input type="radio" name="access" value="invite" #form.access EQ "invite" ? "checked" : ""# onclick="document.getElementById('pwbox').style.display='none'">
+        Send an invitation e-mail with a link to choose a password</label>
+    <label style="font-weight:400"><input type="radio" name="access" value="password" #form.access EQ "password" ? "checked" : ""# onclick="document.getElementById('pwbox').style.display=''">
+        Set the password now (no e-mail is sent; you give the login to the prospect)</label>
+    <div id="pwbox" style="#form.access EQ 'password' ? '' : 'display:none'#;margin:6px 0 0 22px">
+        <div class="grid"><div><label>Password (8+ characters)</label><input type="text" name="password" value="" autocomplete="new-password"></div></div>
+        <label style="font-weight:400"><input type="checkbox" name="mustchange" value="1" #form.mustchange EQ "1" ? "checked" : ""#> Ask the prospect to choose a new password at first sign-in</label>
+    </div>
     <p class="muted small">Creating builds a private copy of the demo assistant for this prospect (about 10-30 seconds) and an account that can only see it.</p>
     <button class="btn primary" onclick="this.disabled=true;this.textContent='Building the sandbox…';this.form.submit()">Create the demo</button>
 </form>

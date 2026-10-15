@@ -13,7 +13,7 @@
           "q": "Where is the server hosted?"
         },
         {
-          "a": "That depends on users, assistants and hosting. Talk to us for a proposal based on your pilot.",
+          "a": "That depends on users, assistants and hosting. Use Talk to a person to ask for a proposal.",
           "q": "What does it cost?"
         }
       ],
@@ -272,7 +272,7 @@
       "audience": "business",
       "proof_html": "",
       "feature_key": "moment_10q",
-      "why_html": "<p>The sample is fictional. The fastest way to judge Trilivy is with a few of your own documents: upload them under <b>My documents</b>, or ask us for a pilot on a larger set.</p>"
+      "why_html": "<p>The sample is fictional. The fastest way to judge Trilivy is with a few of your own documents: upload them under <b>My documents</b> and ask about them.</p>"
     },
     {
       "verified_by": "",
@@ -310,7 +310,7 @@
       "audience": "business",
       "proof_html": "",
       "feature_key": "moment_expiring",
-      "why_html": "<p>Your demo ends in a couple of days. We can extend it, or set up a pilot on your own data and systems.</p>"
+      "why_html": "<p>Your demo ends in a couple of days. If you need more time, or want to see Trilivy on your own data, send a message with Talk to a person.</p>"
     },
     {
       "verified_by": "",
@@ -331,7 +331,7 @@
       "how_html": "<p>In a pilot we switch on the parts that matter for your use case and set them up with you.</p>",
       "objections": [
         {
-          "a": "Yes: ask for a walkthrough and a Trilivy engineer shows it live.",
+          "a": "Send a message with Talk to a person and say what you would like to see.",
           "q": "Can I see it anyway?"
         }
       ],
