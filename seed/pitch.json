@@ -1,199 +1,529 @@
 {
-  "_comment": "Pitch cards (DRAFT copy written 2026-10-15 for Octavio to verify). Every claim must be checked before a card is set to verified/live. objections = [{q, a}], cta = list of actions: talk | book | wishlist.",
   "cards": [
-    { "feature_key": "connections", "audience": "business", "kicker": "Available in your pilot · Connections",
-      "headline": "Let the assistant read your live systems, not yesterday's export",
-      "why_html": "<p>Your team asks <i>\"What is the status of order 4471?\"</i> and gets the answer from your ERP at that moment, with the source shown. Nobody copies between screens and nobody works from a stale spreadsheet.</p>",
-      "how_html": "<p>Trilivy connects to business systems through Connections, the REST Builder and MCP (the open standard AI assistants use to call tools). Each connection is configured once by your administrator; the assistant then calls it when a question needs live data.</p>",
-      "objections": [
-        { "q": "Will it write into our ERP?", "a": "Only if you allow it. Tools are read-only by default, every write action is switched on separately, and every call is logged with the person who triggered it." },
-        { "q": "Will people see data they are not allowed to?", "a": "Where the source system supports it, each user connects with their own rights, so the assistant never sees more than that user can." },
-        { "q": "Our system is old and has no API.", "a": "Many older systems can be reached through their database or a small adapter. That is exactly the kind of thing we check together in a pilot." }
-      ],
-      "proof_html": "<p>Every call through a connection is recorded with the user, the tool and the time, so you can audit what the assistant looked at.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-    { "feature_key": "connections", "audience": "it", "kicker": "Available in your pilot · Connections",
-      "headline": "Governed tool access: MCP, REST and OAuth, logged per user",
-      "why_html": "<p>Give the assistant controlled access to live systems without opening a free-for-all: per-connection keys, rate limits and a full call log.</p>",
-      "how_html": "<p>Connections hold credentials server-side (never in the browser). The REST Builder turns an API into tools; the MCP server exposes Trilivy itself to other AI clients; OAuth connections act on behalf of the signed-in user. Calls are rate-limited and logged with the user.</p>",
-      "objections": [
-        { "q": "Where are the credentials stored?", "a": "On your own Trilivy server, in its database, used only by the server-side code. The browser never receives them." },
-        { "q": "Can we restrict which tools an assistant may call?", "a": "Yes. Tools are assigned per assistant and switched on individually; write tools are off by default." },
-        { "q": "Do you support SSO / OAuth?", "a": "OAuth connections are supported for the sources that offer it. Your identity provider setup is a pilot topic." }
-      ],
-      "proof_html": "<p>Each Trilivy customer runs on a dedicated server, so connections and their logs never share infrastructure with another company.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-
-    { "feature_key": "rag_maker", "audience": "business", "kicker": "Available in your pilot · Knowledge Builder",
-      "headline": "Turn your documents into answers your team can trust",
-      "why_html": "<p>Manuals, policies, contracts and wikis become one place to ask questions, and every answer shows which document it came from. In this demo you can already try it on a few files under <b>My documents</b>.</p>",
-      "how_html": "<p>The Knowledge Builder loads whole document sets, splits them into passages, keeps their structure and metadata, and indexes them for meaning as well as keywords. Groups and confidentiality levels decide who may get answers from what.</p>",
-      "objections": [
-        { "q": "We have thousands of documents. Is that a problem?", "a": "No. Loading is done in the background and in batches; large sets are normal." },
-        { "q": "What if a document changes?", "a": "Reload it: the old passages are replaced, so answers follow the current version." },
-        { "q": "Can some documents be restricted?", "a": "Yes, by group and confidentiality level, per assistant and per user." }
-      ],
-      "proof_html": "<p>Try it now: upload a document under My documents and ask about it. The answer cites the passages it used.</p>",
-      "cta": ["talk", "wishlist"] },
-    { "feature_key": "rag_maker", "audience": "it", "kicker": "Available in your pilot · Knowledge Builder",
-      "headline": "Hybrid retrieval on PostgreSQL + pgvector, on your own server",
-      "why_html": "<p>Retrieval quality decides answer quality. Trilivy gives you control of chunking, metadata, groups and confidentiality instead of a black box.</p>",
-      "how_html": "<p>Documents are chunked and embedded into per-knowledge-base tables (PostgreSQL with pgvector and full-text indexes), then retrieved with hybrid semantic + keyword search and reranking. Everything runs on the customer's dedicated server.</p>",
-      "objections": [
-        { "q": "Which embedding and language models?", "a": "Configurable per installation; the server uses the providers you choose with your own keys." },
-        { "q": "Can we back it up like any database?", "a": "Yes: it is ordinary MySQL and PostgreSQL on your server." }
-      ],
-      "proof_html": "<p>Your demo sandbox has its own knowledge tables; what you upload never mixes with another prospect's.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-
-    { "feature_key": "answer_bank", "audience": "business", "kicker": "Available in your pilot · Answer Bank",
-      "headline": "Approved answers for the questions that matter most",
-      "why_html": "<p>For the questions where wording matters, prices, policies, legal answers, your experts write the answer once and the assistant uses it every time.</p>",
-      "how_html": "<p>Answer Bank entries are matched to incoming questions and take priority over generated text. Answers from Talk to a Person conversations can be promoted into the bank, so the assistant learns from your staff.</p>",
-      "objections": [
-        { "q": "Who maintains it?", "a": "Your subject-matter experts, in a simple editor. Changes are versioned." }
-      ],
-      "proof_html": "<p>Combined with citations, this is how teams move from \"interesting demo\" to an assistant they let customers use.</p>",
-      "cta": ["talk", "wishlist"] },
-
-    { "feature_key": "quality_lab", "audience": "business", "kicker": "Available in your pilot · Quality Lab",
-      "headline": "Measure answer quality before anyone relies on it",
-      "why_html": "<p>\"AI makes things up\" is the right worry. Quality Lab turns it into a number you can watch: a test set of real questions, graded automatically, before go-live and after every change.</p>",
-      "how_html": "<p>You keep a golden set of questions with expected answers. Quality Lab runs them against the assistant, grades the responses (Response Grading) and shows which questions got worse when content or settings changed.</p>",
-      "objections": [
-        { "q": "How do you prevent hallucinations?", "a": "Answers are grounded in your documents with citations, approved answers come from the Answer Bank, and Quality Lab measures accuracy so problems are found before users find them." },
-        { "q": "Who writes the test questions?", "a": "Usually your team with ours in the pilot; Trilivy can also draft candidate questions from your documents for you to review." }
-      ],
-      "proof_html": "<p>A pilot ends with a measured score on your own questions, not a feeling.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-    { "feature_key": "quality_lab", "audience": "it", "kicker": "Available in your pilot · Quality Lab",
-      "headline": "Regression tests for an AI assistant",
-      "why_html": "<p>Treat assistant changes like code changes: run the suite, compare, and only ship what does not regress.</p>",
-      "how_html": "<p>Golden sets, quick runs, A/B arms and LLM-judge grading with calibration labels. Results are stored per run, so you can compare retrieval settings, models or content versions side by side.</p>",
-      "objections": [
-        { "q": "Can we export the results?", "a": "Yes, runs and grades are in your own database." }
-      ],
-      "proof_html": "<p>The same suite can run after every platform update to confirm nothing changed for your users.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-
-    { "feature_key": "agent_factory", "audience": "business", "kicker": "Available in your pilot · Agent Factory",
-      "headline": "From answering questions to getting work done",
-      "why_html": "<p>Agents follow a defined task: check an order, open a ticket, prepare a summary, route a request. Built for your processes, tested before they go live.</p>",
-      "how_html": "<p>Agent Factory describes an agent, its tools and its tests; Trilivy builds it, runs the tests, and only then lets you install it next to your assistant.</p>",
-      "objections": [
-        { "q": "Will an agent act without control?", "a": "Agents only get the tools you give them, write actions need explicit permission, and every run is logged." },
-        { "q": "How long does it take to build one?", "a": "It depends on the systems involved; a pilot usually starts with one well-defined process." }
-      ],
-      "proof_html": "<p>The service-desk sample in this demo shows the kind of assistant an agent extends.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-    { "feature_key": "agent_factory", "audience": "it", "kicker": "Available in your pilot · Agent Factory",
-      "headline": "Agents with explicit tools, tests and an install gate",
-      "why_html": "<p>No prompt spaghetti: an agent is a versioned definition with its tools and its test cases.</p>",
-      "how_html": "<p>Agent definitions, versions, runs and test results are stored per assistant. An agent is installed only after its tests pass; tools are the same governed connections the assistant uses.</p>",
-      "objections": [
-        { "q": "Can we version and roll back agents?", "a": "Yes, agent versions are kept and an earlier version can be reinstated." }
-      ],
-      "proof_html": "",
-      "cta": ["talk", "book", "wishlist"] },
-
-    { "feature_key": "instances", "audience": "business", "kicker": "Available in your pilot · Assistants",
-      "headline": "One platform, many assistants: HR, IT, customers, partners",
-      "why_html": "<p>Each department gets its own assistant with its own knowledge, tone, branding and audience, managed from one place.</p>",
-      "how_html": "<p>Every assistant has its own database, knowledge bases, persona, guardrails and look. Users are given access per assistant, with clearance levels for sensitive content.</p>",
-      "objections": [
-        { "q": "Can different departments see different things?", "a": "Yes. Access is per assistant and per clearance level; a user only gets answers from content they are allowed to see." },
-        { "q": "Can it carry our brand?", "a": "Yes: name, colours, logo, welcome text and its own web address per assistant." }
-      ],
-      "proof_html": "<p>This demo itself runs as your own private assistant, separate from every other visitor's.</p>",
-      "cta": ["talk", "wishlist"] },
-
-    { "feature_key": "lms_authoring", "audience": "business", "kicker": "Available in your pilot · Courses",
-      "headline": "Training that writes itself from your documents",
-      "why_html": "<p>Turn procedures into short courses with quizzes and certificates, and let the assistant answer questions while people learn.</p>",
-      "how_html": "<p>Course Maker drafts lessons from your sources; the learning player tracks progress, quizzes and certificates per learner.</p>",
-      "objections": [
-        { "q": "Do we need an LMS already?", "a": "No, the learning player is built in. Whether to connect an existing LMS is a pilot topic." }
-      ],
-      "proof_html": "<p>Open Courses in this demo to see the learner side.</p>",
-      "cta": ["talk", "wishlist"] },
-
-    { "feature_key": "reports", "audience": "business", "kicker": "Available in your pilot · Reports",
-      "headline": "See what people ask, and what they could not find",
-      "why_html": "<p>The questions your staff and customers ask are a map of what is missing or unclear. Reports show volumes, topics, unanswered questions and handoffs.</p>",
-      "how_html": "<p>Every conversation, retrieval and handoff is logged on your server; reports and dashboards read those logs.</p>",
-      "objections": [
-        { "q": "Who can see the conversations?", "a": "Only roles you allow. Logs stay on your server." }
-      ],
-      "proof_html": "",
-      "cta": ["talk", "wishlist"] },
-
-    { "feature_key": "jumpstart", "audience": "business", "kicker": "Available in your pilot · JumpStart",
-      "headline": "A guided start for your own team",
-      "why_html": "<p>JumpStart walks your administrators through the platform: connecting knowledge, creating assistants, testing quality and going live.</p>",
-      "how_html": "<p>A step-by-step home for administrators with explanations, checklists and links to every tool.</p>",
-      "objections": [],
-      "proof_html": "",
-      "cta": ["talk", "book"] },
-
-    { "feature_key": "admin", "audience": "business", "kicker": "Available in your pilot · Administration",
-      "headline": "Your platform, your rules",
-      "why_html": "<p>Users and roles, assistants, keys, mail and updates are all managed by your own administrators, on a server that belongs to your company.</p>",
+    {
+      "verified_by": "",
       "how_html": "<p>Each Trilivy customer gets a dedicated server. Your administrators manage users and rights, AI provider keys, e-mail, web addresses and updates; Trilivy provides releases and support.</p>",
       "objections": [
-        { "q": "Is our data used to train the AI?", "a": "Your Trilivy runs on its own dedicated server and your documents stay in its database. Models are called through business APIs; the provider terms for training must be confirmed for the providers you choose (to be verified per provider)." },
-        { "q": "Where is the server hosted?", "a": "On a dedicated virtual server; location and hosting options are agreed in the pilot." },
-        { "q": "What does it cost?", "a": "That depends on users, assistants and hosting. Talk to us for a proposal based on your pilot." }
+        {
+          "a": "Your Trilivy runs on its own dedicated server and your documents stay in its database. Models are called through business APIs; the provider terms for training must be confirmed for the providers you choose (to be verified per provider).",
+          "q": "Is our data used to train the AI?"
+        },
+        {
+          "a": "On a dedicated virtual server; location and hosting options are agreed in the pilot.",
+          "q": "Where is the server hosted?"
+        },
+        {
+          "a": "That depends on users, assistants and hosting. Talk to us for a proposal based on your pilot.",
+          "q": "What does it cost?"
+        }
       ],
+      "headline": "Your platform, your rules",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Administration",
+      "lang": "en",
+      "audience": "business",
       "proof_html": "<p>Updates are applied by your administrators with one click, and your own changes are protected.</p>",
-      "cta": ["talk", "book", "wishlist"] },
-    { "feature_key": "admin", "audience": "it", "kicker": "Available in your pilot · Administration",
-      "headline": "Dedicated server, your keys, controlled updates",
-      "why_html": "<p>No shared multi-tenant black box: a dedicated VPS per customer, your own provider keys, and updates you start when you are ready.</p>",
+      "feature_key": "admin",
+      "why_html": "<p>Users and roles, assistants, keys, mail and updates are all managed by your own administrators, on a server that belongs to your company.</p>"
+    },
+    {
+      "verified_by": "",
       "how_html": "<p>Lucee/CFML and Python services on a hardened Ubuntu server, MySQL and PostgreSQL with pgvector, nginx with TLS. Updates are packaged releases with backup and rollback; customer changes are detected and protected.</p>",
       "objections": [
-        { "q": "Can we run it in our own data centre?", "a": "The platform is a standard Linux stack; on-premises options are a pilot discussion." },
-        { "q": "How are updates handled?", "a": "You start them from the Updates page; each update is checked against your changes, backed up and can roll back." }
+        {
+          "a": "The platform is a standard Linux stack; on-premises options are a pilot discussion.",
+          "q": "Can we run it in our own data centre?"
+        },
+        {
+          "a": "You start them from the Updates page; each update is checked against your changes, backed up and can roll back.",
+          "q": "How are updates handled?"
+        }
       ],
+      "headline": "Dedicated server, your keys, controlled updates",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Administration",
+      "lang": "en",
+      "audience": "it",
       "proof_html": "",
-      "cta": ["talk", "book", "wishlist"] },
-
-    { "feature_key": "platform", "audience": "business", "kicker": "Part of the full platform",
-      "headline": "This part of Trilivy is not open in the demo",
-      "why_html": "<p>The demo focuses on the assistant, your own documents and courses. The full platform adds knowledge building, quality measurement, agents, connections to your systems and administration.</p>",
+      "feature_key": "admin",
+      "why_html": "<p>No shared multi-tenant black box: a dedicated VPS per customer, your own provider keys, and updates you start when you are ready.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Agent Factory describes an agent, its tools and its tests; Trilivy builds it, runs the tests, and only then lets you install it next to your assistant.</p>",
+      "objections": [
+        {
+          "a": "Agents only get the tools you give them, write actions need explicit permission, and every run is logged.",
+          "q": "Will an agent act without control?"
+        },
+        {
+          "a": "It depends on the systems involved; a pilot usually starts with one well-defined process.",
+          "q": "How long does it take to build one?"
+        }
+      ],
+      "headline": "From answering questions to getting work done",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Agent Factory",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>The service-desk sample in this demo shows the kind of assistant an agent extends.</p>",
+      "feature_key": "agent_factory",
+      "why_html": "<p>Agents follow a defined task: check an order, open a ticket, prepare a summary, route a request. Built for your processes, tested before they go live.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Agent definitions, versions, runs and test results are stored per assistant. An agent is installed only after its tests pass; tools are the same governed connections the assistant uses.</p>",
+      "objections": [
+        {
+          "a": "Yes, agent versions are kept and an earlier version can be reinstated.",
+          "q": "Can we version and roll back agents?"
+        }
+      ],
+      "headline": "Agents with explicit tools, tests and an install gate",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Agent Factory",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "",
+      "feature_key": "agent_factory",
+      "why_html": "<p>No prompt spaghetti: an agent is a versioned definition with its tools and its test cases.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Answer Bank entries are matched to incoming questions and take priority over generated text. Answers from Talk to a Person conversations can be promoted into the bank, so the assistant learns from your staff.</p>",
+      "objections": [
+        {
+          "a": "Your subject-matter experts, in a simple editor. Changes are versioned.",
+          "q": "Who maintains it?"
+        }
+      ],
+      "headline": "Approved answers for the questions that matter most",
+      "cta": [
+        "talk",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Answer Bank",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Combined with citations, this is how teams move from \"interesting demo\" to an assistant they let customers use.</p>",
+      "feature_key": "answer_bank",
+      "why_html": "<p>For the questions where wording matters, prices, policies, legal answers, your experts write the answer once and the assistant uses it every time.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Trilivy connects to business systems through Connections, the REST Builder and MCP (the open standard AI assistants use to call tools). Each connection is configured once by your administrator; the assistant then calls it when a question needs live data.</p>",
+      "objections": [
+        {
+          "a": "Only if you allow it. Tools are read-only by default, every write action is switched on separately, and every call is logged with the person who triggered it.",
+          "q": "Will it write into our ERP?"
+        },
+        {
+          "a": "Where the source system supports it, each user connects with their own rights, so the assistant never sees more than that user can.",
+          "q": "Will people see data they are not allowed to?"
+        },
+        {
+          "a": "Many older systems can be reached through their database or a small adapter. That is exactly the kind of thing we check together in a pilot.",
+          "q": "Our system is old and has no API."
+        }
+      ],
+      "headline": "Let the assistant read your live systems, not yesterday's export",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Connections",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Every call through a connection is recorded with the user, the tool and the time, so you can audit what the assistant looked at.</p>",
+      "feature_key": "connections",
+      "why_html": "<p>Your team asks <i>\"What is the status of order 4471?\"</i> and gets the answer from your ERP at that moment, with the source shown. Nobody copies between screens and nobody works from a stale spreadsheet.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Connections hold credentials server-side (never in the browser). The REST Builder turns an API into tools; the MCP server exposes Trilivy itself to other AI clients; OAuth connections act on behalf of the signed-in user. Calls are rate-limited and logged with the user.</p>",
+      "objections": [
+        {
+          "a": "On your own Trilivy server, in its database, used only by the server-side code. The browser never receives them.",
+          "q": "Where are the credentials stored?"
+        },
+        {
+          "a": "Yes. Tools are assigned per assistant and switched on individually; write tools are off by default.",
+          "q": "Can we restrict which tools an assistant may call?"
+        },
+        {
+          "a": "OAuth connections are supported for the sources that offer it. Your identity provider setup is a pilot topic.",
+          "q": "Do you support SSO / OAuth?"
+        }
+      ],
+      "headline": "Governed tool access: MCP, REST and OAuth, logged per user",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Connections",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Each Trilivy customer runs on a dedicated server, so connections and their logs never share infrastructure with another company.</p>",
+      "feature_key": "connections",
+      "why_html": "<p>Give the assistant controlled access to live systems without opening a free-for-all: per-connection keys, rate limits and a full call log.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Every assistant has its own database, knowledge bases, persona, guardrails and look. Users are given access per assistant, with clearance levels for sensitive content.</p>",
+      "objections": [
+        {
+          "a": "Yes. Access is per assistant and per clearance level; a user only gets answers from content they are allowed to see.",
+          "q": "Can different departments see different things?"
+        },
+        {
+          "a": "Yes: name, colours, logo, welcome text and its own web address per assistant.",
+          "q": "Can it carry our brand?"
+        }
+      ],
+      "headline": "One platform, many assistants: HR, IT, customers, partners",
+      "cta": [
+        "talk",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Assistants",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>This demo itself runs as your own private assistant, separate from every other visitor's.</p>",
+      "feature_key": "instances",
+      "why_html": "<p>Each department gets its own assistant with its own knowledge, tone, branding and audience, managed from one place.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>A step-by-step home for administrators with explanations, checklists and links to every tool.</p>",
+      "objections": [],
+      "headline": "A guided start for your own team",
+      "cta": [
+        "talk",
+        "book"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · JumpStart",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "",
+      "feature_key": "jumpstart",
+      "why_html": "<p>JumpStart walks your administrators through the platform: connecting knowledge, creating assistants, testing quality and going live.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Course Maker drafts lessons from your sources; the learning player tracks progress, quizzes and certificates per learner.</p>",
+      "objections": [
+        {
+          "a": "No, the learning player is built in. Whether to connect an existing LMS is a pilot topic.",
+          "q": "Do we need an LMS already?"
+        }
+      ],
+      "headline": "Training that writes itself from your documents",
+      "cta": [
+        "talk",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Courses",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Open Courses in this demo to see the learner side.</p>",
+      "feature_key": "lms_authoring",
+      "why_html": "<p>Turn procedures into short courses with quizzes and certificates, and let the assistant answer questions while people learn.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "",
+      "objections": [],
+      "headline": "Want to see this on your own data?",
+      "cta": [
+        "talk",
+        "book"
+      ],
+      "status": "draft",
+      "kicker": "You have asked 10 questions",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "",
+      "feature_key": "moment_10q",
+      "why_html": "<p>The sample is fictional. The fastest way to judge Trilivy is with a few of your own documents: upload them under <b>My documents</b>, or ask us for a pilot on a larger set.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Every answer is built from retrieved passages of your knowledge, and the citations point back to them.</p>",
+      "objections": [
+        {
+          "a": "The assistant says it does not know, or offers Talk to a person, instead of inventing an answer.",
+          "q": "What if there is no good source?"
+        }
+      ],
+      "headline": "That answer came with its sources",
+      "cta": [
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Did you notice?",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "",
+      "feature_key": "moment_citations",
+      "why_html": "<p>The numbered sources under the answer are the passages the assistant used. Click one to check it. This is what makes answers auditable instead of a black box.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "",
+      "objections": [],
+      "headline": "Need more time, or ready for a pilot?",
+      "cta": [
+        "talk",
+        "book"
+      ],
+      "status": "draft",
+      "kicker": "Your demo ends soon",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "",
+      "feature_key": "moment_expiring",
+      "why_html": "<p>Your demo ends in a couple of days. We can extend it, or set up a pilot on your own data and systems.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "",
+      "objections": [],
+      "headline": "Ask the assistant about your own document now",
+      "cta": [],
+      "status": "draft",
+      "kicker": "Your document is ready",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "",
+      "feature_key": "moment_upload",
+      "why_html": "<p>Your file has been loaded into your private knowledge base. Ask a question only that document can answer, and look at the sources under the answer.</p>"
+    },
+    {
+      "verified_by": "",
       "how_html": "<p>In a pilot we switch on the parts that matter for your use case and set them up with you.</p>",
       "objections": [
-        { "q": "Can I see it anyway?", "a": "Yes: ask for a walkthrough and a Trilivy engineer shows it live." }
+        {
+          "a": "Yes: ask for a walkthrough and a Trilivy engineer shows it live.",
+          "q": "Can I see it anyway?"
+        }
       ],
+      "headline": "This part of Trilivy is not open in the demo",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform",
+      "lang": "en",
+      "audience": "business",
       "proof_html": "",
-      "cta": ["talk", "book", "wishlist"] },
-
-    { "feature_key": "moment_citations", "audience": "business", "kicker": "Did you notice?",
-      "headline": "That answer came with its sources",
-      "why_html": "<p>The numbered sources under the answer are the passages the assistant used. Click one to check it. This is what makes answers auditable instead of a black box.</p>",
-      "how_html": "<p>Every answer is built from retrieved passages of your knowledge, and the citations point back to them.</p>",
-      "objections": [ { "q": "What if there is no good source?", "a": "The assistant says it does not know, or offers Talk to a person, instead of inventing an answer." } ],
-      "proof_html": "", "cta": ["wishlist"] },
-    { "feature_key": "moment_10q", "audience": "business", "kicker": "You have asked 10 questions",
-      "headline": "Want to see this on your own data?",
-      "why_html": "<p>The sample is fictional. The fastest way to judge Trilivy is with a few of your own documents: upload them under <b>My documents</b>, or ask us for a pilot on a larger set.</p>",
-      "how_html": "", "objections": [], "proof_html": "", "cta": ["talk", "book"] },
-    { "feature_key": "moment_upload", "audience": "business", "kicker": "Your document is ready",
-      "headline": "Ask the assistant about your own document now",
-      "why_html": "<p>Your file has been loaded into your private knowledge base. Ask a question only that document can answer, and look at the sources under the answer.</p>",
-      "how_html": "", "objections": [], "proof_html": "", "cta": [] },
-    { "feature_key": "moment_expiring", "audience": "business", "kicker": "Your demo ends soon",
-      "headline": "Need more time, or ready for a pilot?",
-      "why_html": "<p>Your demo ends in a couple of days. We can extend it, or set up a pilot on your own data and systems.</p>",
-      "how_html": "", "objections": [], "proof_html": "", "cta": ["talk", "book"] }
+      "feature_key": "platform",
+      "why_html": "<p>The demo focuses on the assistant, your own documents and courses. The full platform adds knowledge building, quality measurement, agents, connections to your systems and administration.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>You keep a golden set of questions with expected answers. Quality Lab runs them against the assistant, grades the responses (Response Grading) and shows which questions got worse when content or settings changed.</p>",
+      "objections": [
+        {
+          "a": "Answers are grounded in your documents with citations, approved answers come from the Answer Bank, and Quality Lab measures accuracy so problems are found before users find them.",
+          "q": "How do you prevent hallucinations?"
+        },
+        {
+          "a": "Usually your team with ours in the pilot; Trilivy can also draft candidate questions from your documents for you to review.",
+          "q": "Who writes the test questions?"
+        }
+      ],
+      "headline": "Measure answer quality before anyone relies on it",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Quality Lab",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>A pilot ends with a measured score on your own questions, not a feeling.</p>",
+      "feature_key": "quality_lab",
+      "why_html": "<p>\"AI makes things up\" is the right worry. Quality Lab turns it into a number you can watch: a test set of real questions, graded automatically, before go-live and after every change.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Golden sets, quick runs, A/B arms and LLM-judge grading with calibration labels. Results are stored per run, so you can compare retrieval settings, models or content versions side by side.</p>",
+      "objections": [
+        {
+          "a": "Yes, runs and grades are in your own database.",
+          "q": "Can we export the results?"
+        }
+      ],
+      "headline": "Regression tests for an AI assistant",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Quality Lab",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>The same suite can run after every platform update to confirm nothing changed for your users.</p>",
+      "feature_key": "quality_lab",
+      "why_html": "<p>Treat assistant changes like code changes: run the suite, compare, and only ship what does not regress.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The Knowledge Builder loads whole document sets, splits them into passages, keeps their structure and metadata, and indexes them for meaning as well as keywords. Groups and confidentiality levels decide who may get answers from what.</p>",
+      "objections": [
+        {
+          "a": "No. Loading is done in the background and in batches; large sets are normal.",
+          "q": "We have thousands of documents. Is that a problem?"
+        },
+        {
+          "a": "Reload it: the old passages are replaced, so answers follow the current version.",
+          "q": "What if a document changes?"
+        },
+        {
+          "a": "Yes, by group and confidentiality level, per assistant and per user.",
+          "q": "Can some documents be restricted?"
+        }
+      ],
+      "headline": "Turn your documents into answers your team can trust",
+      "cta": [
+        "talk",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Knowledge Builder",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Try it now: upload a document under My documents and ask about it. The answer cites the passages it used.</p>",
+      "feature_key": "rag_maker",
+      "why_html": "<p>Manuals, policies, contracts and wikis become one place to ask questions, and every answer shows which document it came from. In this demo you can already try it on a few files under <b>My documents</b>.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Documents are chunked and embedded into per-knowledge-base tables (PostgreSQL with pgvector and full-text indexes), then retrieved with hybrid semantic + keyword search and reranking. Everything runs on the customer's dedicated server.</p>",
+      "objections": [
+        {
+          "a": "Configurable per installation; the server uses the providers you choose with your own keys.",
+          "q": "Which embedding and language models?"
+        },
+        {
+          "a": "Yes: it is ordinary MySQL and PostgreSQL on your server.",
+          "q": "Can we back it up like any database?"
+        }
+      ],
+      "headline": "Hybrid retrieval on PostgreSQL + pgvector, on your own server",
+      "cta": [
+        "talk",
+        "book",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Knowledge Builder",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Your demo sandbox has its own knowledge tables; what you upload never mixes with another prospect's.</p>",
+      "feature_key": "rag_maker",
+      "why_html": "<p>Retrieval quality decides answer quality. Trilivy gives you control of chunking, metadata, groups and confidentiality instead of a black box.</p>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Every conversation, retrieval and handoff is logged on your server; reports and dashboards read those logs.</p>",
+      "objections": [
+        {
+          "a": "Only roles you allow. Logs stay on your server.",
+          "q": "Who can see the conversations?"
+        }
+      ],
+      "headline": "See what people ask, and what they could not find",
+      "cta": [
+        "talk",
+        "wishlist"
+      ],
+      "status": "draft",
+      "kicker": "Available in your pilot · Reports",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "",
+      "feature_key": "reports",
+      "why_html": "<p>The questions your staff and customers ask are a map of what is missing or unclear. Reports show volumes, topics, unanswered questions and handoffs.</p>"
+    }
   ],
+  "_comment": "Exported from the Demo Console",
   "moments": [
-    { "moment_key": "citations", "title": "First answer with 2+ sources", "feature_key": "moment_citations",
-      "trigger_json": { "event": "chat_answer", "min_rag_hits": 2, "nth": 1 } },
-    { "moment_key": "ten_questions", "title": "Tenth question", "feature_key": "moment_10q",
-      "trigger_json": { "event": "chat_question", "count": 10 } },
-    { "moment_key": "upload_ready", "title": "First upload ingested", "feature_key": "moment_upload",
-      "trigger_json": { "event": "ingest_done", "nth": 1 } },
-    { "moment_key": "expiring", "title": "Two days before the end", "feature_key": "moment_expiring",
-      "trigger_json": { "days_left_max": 2 } }
+    {
+      "once_per_prospect": 1,
+      "trigger_json": {
+        "nth": 1,
+        "event": "chat_answer",
+        "min_rag_hits": 2
+      },
+      "moment_key": "citations",
+      "active": 1,
+      "feature_key": "moment_citations",
+      "title": "First answer with 2+ sources"
+    },
+    {
+      "once_per_prospect": 1,
+      "trigger_json": {
+        "days_left_max": 2
+      },
+      "moment_key": "expiring",
+      "active": 1,
+      "feature_key": "moment_expiring",
+      "title": "Two days before the end"
+    },
+    {
+      "once_per_prospect": 1,
+      "trigger_json": {
+        "count": 10,
+        "event": "chat_question"
+      },
+      "moment_key": "ten_questions",
+      "active": 1,
+      "feature_key": "moment_10q",
+      "title": "Tenth question"
+    },
+    {
+      "once_per_prospect": 1,
+      "trigger_json": {
+        "nth": 1,
+        "event": "ingest_done"
+      },
+      "moment_key": "upload_ready",
+      "active": 1,
+      "feature_key": "moment_upload",
+      "title": "First upload ingested"
+    }
   ]
 }

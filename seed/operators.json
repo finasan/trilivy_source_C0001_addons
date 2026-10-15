@@ -1,4 +1,10 @@
 {
-  "_comment": "Demo Console operators, linked by e-mail to EXISTING accounts on the box (never passwords). Empty on a fresh box: bootstrap then makes every active admin account an operator. Export to package fills this from the console.",
-  "operators": []
+  "operators": [
+    {
+      "display_name": "Administrator",
+      "role": "admin",
+      "email": "octavioslemer4@gmail.com"
+    }
+  ],
+  "_comment": "Accounts must exist on the box; bootstrap links them by e-mail."
 }
