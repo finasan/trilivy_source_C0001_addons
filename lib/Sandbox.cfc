@@ -286,7 +286,9 @@ component output="false" {
         var have = queryExecute("SELECT course_id FROM `#n.db#`.ws_courses", {}, {datasource: ds});
         var todo = [];
         for (var c2 in codes) if (!listFindNoCase(valueList(have.course_id), c2)) arrayAppend(todo, c2);
-        if (!arrayLen(todo)) return "courses already there";
+        var root = reReplace(application.env.OBTX_PATH_INSTANCES ?: "/home/trilivyapp/containers/instances", "[/\\]+$", "");
+        var fromDir = root & "/" & lCase(sdb) & "/";
+        if (!arrayLen(todo)) return "courses already there; " & copyCourseFolders(n, sdb, fromDir, codes);
         var inList = "'" & arrayToList(todo, "','") & "'";
         // course-keyed tables, then the ones keyed through quizzes / assessments
         for (var tbl in ["ws_courses", "ws_modules", "ws_lessons", "ws_topics", "ws_quizzes", "ws_handson", "ws_assessments"]) {
@@ -297,24 +299,28 @@ component output="false" {
         queryExecute("INSERT INTO `#n.db#`.ws_assessment_questions SELECT q.* FROM `#sdb#`.ws_assessment_questions q
                       WHERE q.assessment_id IN (SELECT assessment_id FROM `#sdb#`.ws_assessments WHERE course_id IN (#inList#))", {}, {datasource: ds});
         // absolute content paths point at the source instance's folder
-        var root = reReplace(application.env.OBTX_PATH_INSTANCES ?: "/home/trilivyapp/containers/instances", "[/\\]+$", "");
-        var fromDir = root & "/" & lCase(sdb) & "/";
         var toDir = n.dir & "/";
         for (var pc in [["ws_courses", "course_url"], ["ws_modules", "content_path"], ["ws_lessons", "content_path"]]) {
             queryExecute("UPDATE `#n.db#`.`#pc[1]#` SET `#pc[2]#` = REPLACE(`#pc[2]#`, :f, :t) WHERE course_id IN (#inList#)",
                 {f: fromDir, t: toDir}, {datasource: ds});
         }
-        // folders
-        var folders = queryExecute("SELECT folder_name FROM `#n.db#`.ws_courses WHERE course_id IN (#inList#)", {}, {datasource: ds});
+        return arrayLen(todo) & " course(s) " & arrayToList(todo) & "; " & copyCourseFolders(n, sdb, fromDir, codes);
+    }
+
+    /** The course folders (LMS/courses/<folder>): folder_name, or the last part of course_url when it is empty. */
+    private string function copyCourseFolders(required struct n, required string sdb, required string fromDir, required array codes) {
+        var inList = "'" & arrayToList(arguments.codes, "','") & "'";
+        var folders = queryExecute("SELECT folder_name, course_url FROM `#arguments.sdb#`.ws_courses WHERE course_id IN (#inList#)", {}, {datasource: adminDS()});
         var copied = 0;
         directoryCreate(n.dir & "/LMS/courses", true, true);
         for (var r in folders) {
-            if (!len(r.folder_name ?: "") || find("..", r.folder_name) || find("/", r.folder_name)) continue;
-            var s = fromDir & "LMS/courses/" & r.folder_name;
-            var d = n.dir & "/LMS/courses/" & r.folder_name;
+            var f = len(trim(r.folder_name ?: "")) ? trim(r.folder_name) : listLast(reReplace(r.course_url ?: "", "[/\\]+$", ""), "/\");
+            if (!len(f) || find("..", f) || find("/", f) || find("\", f)) continue;
+            var s = arguments.fromDir & "LMS/courses/" & f;
+            var d = n.dir & "/LMS/courses/" & f;
             if (directoryExists(s) && !directoryExists(d)) { directoryCopy(s, d, true); copied++; }
         }
-        return arrayLen(todo) & " course(s) " & arrayToList(todo) & ", " & copied & " folder(s)";
+        return copied & " folder(s) copied";
     }
 
     /** Courses + background knowledge for a sandbox made before they existed. */
