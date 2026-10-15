@@ -79,11 +79,91 @@
       "title": "Trilivy knowledge pages"
     },
     {
+      "_comment": "FULL PLATFORM (explorer) map, from the 2026-10-15 safety audit: two marker prospects, every candidate page crawled as one of them. These pages showed other prospects' knowledge bases / assistants / company names or server configuration, or edit box-wide tables. Locked in BOTH experiences. Must stay above the explorer-open entries.",
+      "feature_key": "ex_locked",
+      "title": "Server-wide administration",
+      "mode": "pitch",
+      "explorer_mode": "pitch",
+      "sort": 31,
+      "path_patterns": [
+        "/ain5py/menucenter/restapi_center.cfm", "/ain5py/menucenter/agent_center.cfm", "/ain5py/menucenter/retrieve_center*",
+        "/ain5py/menucenter/deprec_*", "/ain5py/menucenter/live_bridge/*", "/ain5py/menucenter/folder_copy/*",
+        "/ain5py/menucenter/connect*", "/ain5py/menucenter/mcp*", "/ain5py/menucenter/one_click.cfm",
+        "/ain5py/menucenter/api_code_assistant_token.cfm",
+        "/ain5py/boty/admin/agentsup_prompt_inspector.cfm", "/ain5py/boty/admin/test_*",
+        "/ain5py/tips/ai_buzzwords_crud.cfm", "/ain5py/tips/ai_buzzwords_genall.cfm", "/ain5py/tips/ai_buzzwords_code.cfm",
+        "/ain5py/tips/faqm.cfm", "/ain5py/tips/ragm_buzzwords_export.cfm",
+        "/ain5py/coursemaker/*"
+      ]
+    },
+    {
+      "_comment": "Full platform: JumpStart, Quick and the read-only tips/FAQ pages (menus and explanations, nothing box-wide).",
+      "feature_key": "jumpstart__ex",
+      "title": "JumpStart",
+      "mode": "pitch",
+      "explorer_mode": "open",
+      "sort": 32,
+      "path_patterns": [
+        "/ain5py/menucenter/index_v2.cfm", "/ain5py/menucenter/index.cfm", "/ain5py/menucenter/mc_*",
+        "/ain5py/menucenter/agent_factory_center.cfm", "/ain5py/menucenter/examples_center.cfm",
+        "/ain5py/menucenter/code_assistant_center.cfm", "/ain5py/menucenter/model_app_download.cfm",
+        "/ain5py/menucenter/_mode_badges.cfm",
+        "/ain5py/quick/menu.cfm", "/ain5py/quick/menu_config.cfm", "/ain5py/quick/welcome.cfm",
+        "/ain5py/tips/faq_view.cfm", "/ain5py/tips/faq_a.cfm", "/ain5py/tips/ai_buzzwords_browser.cfm", "/ain5py/tips/ai_judge.cfm"
+      ]
+    },
+    {
+      "_comment": "Full platform: the Main AI menus and the RAG dashboard. The Knowledge Builder pages themselves list every knowledge base on the box and stay locked.",
+      "feature_key": "rag_maker__ex",
+      "title": "Main AI and the RAG dashboard",
+      "mode": "pitch",
+      "explorer_mode": "open",
+      "sort": 33,
+      "path_patterns": ["/ain5py/frontmenu/*", "/ain5py/frontend/rag_dashboard.cfm"]
+    },
+    {
+      "_comment": "Full platform: the assistant's own setup (persona, guardrails, look and feel, agent tools), scoped to the prospect's sandbox by the instance guard.",
+      "feature_key": "agent_factory__ex",
+      "title": "Assistant setup",
+      "mode": "pitch",
+      "explorer_mode": "open",
+      "sort": 34,
+      "path_patterns": [
+        "/ain5py/boty/admin/manage_guardrails.cfm", "/ain5py/boty/admin/manage_look_feel.cfm", "/ain5py/boty/admin/manage_personas.cfm",
+        "/ain5py/boty/admin/ragm_agent_tools.cfm", "/ain5py/boty/admin/icp_agent_factory.cfm", "/ain5py/boty/admin/_schema_guide.cfm"
+      ]
+    },
+    {
+      "_comment": "Full platform: Talk to a Person on their own assistant (inbox, live, configuration) and its conversation audit.",
+      "feature_key": "instances__ex",
+      "title": "Talk to a Person",
+      "mode": "pitch",
+      "explorer_mode": "open",
+      "sort": 35,
+      "path_patterns": [
+        "/ain5py/botinstances/handoff_config.cfm", "/ain5py/botinstances/handoff_inbox.cfm", "/ain5py/botinstances/handoff_live.cfm",
+        "/ain5py/botinstances/api_handoff_live.cfm", "/ain5py/botinstances/conversation_audit.cfm"
+      ]
+    },
+    {
+      "_comment": "Full platform: the Manage area's frame and the account pages. Its box-wide items (users, triad options, services, SQL, system) stay locked by the admin / system entries below.",
+      "feature_key": "admin__ex",
+      "title": "Manage",
+      "mode": "pitch",
+      "explorer_mode": "open",
+      "sort": 36,
+      "path_patterns": [
+        "/ain5py/manage/menu.cfm", "/ain5py/manage/welcome.cfm", "/ain5py/manage/menu_config.cfm", "/ain5py/manage/view_myprofile.cfm",
+        "/ain5py/supportpages/aboutdoc.cfm", "/ain5py/supportpages/support_text.cfm"
+      ]
+    },
+    {
       "path_patterns": [
         "/ain5py/lms_workshop/*",
         "/ain5py/coursemaker/*"
       ],
       "mode": "pitch",
+      "explorer_mode": "open",
       "sort": 40,
       "nav_label": "Course Maker",
       "feature_key": "lms_authoring",
@@ -107,6 +187,7 @@
         "/ain5py/answer_bank/*"
       ],
       "mode": "pitch",
+      "explorer_mode": "open",
       "sort": 55,
       "nav_label": "Answer Bank",
       "feature_key": "answer_bank",
@@ -130,6 +211,7 @@
         "/ain5py/agentfactory_v2/*"
       ],
       "mode": "pitch",
+      "explorer_mode": "open",
       "sort": 70,
       "nav_label": "Agent Factory",
       "feature_key": "agent_factory",

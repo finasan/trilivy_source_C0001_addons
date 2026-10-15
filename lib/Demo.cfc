@@ -337,6 +337,8 @@ component output="false" {
                               ORDER BY (audience = :a) DESC, (audience = 'business') DESC, (lang = :l) DESC, (lang = 'en') DESC,
                                        FIELD(status, 'live', 'verified', 'draft') LIMIT 1",
             {f: arguments.feature, a: arguments.audience, l: arguments.lang}, {datasource: variables.dsn});
+        // "rag_maker__ex" (a Full-platform map entry) uses the card of "rag_maker"
+        if (!q.recordCount && find("__", arguments.feature)) return card(reReplace(arguments.feature, "__.*$", ""), arguments.audience, arguments.lang);
         if (!q.recordCount && arguments.feature != "platform") return card("platform", arguments.audience, arguments.lang);
         if (!q.recordCount) return {};
         var c = queryGetRow(q, 1);
