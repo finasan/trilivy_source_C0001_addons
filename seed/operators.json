@@ -1,0 +1,4 @@
+{
+  "_comment": "Demo Console operators, linked by e-mail to EXISTING accounts on the box (never passwords). Empty on a fresh box: bootstrap then makes every active admin account an operator. Export to package fills this from the console.",
+  "operators": []
+}

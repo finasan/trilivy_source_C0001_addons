@@ -1,0 +1,8 @@
+[Unit]
+Description=Trilivy Demo add-on - daily digest, score decay and backup
+After=lucee.service mysql.service postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/python3.13 /home/trilivyapp/addons/demo/py/cron_call.py daily
+ExecStartPost=/bin/bash /home/trilivyapp/addons/demo/install/backup.sh

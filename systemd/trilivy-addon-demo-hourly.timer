@@ -1,0 +1,10 @@
+[Unit]
+Description=Trilivy Demo add-on - hourly housekeeping
+
+[Timer]
+OnCalendar=*-*-* *:07:00
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

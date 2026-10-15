@@ -1,0 +1,35 @@
+/* Trilivy Demo add-on - banner and pitch popup. Everything is prefixed so the
+   platform's own styles are never touched. */
+.demo-bar{position:sticky;top:0;z-index:9000;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:6px 14px;background:#0d47a1;color:#fff;font:13px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.demo-bar .demo-tag{background:#ffb300;color:#1b2333;font-weight:800;letter-spacing:.08em;padding:1px 8px;border-radius:4px}
+.demo-bar .demo-left{opacity:.85}
+.demo-bar .demo-talk{margin-left:auto;color:#fff;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,.6);padding:3px 12px;border-radius:999px}
+.demo-bar .demo-talk:hover{background:rgba(255,255,255,.15)}
+
+.demo-ov{position:fixed;inset:0;z-index:10000;background:rgba(15,19,27,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.demo-pop{background:#fff;color:#1b2333;border-radius:16px;max-width:680px;width:100%;max-height:92vh;display:flex;flex-direction:column;
+  overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.35);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.demo-pop .dp-top{background:linear-gradient(135deg,#0d47a1,#2457d6);color:#fff;padding:16px 46px 14px 20px;position:relative}
+.demo-pop .dp-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.88}
+.demo-pop .dp-h{font-size:21px;font-weight:700;line-height:1.25;margin-top:3px}
+.demo-pop .dp-x{position:absolute;right:10px;top:8px;background:none;border:0;color:#fff;font-size:26px;cursor:pointer;line-height:1;padding:4px 8px}
+.demo-pop .dp-draft{display:inline-block;background:#ffb300;color:#1b2333;font-size:10.5px;font-weight:800;padding:1px 7px;border-radius:4px;margin-left:8px;letter-spacing:.06em}
+.demo-pop .dp-tabs{display:flex;flex-wrap:wrap;background:#f1f3f8;border-bottom:1px solid #e3e7ef}
+.demo-pop .dp-tabs button{background:none;border:0;padding:9px 14px;font:600 13px system-ui,Arial,sans-serif;color:#5d6779;cursor:pointer;border-bottom:2px solid transparent}
+.demo-pop .dp-tabs button.on{color:#2457d6;border-bottom-color:#2457d6;background:#fff}
+.demo-pop .dp-body{padding:14px 20px;overflow:auto;flex:1}
+.demo-pop .dp-body p{margin:0 0 10px}
+.demo-pop details.dp-obj{border:1px solid #e3e7ef;border-radius:8px;padding:8px 12px;margin:7px 0}
+.demo-pop details.dp-obj summary{cursor:pointer;font-weight:600}
+.demo-pop details.dp-obj p{margin:6px 0 0}
+.demo-pop .dp-ask{display:flex;gap:8px;margin-top:12px}
+.demo-pop .dp-ask input{flex:1;padding:8px 10px;border:1px dashed #c9d2e3;border-radius:8px;font:inherit}
+.demo-pop .dp-cta{display:flex;flex-wrap:wrap;gap:8px;padding:12px 20px;border-top:1px solid #e3e7ef}
+.demo-pop .dp-btn{font:600 13.5px system-ui,Arial,sans-serif;padding:8px 14px;border-radius:8px;border:1px solid #c9d2e3;background:#fff;color:#1b2333;cursor:pointer}
+.demo-pop .dp-btn.p{background:#2457d6;border-color:#2457d6;color:#fff}
+.demo-pop .dp-btn:disabled{opacity:.6;cursor:default}
+.demo-pop textarea{width:100%;box-sizing:border-box;min-height:90px;padding:8px 10px;border:1px solid #c9d2e3;border-radius:8px;font:inherit}
+.demo-pop .dp-ok{background:#e3f5ee;color:#0b5e40;border-radius:8px;padding:9px 12px;margin:8px 0}
+.demo-pop iframe{width:100%;height:58vh;border:1px solid #e3e7ef;border-radius:8px}
+@media (max-width:560px){.demo-pop .dp-h{font-size:18px}.demo-pop .dp-tabs button{padding:8px 10px}}

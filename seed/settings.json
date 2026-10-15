@@ -1,0 +1,29 @@
+{
+  "_comment": "Demo settings. bootstrap.sh inserts missing keys only, so values changed in the Demo Console survive updates; Export to package writes the live values back here.",
+  "settings": {
+    "template_instance": "demo_servicedesk",
+    "sales_engineer_instance": "",
+    "default_days": "14",
+    "retention_days": "30",
+    "expiring_warn_days": "3",
+    "welcome_link_hours": "72",
+    "demo_paused": "0",
+    "pitch_show_drafts": "1",
+    "public_host": "",
+    "consent_version": "2026-10-15",
+    "consent_html": "<p>This is a guided demo of Trilivy. To help our team understand what is useful to you, we record your activity here: pages you open, features you click, the questions you ask and the answers you get, documents you upload, and your IP address.</p><p>Only Trilivy staff see this. It is deleted at the latest 30 days after your demo ends, and earlier if you ask (reply to any of our e-mails).</p><p>Please do not upload other people's personal data or secrets. Files you upload are used only inside your private demo and are deleted with it.</p>",
+    "caps_standard": "{\"questions_day\":150,\"tokens_total\":2000000,\"asks_day\":40,\"files_total\":20,\"file_mb\":25,\"total_mb\":150,\"ingests_day\":3,\"sessions\":1}",
+    "caps_generous": "{\"questions_day\":400,\"tokens_total\":6000000,\"asks_day\":100,\"files_total\":60,\"file_mb\":25,\"total_mb\":500,\"ingests_day\":10,\"sessions\":2}",
+    "monthly_token_budget": "60000000",
+    "score_weights": "{\"first_login\":10,\"active_day\":5,\"question\":1,\"question_day_max\":20,\"upload\":10,\"upload_max\":30,\"gate\":2,\"objection\":3,\"ask\":4,\"wishlist\":8,\"handoff\":25,\"idle_decay_pct\":10,\"warm\":25,\"hot\":60}",
+    "upload_types": "pdf,docx,txt,md,html,htm",
+    "mail_welcome_subject": "Your Trilivy demo is ready, {fname}",
+    "mail_welcome_body": "Hello {fname},\n\n{owner_name} has set up a private Trilivy demo for {company}. It is yours for {days} days, until {expires}.\n\nChoose your password here (the link works for {link_hours} hours):\n{link}\n\nThen sign in at {host}. Good first steps:\n- Ask the assistant about the sample company's HR and IT policies (try: \"My VPN keeps disconnecting, what should I do?\").\n- Upload two or three of your own documents under My documents, and ask about them.\n- Click anything that looks interesting, including the greyed items: each one explains what it does in the full platform.\n\nQuestions at any time: use Talk to a person inside the demo, or reply to {owner_email}.\n\nThe Trilivy team",
+    "mail_expiring_subject": "Your Trilivy demo ends on {expires}",
+    "mail_expiring_body": "Hello {fname},\n\nYour Trilivy demo for {company} ends on {expires}. If you would like more time, or want to see Trilivy on your own data in a pilot, reply to {owner_email} or use Talk to a person inside the demo.\n\nSign in: {host}\n\nThe Trilivy team",
+    "mail_ended_subject": "Your Trilivy demo has ended",
+    "mail_ended_body": "Hello {fname},\n\nThank you for trying Trilivy. Your demo has ended, and everything you uploaded will be deleted on {purge_date}.\n\nTo talk about a pilot on your own data, reply to {owner_email}.\n\nThe Trilivy team",
+    "mail_alert_subject": "[Demo] {company}: {what}",
+    "mail_alert_body": "{what}\n\nProspect: {fname} {lname} <{email}>, {company} ({pid})\nScore: {score} ({band})\n\n{detail}\n\nOpen in the Demo Console: {console_link}"
+  }
+}

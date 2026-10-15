@@ -1,0 +1,9 @@
+[Unit]
+Description=Trilivy Demo add-on - daily digest, score decay and backup
+
+[Timer]
+OnCalendar=*-*-* 05:30:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target
