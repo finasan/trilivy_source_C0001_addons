@@ -154,9 +154,9 @@ component output="false" {
             for (var it in ctx.nav) {
                 if (findNoCase("wsDsn=", it.href ?: "")) it.href = reReplaceNoCase(it.href, "wsDsn=[^&]*", "wsDsn=" & ws);
             }
-            ctx.res = [];
+            // Resources (the platform's own list: docs via docs_go, support page) stays: reading is free.
             ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
-            ctx.flags.resources = 0;
+            ctx.flags.resources = 1;
             ctx.flags.supportChat = 0;
             return;
         }
@@ -170,9 +170,8 @@ component output="false" {
         // buttons wrapped it onto two lines and hid the account menu. They are
         // drawn in the DEMO bar under the header (page_top), each opening its popup.
         ctx.nav = nav;
-        ctx.res = [];
         ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
-        ctx.flags.resources = 0;
+        ctx.flags.resources = 1;
         ctx.flags.supportChat = 0;
     }
 

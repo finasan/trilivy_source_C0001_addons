@@ -58,6 +58,17 @@
       "title": "Courses (learner)"
     },
     {
+      "_comment": "The header's Resources menu: its docs open through /ain5py/login/docs_go.cfm (signed hand-off to the docs site); these are its two local pages. Free to read in both experiences (2026-10-16).",
+      "path_patterns": [
+        "/ain5py/supportpages/aboutdoc.cfm",
+        "/ain5py/supportpages/support_text.cfm"
+      ],
+      "mode": "open",
+      "sort": 25,
+      "feature_key": "resources",
+      "title": "Resources (documentation)"
+    },
+    {
       "path_patterns": [
         "/ain5py/ai_docs/deprecated_auditrep/*",
         "/ain5py/ai_docs/xray/*"

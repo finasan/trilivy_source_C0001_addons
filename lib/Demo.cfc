@@ -134,7 +134,7 @@ component output="false" {
         var full = arguments.mode == "explorer";
         session.ur_bot = 1; session.ur_kb = 1; session.ur_courses = 1;
         for (var k in ["ur_panel", "ur_rag", "ur_jumpstart", "ur_manage", "ur_quick", "ur_tips"]) session[k] = full ? 1 : 0;
-        session.ur_resources = 0;
+        session.ur_resources = 1;   // Resources (documentation) is free to read in both experiences
     }
 
     /**
