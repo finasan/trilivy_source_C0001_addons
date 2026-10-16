@@ -4,8 +4,10 @@
       "area": "jumpstart",
       "source": "menu",
       "sort": 1,
+      "explorer_mode": "open",
       "path": "/ain5py/menucenter/ingestion_center_v2.cfm",
       "safety": "unknown",
+      "guided_mode": "open",
       "grp": "index_V2",
       "label": "Step 1 Build the knowledge Ingestion Center RAG Maker…",
       "readonly": 0
@@ -1364,6 +1366,15 @@
       "area": "other",
       "source": "seen",
       "sort": 9999,
+      "path": "/ain5py/frontmenu/menu.cfm",
+      "safety": "unknown",
+      "label": "menu.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
       "path": "/ain5py/manage/menu.cfm",
       "safety": "unknown",
       "label": "menu.cfm",
@@ -1382,9 +1393,27 @@
       "area": "other",
       "source": "seen",
       "sort": 9999,
+      "path": "/ain5py/menucenter/live_bridge/live_bridge.cfm",
+      "safety": "unknown",
+      "label": "live_bridge.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
       "path": "/ain5py/menucenter/mc_v2_data.cfm",
       "safety": "unknown",
       "label": "mc_v2_data.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
+      "path": "/ain5py/public/contact/ticket.cfm",
+      "safety": "unknown",
+      "label": "ticket.cfm",
       "readonly": 0
     },
     {
