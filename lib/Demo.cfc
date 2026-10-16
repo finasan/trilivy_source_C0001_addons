@@ -15,8 +15,8 @@ component output="false" {
     // The Access map's sections, in menu order: key, label, where the pages come from
     variables.AREAS = [
         {key: "main_ai",   label: "Main AI",          src: "frontmenu/menu*.cfm"},
-        {key: "jumpstart", label: "JumpStart",        src: "menucenter/index_V2.cfm + mc_*.cfm"},
-        {key: "rag",       label: "RAG dashboard",    src: "frontend/rag_dashboard.cfm"},
+        {key: "jumpstart", label: "JumpStart",        src: "menucenter/index_V2.cfm, mc_nav_V2.cfm + the Build / Use / Agents centers"},
+        {key: "rag",       label: "RAG dashboard",    src: "frontend/rag_dashboard.cfm (its tool list)"},
         {key: "manage",    label: "Manage menu",      src: "manage/menu_config.cfm"},
         {key: "instance",  label: "Instance menu",    src: "menuinst/icp_menu_config.cfm (Instance Control Panel)"},
         {key: "kb",        label: "Knowledge menu",   src: "kb/menu_config.cfm"},
