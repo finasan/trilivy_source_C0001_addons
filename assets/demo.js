@@ -168,6 +168,122 @@
     });
   }
 
+  // ---------------------------------------------------------------- access map
+  // C.map = {pages: {path: mode}, rx: [[regex, mode], ...]} for this experience
+  // (Demo Console > Access map). Links to Hidden pages are removed, links to
+  // Locked pages get a lock, and an "Open with guardrail" page shows its
+  // instructions once per session + a "What can I do here?" button. Same-origin
+  // frames (the Manage / JumpStart menus) are treated the same way.
+  var MAP = C.map || { pages: {}, rx: [] };
+  var RX = (MAP.rx || []).map(function (r) {
+    try { return [new RegExp(r[0]), r[1]]; } catch (e) { return null; }
+  }).filter(Boolean);
+  function modeOf(path) {
+    path = String(path || "").toLowerCase();
+    if (MAP.pages && Object.prototype.hasOwnProperty.call(MAP.pages, path)) return MAP.pages[path];
+    for (var i = 0; i < RX.length; i++) if (RX[i][0].test(path)) return RX[i][1];
+    return "pitch";
+  }
+  function pathOf(href, doc) {
+    try {
+      var u = new URL(href, doc.baseURI);
+      if (u.origin !== location.origin) return null;
+      return u.pathname.toLowerCase();
+    } catch (e) { return null; }
+  }
+  var LINK_CSS = "a.demo-lk::after{content:' \\1F512';font-size:.85em;opacity:.7}";
+  function markLinks(doc) {
+    if (!doc || !doc.body) return;
+    if (!doc.getElementById("demoLkCss")) {
+      var st = doc.createElement("style"); st.id = "demoLkCss"; st.textContent = LINK_CSS;
+      (doc.head || doc.body).appendChild(st);
+    }
+    doc.querySelectorAll("a[href]").forEach(function (a) {
+      if (a.dataset.demoMk === "1" || a.closest("#demoBar,#demoOv,.demo-bar")) return;
+      a.dataset.demoMk = "1";
+      var p = pathOf(a.getAttribute("href"), doc);
+      if (!p || p === "/ain5py/addon.cfm" || p === "/ain5py/addon_api.cfm" || p.indexOf("/ain5py/login/") === 0) return;
+      var m = modeOf(p);
+      if (m === "hidden") {
+        var li = a.closest("li");
+        (li && li.querySelectorAll("a").length === 1 ? li : a).style.display = "none";
+      } else if (m === "pitch") {
+        a.classList.add("demo-lk");
+      }
+    });
+  }
+
+  var guardPath = null;
+  function openGuard(path, via) {
+    return get("guard", "&path=" + encodeURIComponent(path) + "&via=" + (via || "auto")).then(function (j) {
+      if (!j.ok) return;
+      var ov = shell("In your demo", j.title, false);
+      current = { feature: "guard" };
+      ov.querySelector(".dp-tabs").style.display = "none";
+      ov.querySelector(".dp-body").innerHTML = j.html; // written by operators (Access map)
+      var bar = ov.querySelector(".dp-cta");
+      var ok = document.createElement("button");
+      ok.className = "dp-btn p"; ok.textContent = "Got it"; ok.onclick = close;
+      bar.appendChild(ok);
+      var t = document.createElement("button");
+      t.className = "dp-btn"; t.style.marginLeft = "auto"; t.textContent = "Contact us";
+      t.onclick = function () { talk("", "About " + (j.label || "") + ": "); };
+      bar.appendChild(t);
+    });
+  }
+  function pageLoaded(path) {
+    if (!path) return;
+    var help = document.getElementById("demoHelp");
+    if (modeOf(path) !== "guard") {
+      if (help && guardPath && guardPath === path) help.hidden = true;
+      return;
+    }
+    guardPath = path;
+    if (help) help.hidden = false;
+    var k = "trlvGuard_" + path, seen = false;
+    try { seen = sessionStorage.getItem(k) === "1"; sessionStorage.setItem(k, "1"); } catch (e) { seen = false; }
+    if (!seen && !document.getElementById("demoOv")) openGuard(path, "auto");
+  }
+  function watchDoc(doc) {
+    if (!doc || !doc.body || doc.__demoWatched) return;
+    doc.__demoWatched = true;
+    markLinks(doc);
+    var t = 0;
+    try {
+      new MutationObserver(function () {
+        clearTimeout(t);
+        t = setTimeout(function () { markLinks(doc); hookFrames(doc); }, 150);
+      }).observe(doc.body, { childList: true, subtree: true });
+    } catch (e) {}
+    hookFrames(doc);
+  }
+  function hookFrames(doc) {
+    doc.querySelectorAll("iframe,frame").forEach(function (f) {
+      if (f.__demoHooked || f.closest("#demoOv")) return;
+      f.__demoHooked = true;
+      var onload = function () {
+        try {
+          var fd = f.contentDocument;
+          if (!fd) return;
+          watchDoc(fd);
+          pageLoaded(f.contentWindow.location.pathname.toLowerCase());
+        } catch (e) { /* another origin: leave it */ }
+      };
+      f.addEventListener("load", onload);
+      try { if (f.contentDocument && f.contentDocument.readyState === "complete") onload(); } catch (e) {}
+    });
+  }
+  function startMap() {
+    watchDoc(document);
+    pageLoaded(location.pathname.toLowerCase());
+    var help = document.getElementById("demoHelp");
+    if (help) help.addEventListener("click", function (e) { e.preventDefault(); if (guardPath) openGuard(guardPath, "help"); });
+  }
+  // inside a frame the top window's script does this
+  if (C.where !== "frame") {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", startMap); else startMap();
+  }
+
   // ---------------------------------------------------------------- clicks
   document.addEventListener("click", function (e) {
     var el = e.target.closest ? e.target.closest("[data-demo-feature],[data-demo-action]") : null;

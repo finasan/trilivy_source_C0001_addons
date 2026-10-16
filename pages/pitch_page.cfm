@@ -6,7 +6,7 @@
 <cfset d = demo.sessionDemo()>
 <cfset feature = reReplace(lCase(request.addon.arg), "[^a-z0-9_]", "", "all")>
 <cfif NOT len(feature)><cfset feature = "platform"></cfif>
-<cfset c = demo.card(feature, d.audience ?: "business", d.language ?: "en")>
+<cfset c = demo.card(feature, d.audience ?: "business", d.language ?: "en", reReplace(lCase(url.fb ?: ""), "[^a-z0-9_]", "", "all"))>
 <cfoutput>
 <div style="font:15px/1.6 var(--fs);color:##1b2333;max-width:760px;margin:30px auto;padding:0 16px">
 <cfif structIsEmpty(c)>

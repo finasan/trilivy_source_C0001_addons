@@ -100,6 +100,27 @@ def main():
             cur.execute("UPDATE cx_demo_settings SET v=%s WHERE k=%s", (val, key))
             s_updated += 1
     out["settings_added"], out["settings_updated"] = s_added, s_updated
+
+    # access map (cx_demo_pages): missing pages added; a page nobody changed on
+    # this box since the seed (updated_by NULL or 'seed') follows the seed
+    p_added = p_updated = 0
+    cols = ("area", "grp", "label", "sort", "guided_mode", "explorer_mode", "readonly", "safety",
+            "guard_title", "guard_html", "card_key", "source")
+    for pg in load("pages.json").get("pages", []):
+        vals = tuple(pg.get(k) for k in cols)
+        vals = vals[:3] + (int(pg.get("sort", 1000)),) + vals[4:6] + (int(pg.get("readonly", 0)), pg.get("safety", "unknown")) \
+            + vals[8:11] + (pg.get("source", "menu"),)
+        cur.execute("SELECT id, updated_by FROM cx_demo_pages WHERE path=%s", (pg["path"],))
+        row = cur.fetchone()
+        if not row:
+            cur.execute("INSERT INTO cx_demo_pages (" + ", ".join(cols) + ", path, updated_by) VALUES ("
+                        + ", ".join(["%s"] * len(cols)) + ", %s, 'seed')", vals + (pg["path"],))
+            p_added += 1
+        elif row["updated_by"] in (None, "", "seed"):
+            cur.execute("UPDATE cx_demo_pages SET " + ", ".join(k + "=%s" for k in cols) + ", updated_by='seed' WHERE id=%s",
+                        vals + (row["id"],))
+            p_updated += cur.rowcount
+    out["pages_added"], out["pages_updated"] = p_added, p_updated
     c.commit()
 
     # operators (accounts live in ai_data)

@@ -44,6 +44,16 @@
         var ops = [];
         for (var r5 in o) arrayAppend(ops, {email: r5.email, role: r5.role, display_name: r5.display_name ?: ""});
         out.operators = {"_comment": "Accounts must exist on the box; bootstrap links them by e-mail.", operators: ops};
+        var pq = queryExecute("SELECT * FROM cx_demo_pages ORDER BY area, sort, path", {}, {datasource: "addon_demo"});
+        var pgs = [];
+        for (var r6 in pq) {
+            var row6 = {path: r6.path, area: r6.area, label: r6.label, sort: r6.sort, safety: r6.safety, readonly: val(r6.readonly), source: r6.source};
+            for (var k6 in ["grp", "guided_mode", "explorer_mode", "guard_title", "guard_html", "card_key"]) {
+                if (len(r6[k6] ?: "")) row6[k6] = r6[k6];
+            }
+            arrayAppend(pgs, row6);
+        }
+        out.pages = {"_comment": "Access map (Demo Console). Empty mode = inherit from features.json.", pages: pgs};
         return out;
     }
 </cfscript>
@@ -57,7 +67,7 @@
                 <cfset dir = exportRoot & "/" & stamp>
                 <cfdirectory action="create" directory="#dir#" recurse="true">
                 <cfset data = exportData()>
-                <cfloop list="features,pitch,settings,operators" item="k">
+                <cfloop list="features,pitch,settings,operators,pages" item="k">
                     <cffile action="write" file="#dir#/#k#.json" output="#demo.toJson(data[k])#" charset="utf-8">
                 </cfloop>
                 <cffile action="write" file="#dir#/EXPORT.json" output="#demo.toJson({addon: 'demo', from_version: meta.version, at: dateTimeFormat(now(), 'yyyy-mm-dd HH:nn:ss'), by: op.email ?: op.oid, host: cgi.server_name})#">
@@ -109,6 +119,7 @@
     SELECT 'pitch card' AS what, CONCAT(feature_key,'/',audience,'/',lang) AS name, updated_at FROM cx_demo_pitch WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
     UNION ALL SELECT 'setting', k, updated_at FROM cx_demo_settings WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND k NOT LIKE 'state\_%' AND updated_at > :t
     UNION ALL SELECT 'operator', email, created_at FROM cx_demo_operators WHERE role <> 'system' AND created_at > :t
+    UNION ALL SELECT 'access map', path, updated_at FROM cx_demo_pages WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
     ORDER BY 3 DESC", {t: {value: lastExport, cfsqltype: "cf_sql_timestamp"}}, {datasource: "addon_demo"})>
 <cfset settings = queryExecute("SELECT k, v, updated_at, updated_by FROM cx_demo_settings WHERE k NOT LIKE 'state\_%' ORDER BY k", {}, {datasource: "addon_demo"})>
 

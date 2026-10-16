@@ -117,7 +117,14 @@ component output="false" {
             demo.logEvent(d.pid, "audit_view", {feature: f.key, page: left(path, 255)});
             return {action: "continue"};
         }
-        if (f.mode == "open" || f.mode == "capped") {
+        // A page no menu lists yet shows up in the Access map (it stays inherited).
+        if (!f.page && !isAddon && !isApiPath(path) && cgi.request_method == "GET" && reFind("\.cfm$", path)) demo.registerSeen(path);
+        if (f.mode == "open" || f.mode == "capped" || f.mode == "guard") {
+            // "Open with guardrail" + read-only: the page shows, saving on it does not
+            if (f.readonly && cgi.request_method != "GET") {
+                demo.logEvent(d.pid, "readonly_blocked", {feature: f.key, page: left(path, 255)});
+                return {action: "deny", message: "In the demo this page is read-only: you can look at everything, but saving is turned off."};
+            }
             if (!isAddon && !isApiPath(path) && cgi.request_method == "GET") {
                 demo.logEvent(d.pid, "page_view", {feature: f.key, page: left(path & (len(cgi.query_string) ? "?" & cgi.query_string : ""), 255)});
             }
@@ -131,7 +138,9 @@ component output="false" {
             // Inside a frame (the Manage / JumpStart menus) keep embed=1, or the card
             // page brings its own platform header and the frame shows a second one.
             var framed = (url.embed ?: "") == "1" || (form.embed ?: "") == "1" || lCase(cgi.http_sec_fetch_dest ?: "") == "iframe";
-            return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=pitch_page&arg=" & urlEncodedFormat(f.key) & (framed ? "&embed=1" : "")};
+            // the page's own card (Access map), else its group's card
+            return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=pitch_page&arg=" & urlEncodedFormat(f.card)
+                                             & (f.card != f.key ? "&fb=" & urlEncodedFormat(f.key) : "") & (framed ? "&embed=1" : "")};
         }
         demo.logEvent(d.pid, "page_denied", {feature: f.key, page: path});
         return {action: "deny", message: "This page is not part of the demo."};
@@ -175,6 +184,39 @@ component output="false" {
         ctx.flags.supportChat = 0;
     }
 
+    // ------------------------------------------------------------- menu_filter
+    // Manage / KB / Quick menus: every render records the menu's pages for the
+    // Access map (at most every 10 minutes); for a prospect, Hidden pages and
+    // links that leave the box are taken out, and empty groups with them.
+    public void function menu_filter(required struct ctx) {
+        var base = "/ain5py/" & lCase(ctx.area ?: "") & "/";
+        try { demo.registerMenu(ctx.area, ctx.menu, base); } catch (any e) {}
+        if (!isProspect()) return;
+        var d = demo.sessionDemo();
+        if (d.missing ?: true) return;
+        ctx.menu = pruneMenu(ctx.menu, base, d.mode);
+    }
+
+    private array function pruneMenu(required array items, required string base, required string mode) {
+        var out = [];
+        for (var it in arguments.items) {
+            if (!isStruct(it)) { arrayAppend(out, it); continue; }
+            var c = structCopy(it);
+            var u = trim(it.url ?: "");
+            if (len(u)) {
+                if (reFindNoCase("^(https?:)?//", u)) continue;
+                var p = demo.normPath(u, arguments.base);
+                if (len(p) && demo.classify(p, arguments.mode).mode == "hidden") continue;
+            }
+            if (isArray(it.children ?: "")) {
+                c.children = pruneMenu(it.children, arguments.base, arguments.mode);
+                if (!arrayLen(c.children) && !len(u)) continue;
+            }
+            arrayAppend(out, c);
+        }
+        return out;
+    }
+
     // ------------------------------------------------------------- page_top
     public string function page_top(required struct ctx) {
         if (isOperator()) {
@@ -187,9 +229,10 @@ component output="false" {
         var cfg = {
             pid: d.pid, audience: d.audience, lang: d.language, daysLeft: d.daysLeft,
             company: d.company, where: ctx.where ?: "header", wsDsn: d.db,
-            api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon"
+            api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon",
+            map: demo.clientMap(d.mode)
         };
-        var left_ = d.daysLeft == 1 ? "1 day left" : d.daysLeft & " days left";
+        var left_ =d.daysLeft == 1 ? "1 day left" : d.daysLeft & " days left";
         var locked = "";
         for (var f in demo.navPitchItems(d.mode)) {
             locked &='<a href="/ain5py/addon.cfm?a=demo&p=pitch_page&arg=' & encodeForURL(f.feature_key) & '" class="demo-lock" data-demo-feature="'
@@ -201,6 +244,7 @@ component output="false" {
              & '<span class="demo-left">' & encodeForHTML(left_) & '</span>'
              & demo.switchHtml(d.mode)
              & '<span class="demo-locks">' & locked & '</span>'
+             & '<a href="##" class="demo-help" id="demoHelp" hidden>What can I do here?</a>'
              & '<a href="##" class="demo-talk" data-demo-action="talk">Contact us</a></div>'
              & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'
              & '<script src="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.js" defer></script>';
@@ -214,7 +258,8 @@ component output="false" {
         var cfg = {
             pid: d.pid, audience: d.audience, lang: d.language, daysLeft: d.daysLeft,
             company: d.company, where: "frame", wsDsn: d.db,
-            api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon"
+            api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon",
+            map: demo.clientMap(d.mode)
         };
         return '<link rel="stylesheet" href="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.css">'
              & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'

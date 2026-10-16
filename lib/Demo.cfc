@@ -208,12 +208,192 @@ component output="false" {
     public struct function classify(required string path, string experience = "guided") {
         var p = lCase(arguments.path);
         var ex = arguments.experience == "explorer";
-        for (var f in features()) {
-            for (var rx in f.rx) {
-                if (reFind(rx, p)) return {key: f.feature_key, mode: ex ? f.explorer_mode : f.mode, title: f.title};
+        var f = {key: "platform", mode: "pitch", title: "Everything else in the full platform"};
+        var hit = false;
+        for (var ft in features()) {
+            for (var rx in ft.rx) {
+                if (reFind(rx, p)) { f = {key: ft.feature_key, mode: ex ? ft.explorer_mode : ft.mode, title: ft.title}; hit = true; break; }
             }
+            if (hit) break;
         }
-        return {key: "platform", mode: "pitch", title: "Everything else in the full platform"};
+        // The Access map (cx_demo_pages) decides page by page; an empty mode inherits
+        // the feature map above. "guard" = open with an instructions popup.
+        f.page = false; f.readonly = false; f.card = f.key; f.label = f.title; f.safety = ""; f.inherited = f.mode;
+        var pg = pages()[p] ?: {};
+        if (!structIsEmpty(pg)) {
+            f.page = true; f.label = pg.label; f.safety = pg.safety; f.readonly = val(pg.readonly) == 1;
+            var m = ex ? (pg.explorer_mode ?: "") : (pg.guided_mode ?: "");
+            if (len(m)) f.mode = m;
+            if (len(pg.card_key ?: "")) f.card = pg.card_key;
+            // never open a page that shows other prospects' data or changes the server
+            if (listFind("boxwide,server", pg.safety) && listFind("open,capped,guard", f.mode)) f.mode = "pitch";
+        }
+        if (f.mode != "guard") f.readonly = false;
+        return f;
+    }
+
+    // ------------------------------------------------------------------ access map
+    /** cx_demo_pages by lower-case path, cached 2 minutes. */
+    public struct function pages() {
+        var c = application.demo_pages ?: {};
+        if (structKeyExists(c, "at") && dateDiff("s", c.at, now()) LT 120) return c.map;
+        var m = {};
+        try {
+            var q = queryExecute("SELECT * FROM cx_demo_pages", {}, {datasource: variables.dsn});
+            for (var r in q) m[r.path] = r;
+        } catch (any e) {}
+        application.demo_pages = {at: now(), map: m};
+        return m;
+    }
+
+    public void function pagesChanged() {
+        structDelete(application, "demo_pages");
+        structDelete(application, "demo_clientmap");
+        structDelete(application, "demo_features");
+    }
+
+    /** A menu link as a lower-case site path ("" for external links, anchors, expressions). */
+    public string function normPath(required string href, string base = "/ain5py/") {
+        var h = trim(arguments.href);
+        if (!len(h) || find("##", h) || reFindNoCase("^(https?:|//|javascript:|mailto:)", h)) return "";
+        h = listFirst(h, "?");
+        if (left(h, 1) != "/") h = arguments.base & h;
+        var parts = [];
+        for (var s in listToArray(h, "/")) {
+            if (s == "..") { if (arrayLen(parts)) arrayDeleteAt(parts, arrayLen(parts)); }
+            else if (s != ".") arrayAppend(parts, s);
+        }
+        var p = lCase("/" & arrayToList(parts, "/"));
+        if (!reFind("\.(cfm|html?)$", p)) return "";
+        return left(p, 255);
+    }
+
+    /** Records the pages of a platform menu (menu_filter: manage, kb, quick); at most every 10 minutes per area. */
+    public void function registerMenu(required string area, required array menu, required string base, boolean force = false) {
+        var key = "demo_reg_" & arguments.area;
+        if (!arguments.force && structKeyExists(application, key) && dateDiff("n", application[key], now()) LT 10) return;
+        application[key] = now();
+        var rows = [];
+        walkMenu(arguments.menu, "", arguments.base, rows);
+        upsertPages(arguments.area, rows, "menu");
+    }
+
+    private void function walkMenu(required array items, required string grp, required string base, required array rows) {
+        for (var it in arguments.items) {
+            if (!isStruct(it)) continue;
+            var lbl = trim(it.label ?: (it.title ?: ""));
+            if (len(it.url ?: "")) {
+                var p = normPath(it.url, arguments.base);
+                if (len(p)) arrayAppend(arguments.rows, {path: p, label: len(lbl) ? lbl : listLast(p, "/"), grp: arguments.grp});
+            }
+            if (isArray(it.children ?: "")) walkMenu(it.children, lbl, arguments.base, arguments.rows);
+        }
+    }
+
+    public numeric function upsertPages(required string area, required array rows, string source = "menu") {
+        var n = 0, i = 0;
+        for (var r in arguments.rows) {
+            i++;
+            // A row first met as "seen" (a prospect opened it) takes the menu's label and place.
+            queryExecute("INSERT INTO cx_demo_pages (path, area, grp, label, sort, source) VALUES (:p, :a, :g, :l, :s, :src)
+                ON DUPLICATE KEY UPDATE
+                  label = IF(source = 'seen', VALUES(label), label),
+                  grp   = IF(source = 'seen' OR grp IS NULL, VALUES(grp), grp),
+                  area  = IF(source = 'seen', VALUES(area), area),
+                  sort  = IF(source = 'seen', VALUES(sort), sort),
+                  source = IF(source = 'seen', VALUES(source), source)", {
+                p: r.path, a: arguments.area, g: {value: left(r.grp ?: "", 80), null: !len(r.grp ?: "")},
+                l: left(r.label, 120), s: {value: i, cfsqltype: "cf_sql_integer"}, src: arguments.source
+            }, {datasource: variables.dsn, result: "local.res"});
+            if (val(local.res.recordCount ?: 0) == 1) n++;
+        }
+        pagesChanged();
+        return n;
+    }
+
+    /** A page a prospect opened that no menu lists yet: recorded so it shows in the Access map (it stays inherited). */
+    public void function registerSeen(required string path) {
+        if (structKeyExists(pages(), arguments.path)) return;
+        try {
+            queryExecute("INSERT IGNORE INTO cx_demo_pages (path, area, label, sort, source) VALUES (:p, 'other', :l, 9999, 'seen')",
+                {p: left(arguments.path, 255), l: listLast(arguments.path, "/")}, {datasource: variables.dsn});
+            pagesChanged();
+        } catch (any e) {}
+    }
+
+    /**
+     * Reads the menus that are plain pages (Main AI, JumpStart, RAG dashboard) and
+     * the three menu_config areas, and records every link. Returns {area: count}.
+     */
+    public struct function scanMenus() {
+        var out = {};
+        for (var area in ["manage", "kb", "quick"]) {
+            try {
+                var box = {menu: []};
+                module template="/trlvaddons/demo/lib/menu_probe.cfm" attributeCollection={area: area, out: box};
+                var rows = [];
+                walkMenu(box.menu, "", "/ain5py/" & area & "/", rows);
+                upsertPages(area, rows, "menu");
+                out[area] = arrayLen(rows);
+            } catch (any e) { out[area] = "error: " & e.message; }
+        }
+        var srcs = [
+            {area: "main_ai",   base: "/ain5py/frontmenu/",  files: ["frontmenu/menu.cfm", "frontmenu/menu_agents.cfm", "frontmenu/menu_rag_ingest.cfm", "frontmenu/menu_ragmgt.cfm", "frontmenu/menu_smart.cfm", "frontmenu/menu_training.cfm"]},
+            {area: "jumpstart", base: "/ain5py/menucenter/", files: ["menucenter/index_V2.cfm", "menucenter/mc_appsbar.cfm", "menucenter/mc_nav_V2.cfm", "menucenter/mc_shell.cfm"]},
+            {area: "rag",       base: "/ain5py/frontend/",   files: ["frontend/rag_dashboard.cfm"]}
+        ];
+        for (var s in srcs) {
+            var rows = [];
+            for (var fn in s.files) {
+                var fp = expandPath("/ain5py/" & fn);
+                if (!fileExists(fp)) continue;
+                var src = fileRead(fp);
+                var grp = reReplace(listLast(fn, "/"), "\.cfm$", "");
+                for (var a in reMatchNoCase("<a\s[^>]*href\s*=\s*""[^""]+""[^>]*>[\s\S]*?</a>", src)) {
+                    var href = reReplaceNoCase(a, "^[\s\S]*?href\s*=\s*""([^""]+)""[\s\S]*$", "\1");
+                    var p = normPath(href, s.base);
+                    if (!len(p)) continue;
+                    var lbl = trim(reReplace(reReplace(reReplace(a, "<[^>]*>", " ", "all"), "&[a-z##0-9]+;", " ", "all"), "\s+", " ", "all"));
+                    if (find("##", lbl) || !len(lbl)) lbl = listLast(p, "/");
+                    arrayAppend(rows, {path: p, label: left(lbl, 120), grp: grp});
+                }
+            }
+            upsertPages(s.area, rows, "menu");
+            out[s.area] = arrayLen(rows);
+        }
+        return out;
+    }
+
+    /** What demo.js needs to mark links: the Access map rows' effective modes + the feature map's patterns. */
+    public struct function clientMap(required string experience) {
+        var c = application.demo_clientmap ?: {};
+        if (structKeyExists(c, arguments.experience) && dateDiff("s", c[arguments.experience].at, now()) LT 120) return c[arguments.experience].m;
+        var ex = arguments.experience == "explorer";
+        var pg = {};
+        for (var p in pages()) pg[p] = classify(p, arguments.experience).mode;
+        var rx = [];
+        for (var f in features()) {
+            for (var r in f.rx) arrayAppend(rx, [r, ex ? f.explorer_mode : f.mode]);
+        }
+        var m = {pages: pg, rx: rx};
+        c[arguments.experience] = {at: now(), m: m};
+        application.demo_clientmap = c;
+        return m;
+    }
+
+    /** The instructions popup of an "Open with guardrail" page. */
+    public struct function guardInfo(required string path, string experience = "guided") {
+        var f = classify(arguments.path, arguments.experience);
+        if (f.mode != "guard") return {ok: false};
+        var pg = pages()[lCase(arguments.path)] ?: {};
+        var lbl = pg.label ?: f.label;
+        var html = trim(pg.guard_html ?: "");
+        if (!len(html)) {
+            html = "<p>This is the real <b>" & encodeForHTML(lbl) & "</b> page, working on your own private copy of Trilivy. "
+                 & "What you change here affects only your demo.</p>";
+        }
+        if (f.readonly) html &= "<p><b>Read-only in the demo:</b> you can look at everything here, but saving is turned off.</p>";
+        return {ok: true, title: len(trim(pg.guard_title ?: "")) ? pg.guard_title : "You are using: " & lbl, html: html, label: lbl, readonly: f.readonly};
     }
 
     public array function navPitchItems(string experience = "guided") {
@@ -360,12 +540,14 @@ component output="false" {
 
     // ------------------------------------------------------------------ pitch cards
     /** The best card for a feature: exact audience+language, then business, then English; live only (drafts too while pitch_show_drafts=1). */
-    public struct function card(required string feature, string audience = "business", string lang = "en") {
+    public struct function card(required string feature, string audience = "business", string lang = "en", string fallback = "") {
         var statuses = setting("pitch_show_drafts", "0") == "1" ? "'live','verified','draft'" : "'live'";
         var q = queryExecute("SELECT * FROM cx_demo_pitch WHERE feature_key = :f AND status IN (#statuses#)
                               ORDER BY (audience = :a) DESC, (audience = 'business') DESC, (lang = :l) DESC, (lang = 'en') DESC,
                                        FIELD(status, 'live', 'verified', 'draft') LIMIT 1",
             {f: arguments.feature, a: arguments.audience, l: arguments.lang}, {datasource: variables.dsn});
+        // a page's own card (Access map card_key) not written yet: the group's card
+        if (!q.recordCount && len(arguments.fallback) && arguments.fallback != arguments.feature) return card(arguments.fallback, arguments.audience, arguments.lang);
         // "rag_maker__ex" (a Full-platform map entry) uses the card of "rag_maker"
         if (!q.recordCount && find("__", arguments.feature)) return card(reReplace(arguments.feature, "__.*$", ""), arguments.audience, arguments.lang);
         if (!q.recordCount && arguments.feature != "platform") return card("platform", arguments.audience, arguments.lang);

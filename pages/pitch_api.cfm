@@ -7,7 +7,7 @@
 
 <cfswitch expression="#opn#">
     <cfcase value="card">
-        <cfset c = demo.card(feature, d.audience, d.language)>
+        <cfset c = demo.card(feature, d.audience, d.language, reReplace(lCase(url.fb ?: ""), "[^a-z0-9_]", "", "all"))>
         <cfif structIsEmpty(c)><cfset demo.json({ok: false, error: "no card"}, 404)></cfif>
         <cfset via = reReplace(url.via ?: "popup", "[^a-z_]", "", "all")>
         <cfif left(feature, 7) EQ "moment_">
@@ -23,6 +23,15 @@
             objections: c.objections, proof: c.proof_html ?: "", cta: ["talk"], draft: c.isDraft,
             canAsk: len(trim(demo.setting("sales_engineer_instance", ""))) GT 0
         }})>
+    </cfcase>
+
+    <cfcase value="guard">
+        <!--- the instructions popup of an "Open with guardrail" page (Access map) --->
+        <cfset pth = lCase(left(reReplace(url.path ?: "", "[^A-Za-z0-9/_.-]", "", "all"), 255))>
+        <cfset g = demo.guardInfo(pth, d.mode)>
+        <cfif NOT g.ok><cfset demo.json({ok: false}, 404)></cfif>
+        <cfset demo.logEvent(d.pid, (url.via ?: "") EQ "help" ? "guard_help" : "guard_shown", {page: pth})>
+        <cfset demo.json({ok: true, title: g.title, html: g.html, label: g.label, readonly: g.readonly})>
     </cfcase>
 
     <cfcase value="event">
