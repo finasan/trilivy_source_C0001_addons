@@ -80,14 +80,19 @@
     </cftry>
 </cfif>
 
-<!--- every row, classified for both experiences; counts per section --->
-<!--- is_gone: a later scan of the page's section did not find it (decided in MySQL: one clock) --->
-<cfset rows = queryExecute("
-    SELECT p.*, (p.source = 'menu' AND s.v IS NOT NULL AND (p.menu_seen_at IS NULL OR
-           p.menu_seen_at < STR_TO_DATE(SUBSTRING_INDEX(s.v, '|', 1), '%Y-%m-%d %H:%i:%s') - INTERVAL 60 SECOND)) AS is_gone,
-           TIMESTAMPDIFF(MINUTE, p.menu_seen_at, NOW()) AS seen_mins
-    FROM cx_demo_pages p LEFT JOIN cx_demo_settings s ON s.k = CONCAT('state_scan_', p.area)
-    ORDER BY FIELD(p.area, #listQualify(arrayToList(AREA_KEYS), "'")#), p.sort, p.label", {}, {datasource: "addon_demo"})>
+<!--- Nothing scanned yet (a new box): scan once, so every section has its menu --->
+<cfif canEdit AND NOT queryExecute("SELECT COUNT(*) AS n FROM cx_demo_page_links", {}, {datasource: "addon_demo"}).n>
+    <cftry><cfset demo.scanMenus()><cfcatch></cfcatch></cftry>
+</cfif>
+<!--- One setting per page (cx_demo_pages); a page shows in every section whose menu
+      links to it (cx_demo_page_links), under that menu's group and label.
+      is_gone: a later scan of that section did not find the link (decided in MySQL: one clock). --->
+<cfset rows = queryExecute("SELECT p.*, TIMESTAMPDIFF(MINUTE, p.menu_seen_at, NOW()) AS seen_mins FROM cx_demo_pages p", {}, {datasource: "addon_demo"})>
+<cfset links = queryExecute("
+    SELECT l.area, l.path, l.grp, l.label, l.sort,
+           (s.v IS NOT NULL AND l.seen_at < STR_TO_DATE(SUBSTRING_INDEX(s.v, '|', 1), '%Y-%m-%d %H:%i:%s') - INTERVAL 60 SECOND) AS is_gone
+    FROM cx_demo_page_links l LEFT JOIN cx_demo_settings s ON s.k = CONCAT('state_scan_', l.area)
+    ORDER BY FIELD(l.area, #listQualify(arrayToList(AREA_KEYS), "'")#), l.sort", {}, {datasource: "addon_demo"})>
 <cfset ownCards = {}>
 <cfset qc = queryExecute("SELECT DISTINCT feature_key FROM cx_demo_pitch WHERE status <> 'retired'", {}, {datasource: "addon_demo"})>
 <cfloop query="qc"><cfset ownCards[qc.feature_key] = 1></cfloop>
@@ -95,22 +100,40 @@
 <cfset ZERO = {open: 0, capped: 0, guard: 0, pitch: 0, hidden: 0}>
 <cfset per = {}><cfset tot = {guided: duplicate(ZERO), explorer: duplicate(ZERO), n: 0}>
 <cfloop array="#AREAS#" item="ar"><cfset per[ar.key] = {guided: duplicate(ZERO), explorer: duplicate(ZERO), n: 0, gone: 0, unknown: 0}></cfloop>
-<cfset all = []>
+<!--- each page once: classified for both experiences --->
+<cfset byPath = {}><cfset alsoIn = {}>
 <cfloop query="rows">
-    <cfset r = queryGetRow(rows, rows.currentRow)>
-    <cfif NOT structKeyExists(per, r.area)><cfset r.area = "other"></cfif>
-    <cfset r.fg = demo.classify(r.path, "guided")>
-    <cfset r.fe = demo.classify(r.path, "explorer")>
+    <cfset pg = queryGetRow(rows, rows.currentRow)>
+    <cfset pg.fg = demo.classify(pg.path, "guided")>
+    <cfset pg.fe = demo.classify(pg.path, "explorer")>
     <!--- Full platform keeps every menu item: Hidden works as Locked there --->
-    <cfif r.fe.mode EQ "hidden"><cfset r.fe.mode = "pitch"><cfset r.fe.asHidden = true></cfif>
-    <cfset r.gone = val(r.is_gone ?: 0) EQ 1>
-    <cfset r.chosen = len((r.guided_mode ?: "") & (r.explorer_mode ?: "")) GT 0>
-    <cfset pa = per[r.area]>
-    <cfset pa.n++><cfset pa.guided[r.fg.mode]++><cfset pa.explorer[r.fe.mode]++>
-    <cfif r.gone><cfset pa.gone++></cfif>
-    <cfif r.safety EQ "unknown"><cfset pa.unknown++></cfif>
-    <cfset tot.n++><cfset tot.guided[r.fg.mode]++><cfset tot.explorer[r.fe.mode]++>
-    <cfset arrayAppend(all, r)>
+    <cfif pg.fe.mode EQ "hidden"><cfset pg.fe.mode = "pitch"><cfset pg.fe.asHidden = true></cfif>
+    <cfset pg.chosen = len((pg.guided_mode ?: "") & (pg.explorer_mode ?: "")) GT 0>
+    <cfset byPath[pg.path] = pg><cfset alsoIn[pg.path] = []>
+    <cfset tot.n++><cfset tot.guided[pg.fg.mode]++><cfset tot.explorer[pg.fe.mode]++>
+</cfloop>
+<!--- the entries of each section: its menu's links; a page no menu links to stays in its own area --->
+<cfset areaLabel = {}><cfloop array="#AREAS#" item="ar"><cfset areaLabel[ar.key] = ar.label></cfloop>
+<cfset all = []><cfset linked = {}>
+<cfloop query="links">
+    <cfif NOT structKeyExists(byPath, links.path) OR NOT structKeyExists(per, links.area)><cfcontinue></cfif>
+    <cfset arrayAppend(all, {pg: byPath[links.path], area: links.area, grp: links.grp ?: "", label: links.label, gone: val(links.is_gone) EQ 1})>
+    <cfset linked[links.path] = 1>
+    <cfif NOT arrayFind(alsoIn[links.path], links.area)><cfset arrayAppend(alsoIn[links.path], links.area)></cfif>
+</cfloop>
+<cfset scannedArea = {}><cfloop array="#AREAS#" item="ar"><cfset scannedArea[ar.key] = scans[ar.key].ok></cfloop>
+<cfloop query="rows">
+    <cfif structKeyExists(linked, rows.path)><cfcontinue></cfif>
+    <cfset ar_ = structKeyExists(per, rows.area) ? rows.area : "other">
+    <!--- a menu page that the last scan of its section did not find --->
+    <cfset arrayAppend(all, {pg: byPath[rows.path], area: ar_, grp: rows.grp ?: "", label: rows.label, gone: rows.source EQ "menu" AND scannedArea[ar_]})>
+    <cfset arrayAppend(alsoIn[rows.path], ar_)>
+</cfloop>
+<cfloop array="#all#" item="en">
+    <cfset pa = per[en.area]>
+    <cfset pa.n++><cfset pa.guided[en.pg.fg.mode]++><cfset pa.explorer[en.pg.fe.mode]++>
+    <cfif en.gone><cfset pa.gone++></cfif>
+    <cfif en.pg.safety EQ "unknown"><cfset pa.unknown++></cfif>
 </cfloop>
 <!--- the section shown: the chosen one, else the first with pages; a search looks everywhere --->
 <cfset searching = len(trim(url.q)) GT 0>
@@ -119,15 +142,21 @@
     <cfif NOT len(url.area)><cfset url.area = AREAS[1].key></cfif>
 </cfif>
 <cfset curArea = AREAS[1]><cfloop array="#AREAS#" item="ar"><cfif ar.key EQ url.area><cfset curArea = ar></cfif></cfloop>
-<cfset list = []>
-<cfloop array="#all#" item="r">
-    <cfif NOT searching AND r.area NEQ url.area><cfcontinue></cfif>
-    <cfif searching AND NOT findNoCase(trim(url.q), r.label & " " & r.path & " " & (r.grp ?: ""))><cfcontinue></cfif>
+<cfset list = []><cfset shown = {}>
+<cfloop array="#all#" item="en">
+    <cfif NOT searching AND en.area NEQ url.area><cfcontinue></cfif>
+    <!--- a search shows each page once (its first section) --->
+    <cfif searching AND (structKeyExists(shown, en.pg.path) OR NOT findNoCase(trim(url.q), en.label & " " & en.pg.label & " " & en.pg.path & " " & en.grp))><cfcontinue></cfif>
+    <cfset r = structCopy(en.pg)>
+    <cfset r.area = en.area><cfset r.grp = en.grp><cfset r.label = en.label><cfset r.gone = en.gone>
+    <cfset r.others = []>
+    <cfloop array="#alsoIn[r.path]#" item="oa"><cfif oa NEQ en.area><cfset arrayAppend(r.others, areaLabel[oa])></cfif></cfloop>
     <cfif url.show EQ "set" AND NOT r.chosen><cfcontinue></cfif>
     <cfif url.show EQ "fullopen" AND NOT listFind("open,capped,guard", r.fe.mode)><cfcontinue></cfif>
     <cfif url.show EQ "unknown" AND r.safety NEQ "unknown"><cfcontinue></cfif>
     <cfif url.show EQ "unsafe" AND NOT listFind("boxwide,server", r.safety)><cfcontinue></cfif>
     <cfif url.show EQ "gone" AND NOT r.gone><cfcontinue></cfif>
+    <cfset shown[r.path] = 1>
     <cfset arrayAppend(list, r)>
 </cfloop>
 <!--- rows into the menu's own groups, in menu order --->
@@ -242,7 +271,7 @@
 <p class="muted" style="margin-top:-6px">Page by page, what a prospect gets in each experience, organised by the menu each page comes from.
 <b>Open</b>: the page works. <b>Open + guardrail</b>: it works, with your instructions in a popup the first time (and a "What can I do here?" button); read-only turns saving off.
 <b>Locked</b>: the sales popup (the page's own card, else its group's). <b>Hidden</b>: out of the menus in Guided; in Full platform the menus always stay complete, so Hidden works as Locked there.
-<b>Inherit</b> follows the feature map.</p>
+<b>Inherit</b> follows the feature map. A page that several menus link to has <b>one</b> setting: it shows in each of those sections (tagged "also in"), and a change in one is a change in all.</p>
 <cfif len(msg)><div class="note #msgKind#">#encodeForHTML(msg)#</div></cfif>
 
 <div class="am2">
@@ -343,7 +372,7 @@
                     <cfset ownKey = len(r.card_key ?: "") ? r.card_key : "pg_" & r.id>
                     <cfset hasGuard = len(r.guard_html ?: "") OR len(r.guard_title ?: "")>
                     <tr>
-                        <td class="lbl" title="#encodeForHTMLAttribute(r.label & ' — ' & r.path)#"><b>#encodeForHTML(r.label)#<cfif r.gone><span class="tag gone">no longer in the menu</span></cfif><cfif r.source EQ "seen"><span class="tag">opened by a prospect</span></cfif></b>
+                        <td class="lbl" title="#encodeForHTMLAttribute(r.label & ' — ' & r.path)#"><b>#encodeForHTML(r.label)#<cfif r.gone><span class="tag gone">no longer in the menu</span></cfif><cfif r.source EQ "seen"><span class="tag">opened by a prospect</span></cfif><cfif arrayLen(r.others)><span class="tag" title="One setting for this page: a change here is a change there too">also in #encodeForHTML(arrayToList(r.others, ", "))#</span></cfif></b>
                             <span class="mono small muted">#encodeForHTML(r.path)#</span></td>
                         <td><cfif canEdit><select name="sf_#r.id#" class="sf" data-cur="#r.safety#"><cfloop list="sandbox,boxwide,server,unknown" item="s"><option value="#s#" #r.safety EQ s ? "selected" : ""#>#s#</option></cfloop></select>
                             <cfelse><span class="dbadge #unsafe ? 'b-red' : (r.safety EQ 'sandbox' ? 'b-green' : 'b-grey')#">#r.safety#</span></cfif></td>

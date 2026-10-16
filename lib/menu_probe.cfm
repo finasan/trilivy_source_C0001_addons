@@ -12,10 +12,13 @@
     <cfset playerUrl = "/ain5py/lms_workshop/player">
     <cfset actionRegistryUrl = "/ain5py/actionregistry">
     <cfset botxAdminUrl = "/ain5py/boty/admin">
-    <cfinclude template="/ain5py/menuinst/icp_menu_config.cfm">
-    <cfif structKeyExists(variables, "icpMenu") AND isArray(variables.icpMenu)>
-        <cfset attributes.out.menu = variables.icpMenu>
-    </cfif>
+    <!--- icp_menu_config.cfm starts with "var wsDsn = ...": it only runs inside a function --->
+    <cffunction name="_icpMenu" returntype="any" output="false">
+        <cfinclude template="/ain5py/menuinst/icp_menu_config.cfm">
+        <cfreturn variables.icpMenu ?: []>
+    </cffunction>
+    <cfset _m = _icpMenu()>
+    <cfif isArray(_m)><cfset attributes.out.menu = _m></cfif>
     <cfexit>
 </cfif>
 <cfif NOT listFind("manage,kb,quick", attributes.area)><cfexit></cfif>

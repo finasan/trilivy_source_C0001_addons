@@ -354,20 +354,25 @@ component output="false" {
             // A row of the same menu follows the menu (label, group, order); one listed by an
             // other menu too keeps its first place. Operators never edit these columns, and
             // updated_at is kept so a scan is not "changed here since the last export".
-            // MySQL applies the SET list left to right: same_ is decided before area/source change.
+            // MySQL applies the SET list left to right: the IFs read area/source before they change.
+            var prm = {p: r.path, a: arguments.area, g: {value: left(r.grp ?: "", 80), null: !len(r.grp ?: "")},
+                       l: left(r.label, 120), s: {value: i, cfsqltype: "cf_sql_integer"}, src: arguments.source};
             queryExecute("INSERT INTO cx_demo_pages (path, area, grp, label, sort, source, menu_seen_at) VALUES (:p, :a, :g, :l, :s, :src, NOW())
                 ON DUPLICATE KEY UPDATE
                   label = IF(source = 'seen' OR area = VALUES(area), VALUES(label), label),
                   grp   = IF(source = 'seen' OR area = VALUES(area) OR grp IS NULL, VALUES(grp), grp),
                   sort  = IF(source = 'seen' OR area = VALUES(area), VALUES(sort), sort),
-                  menu_seen_at = IF(source = 'seen' OR area = VALUES(area), NOW(), menu_seen_at),
+                  menu_seen_at = NOW(),
                   area  = IF(source = 'seen', VALUES(area), area),
                   source = IF(source = 'seen', VALUES(source), source),
-                  updated_at = updated_at", {
-                p: r.path, a: arguments.area, g: {value: left(r.grp ?: "", 80), null: !len(r.grp ?: "")},
-                l: left(r.label, 120), s: {value: i, cfsqltype: "cf_sql_integer"}, src: arguments.source
-            }, {datasource: variables.dsn, result: "local.res"});
+                  updated_at = updated_at", prm, {datasource: variables.dsn, result: "local.res"});
             if (val(local.res.recordCount ?: 0) == 1) n++;
+            // this menu links to the page (the Access map shows it in every section that does)
+            prm.g = {value: left(r.grp ?: "", 160), null: !len(r.grp ?: "")};
+            structDelete(prm, "src");
+            queryExecute("INSERT INTO cx_demo_page_links (area, path, grp, label, sort, seen_at) VALUES (:a, :p, :g, :l, :s, NOW())
+                ON DUPLICATE KEY UPDATE grp = VALUES(grp), label = VALUES(label), sort = VALUES(sort), seen_at = NOW()",
+                prm, {datasource: variables.dsn});
         }
         pagesChanged();
         return n;
@@ -404,11 +409,12 @@ component output="false" {
         var srcs = [
             {area: "main_ai",   base: "/ain5py/frontmenu/",  files: ["frontmenu/menu.cfm", "frontmenu/menu_agents.cfm", "frontmenu/menu_rag_ingest.cfm", "frontmenu/menu_ragmgt.cfm", "frontmenu/menu_smart.cfm", "frontmenu/menu_training.cfm"]},
             {area: "jumpstart", base: "/ain5py/menucenter/", files: ["menucenter/index_V2.cfm", "menucenter/mc_appsbar.cfm", "menucenter/mc_nav_V2.cfm", "menucenter/mc_shell.cfm"]},
-            {area: "rag",       base: "/ain5py/frontend/",   files: ["frontend/rag_dashboard.cfm"]}
+            {area: "rag",       base: "/ain5py/frontend/",   files: [], tools: "frontend/rag_dashboard.cfm"}
         ];
         for (var s in srcs) {
             if (len(arguments.only) && arguments.only != s.area) continue;
             var rows = [];
+            if (len(s.tools ?: "")) rows = dashboardTools(expandPath("/ain5py/" & s.tools), s.base);
             for (var fn in s.files) {
                 var fp = expandPath("/ain5py/" & fn);
                 if (!fileExists(fp)) continue;
@@ -430,6 +436,29 @@ component output="false" {
             if (arrayLen(rows)) scanned(s.area, arrayLen(rows));
         }
         return out;
+    }
+
+    /**
+     * The RAG dashboard draws its cards from a list in its own source
+     * (tools.essential = [ { name="RAG Maker", file="ragw_maker.cfm", ... } ]), so its
+     * links are read from that list; the groups are the dashboard's section titles.
+     */
+    private array function dashboardTools(required string fp, required string base) {
+        var rows = [];
+        if (!fileExists(arguments.fp)) return rows;
+        var src = fileRead(arguments.fp);
+        var titles = {essential: "Essential · Core workflow", management: "Frequent · Table management", qa: "Quality Lab · Quality", analysis: "Quality Lab · Corpus & capacity"};
+        for (var blk in reMatchNoCase("tools\.[a-z_]+\s*=\s*\[[\s\S]*?\];", src)) {
+            var k = lCase(reReplaceNoCase(blk, "^tools\.([a-z_]+)[\s\S]*$", "\1"));
+            for (var it in reMatchNoCase("\{[^{}]*\}", blk)) {
+                if (!reFindNoCase("\bfile\s*=\s*""", it)) continue;
+                var p = normPath(reReplaceNoCase(it, "^[\s\S]*?\bfile\s*=\s*""([^""]+)""[\s\S]*$", "\1"), arguments.base);
+                if (!len(p)) continue;
+                var nm = reFindNoCase("\bname\s*=\s*""", it) ? reReplaceNoCase(it, "^[\s\S]*?\bname\s*=\s*""([^""]+)""[\s\S]*$", "\1") : listLast(p, "/");
+                arrayAppend(rows, {path: p, label: left(nm, 120), grp: titles[k] ?: k});
+            }
+        }
+        return rows;
     }
 
     /** When a section was last scanned and how many links it had (state_scan_<area> = "yyyy-mm-dd HH:nn:ss|n"). */
