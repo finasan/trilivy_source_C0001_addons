@@ -264,18 +264,21 @@
       bar.appendChild(t);
     });
   }
+  // The instructions show each time the prospect ARRIVES at a guardrail page
+  // (from another page), not on a reload or a save on the same page (2026-10-16:
+  // once per session looked like "the guardrail does not work").
   function pageLoaded(path) {
     if (!path) return;
     var help = document.getElementById("demoHelp");
+    var last = null;
+    try { last = sessionStorage.getItem("trlvGuardLast"); sessionStorage.setItem("trlvGuardLast", path); } catch (e) { last = null; }
     if (modeOf(path) !== "guard") {
       if (help && guardPath && guardPath === path) help.hidden = true;
       return;
     }
     guardPath = path;
     if (help) help.hidden = false;
-    var k = "trlvGuard_" + path, seen = false;
-    try { seen = sessionStorage.getItem(k) === "1"; sessionStorage.setItem(k, "1"); } catch (e) { seen = false; }
-    if (!seen && !document.getElementById("demoOv")) openGuard(path, "auto");
+    if (last !== path && !document.getElementById("demoOv")) openGuard(path, "auto");
   }
   function watchDoc(doc) {
     if (!doc || !doc.body || doc.__demoWatched) return;
