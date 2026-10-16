@@ -291,7 +291,8 @@ component output="false" {
     }
 
     public numeric function upsertPages(required string area, required array rows, string source = "menu") {
-        var n = 0, i = 0;
+        var n = 0;
+        var i = 0;
         for (var r in arguments.rows) {
             i++;
             // A row first met as "seen" (a prospect opened it) takes the menu's label and place.
