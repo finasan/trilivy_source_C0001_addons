@@ -202,7 +202,7 @@ component output="false" {
              & '<span class="demo-left">' & encodeForHTML(left_) & '</span>'
              & demo.switchHtml(d.mode)
              & '<span class="demo-locks">' & locked & '</span>'
-             & '<a href="##" class="demo-talk" data-demo-action="talk">Talk to a person</a></div>'
+             & '<a href="##" class="demo-talk" data-demo-action="talk">Contact us</a></div>'
              & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'
              & '<script src="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.js" defer></script>';
     }
@@ -240,13 +240,13 @@ component output="false" {
         var today = demo.usageToday(d.pid);
         var total = demo.usageTotal(d.pid);
         if (isSe) {
-            if (today.asks GTE val(caps.asks_day ?: 40)) return capHit(d, "asks_day", "You have reached today's limit for questions about features. Talk to a person for more.");
+            if (today.asks GTE val(caps.asks_day ?: 40)) return capHit(d, "asks_day", "You have reached today's limit for questions about features. Use Contact us for more.");
             return {allow: true};
         }
-        if (today.questions GTE val(caps.questions_day ?: 150)) return capHit(d, "questions_day", "You have reached today's question limit for the demo. It resets tomorrow, or talk to a person to raise it.");
-        if (total.tokens GTE val(caps.tokens_total ?: 2000000)) return capHit(d, "tokens_total", "Your demo has used its AI allowance. Talk to a person and we will extend it.");
+        if (today.questions GTE val(caps.questions_day ?: 150)) return capHit(d, "questions_day", "You have reached today's question limit for the demo. It resets tomorrow, or use Contact us to raise it.");
+        if (total.tokens GTE val(caps.tokens_total ?: 2000000)) return capHit(d, "tokens_total", "Your demo has used its AI allowance. Use Contact us and we will extend it.");
         var month = queryExecute("SELECT COALESCE(SUM(tokens),0) AS t FROM cx_demo_usage_day WHERE day >= DATE_FORMAT(CURDATE(), '%Y-%m-01')", {}, {datasource: "addon_demo"});
-        if (month.t GTE val(demo.setting("monthly_token_budget", "60000000"))) return capHit(d, "monthly_budget", "The demo is very busy this month. Please talk to a person.");
+        if (month.t GTE val(demo.setting("monthly_token_budget", "60000000"))) return capHit(d, "monthly_budget", "The demo is very busy this month. Please use Contact us.");
         return {allow: true};
     }
 

@@ -55,7 +55,7 @@
 <div class="tabs">
     <a href="/ain5py/addon.cfm?a=demo&p=console" class="#activeTab EQ 'console' ? 'on' : ''#">Prospects</a>
     <a href="/ain5py/addon.cfm?a=demo&p=new" class="#activeTab EQ 'new' ? 'on' : ''#">+ New prospect</a>
-    <a href="/ain5py/addon.cfm?a=demo&p=handoffs" class="#activeTab EQ 'handoffs' ? 'on' : ''#">Talk to a person</a>
+    <a href="/ain5py/addon.cfm?a=demo&p=handoffs" class="#activeTab EQ 'handoffs' ? 'on' : ''#">Contact requests</a>
     <a href="/ain5py/addon.cfm?a=demo&p=library" class="#activeTab EQ 'library' ? 'on' : ''#">Pitch library</a>
     <a href="/ain5py/addon.cfm?a=demo&p=reports" class="#activeTab EQ 'reports' ? 'on' : ''#">Reports</a>
     <a href="/ain5py/addon.cfm?a=demo&p=operators" class="#activeTab EQ 'operators' ? 'on' : ''#">Operators</a>

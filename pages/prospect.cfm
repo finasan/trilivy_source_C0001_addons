@@ -122,7 +122,7 @@
             case "page_view":       return "opened " & encodeForHTML(e.page);
             case "page_time":       return "spent " & numberFormat(val(e.duration_ms) / 1000, "0") & " s on " & encodeForHTML(e.page);
             case "handoff_requested": return "<b>asked for a person</b>: " & encodeForHTML(left(d.summary ?: "", 300));
-            case "talk_request":    return "<b>asked to talk to a person</b> about " & encodeForHTML(e.feature_key);
+            case "talk_request":    return "<b>used Contact us</b> about " & encodeForHTML(e.feature_key);
             case "tamper_blocked":  return "<b style='color:##c0392b'>blocked access attempt</b> (" & encodeForHTML(d.kind ?: "") & ": " & encodeForHTML(d.value ?: "") & ")";
             case "upload":          return "uploaded " & encodeForHTML(d.name ?: "");
             case "ingest_done":     return "document ready: " & encodeForHTML(d.name ?: "");
@@ -209,7 +209,7 @@
 
 <h2>Interest in locked features</h2>
 <cfif gates.recordCount>
-<table><tr><th>Feature</th><th>Opened</th><th>Objections read</th><th>Questions asked</th><th>Talk to a person</th></tr>
+<table><tr><th>Feature</th><th>Opened</th><th>Objections read</th><th>Questions asked</th><th>Contact us</th></tr>
 <cfloop query="gates"><tr><td><b>#encodeForHTML(gates.feature_key)#</b></td><td>#gates.gates#</td><td>#gates.objections#</td><td>#gates.asks#</td><td>#gates.ctas#</td></tr></cfloop>
 </table>
 <cfelse><p class="muted">No locked feature opened yet.</p></cfif>

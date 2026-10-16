@@ -23,7 +23,7 @@
     </cftry>
 </cfloop>
 <cfoutput>
-<h1>Talk to a person</h1>
+<h1>Contact requests</h1>
 <h2>From the demo popups and the assistant (last 30 days)</h2>
 <table><tr><th>When</th><th>Prospect</th><th>About</th><th>Message</th><th></th></tr>
 <cfloop query="talks">

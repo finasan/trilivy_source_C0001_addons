@@ -119,7 +119,7 @@
   function ctas(bar, feature) {
     var b = document.createElement("button");
     b.className = "dp-btn p";
-    b.textContent = "Talk to a person";
+    b.textContent = "Contact us";
     b.onclick = function () { ev("cta_click", feature, { cta: "talk" }); talk(feature, ""); };
     bar.appendChild(b);
     var back = document.createElement("button");
@@ -136,7 +136,7 @@
   }
 
   function talk(feature, prefill) {
-    var ov = shell("Trilivy", "Talk to a person", false);
+    var ov = shell("Trilivy", "Contact us", false);
     current = { feature: feature || "talk" };
     ov.querySelector(".dp-tabs").style.display = "none";
     var body = ov.querySelector(".dp-body");
@@ -215,7 +215,7 @@
       ["Welcome to your demo", "<p>This is your private copy of Trilivy. Everything you upload or ask stays in your own sandbox.</p>"],
       ["Start with the assistant", "<p>Open <b>Assistant</b> and ask about the sample company's HR and IT policies. Each answer lists the sources it used.</p>"],
       ["Try your own documents", "<p>Under <b>My documents</b> you can load a few files and ask about them a minute later.</p>"],
-      ["Explore the locked parts", "<p>Items with a 🔒 are part of the full platform. Click any of them to see what it does, ask questions, or talk to us.</p>"]
+      ["Explore the locked parts", "<p>Items with a 🔒 are part of the full platform. Click any of them to see what it does, ask questions, or contact us.</p>"]
     ];
     var i = 0;
     function step() {

@@ -42,7 +42,7 @@
 <div class="grid">
     <div class="card"><h3 style="margin-top:0">What prospects wanted that the demo did not open</h3>
         <table><tr><th>Feature</th><th>People</th><th>Opens</th></tr><cfloop query="gates"><tr><td>#gates.feature_key#</td><td>#gates.people#</td><td>#gates.n#</td></tr></cfloop></table></div>
-    <div class="card"><h3 style="margin-top:0">Talk to a person, by feature</h3>
+    <div class="card"><h3 style="margin-top:0">Contact us, by feature</h3>
         <table><tr><th>Asked from</th><th>Messages</th></tr><cfloop query="talks"><tr><td>#len(talks.feature_key) ? encodeForHTML(talks.feature_key) : "the demo bar"#</td><td>#talks.n#</td></tr></cfloop></table></div>
 </div>
 <h2>Objections read most</h2>
