@@ -19,9 +19,7 @@
       ],
       "headline": "Your platform, your rules",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Administration",
@@ -46,9 +44,7 @@
       ],
       "headline": "Dedicated server, your keys, controlled updates",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Administration",
@@ -73,9 +69,7 @@
       ],
       "headline": "From answering questions to getting work done",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Agent Factory",
@@ -96,9 +90,7 @@
       ],
       "headline": "Agents with explicit tools, tests and an install gate",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Agent Factory",
@@ -119,8 +111,7 @@
       ],
       "headline": "Approved answers for the questions that matter most",
       "cta": [
-        "talk",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Answer Bank",
@@ -149,9 +140,7 @@
       ],
       "headline": "Let the assistant read your live systems, not yesterday's export",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Connections",
@@ -180,9 +169,7 @@
       ],
       "headline": "Governed tool access: MCP, REST and OAuth, logged per user",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Connections",
@@ -207,8 +194,7 @@
       ],
       "headline": "One platform, many assistants: HR, IT, customers, partners",
       "cta": [
-        "talk",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Assistants",
@@ -224,8 +210,7 @@
       "objections": [],
       "headline": "A guided start for your own team",
       "cta": [
-        "talk",
-        "book"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · JumpStart",
@@ -246,8 +231,7 @@
       ],
       "headline": "Training that writes itself from your documents",
       "cta": [
-        "talk",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Courses",
@@ -263,8 +247,7 @@
       "objections": [],
       "headline": "Want to see this on your own data?",
       "cta": [
-        "talk",
-        "book"
+        "talk"
       ],
       "status": "draft",
       "kicker": "You have asked 10 questions",
@@ -284,9 +267,7 @@
         }
       ],
       "headline": "That answer came with its sources",
-      "cta": [
-        "wishlist"
-      ],
+      "cta": [],
       "status": "draft",
       "kicker": "Did you notice?",
       "lang": "en",
@@ -301,8 +282,7 @@
       "objections": [],
       "headline": "Need more time, or ready for a pilot?",
       "cta": [
-        "talk",
-        "book"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Your demo ends soon",
@@ -337,9 +317,7 @@
       ],
       "headline": "This part of Trilivy is not open in the demo",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Part of the full platform",
@@ -364,9 +342,7 @@
       ],
       "headline": "Measure answer quality before anyone relies on it",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Quality Lab",
@@ -387,9 +363,7 @@
       ],
       "headline": "Regression tests for an AI assistant",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Quality Lab",
@@ -418,8 +392,7 @@
       ],
       "headline": "Turn your documents into answers your team can trust",
       "cta": [
-        "talk",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Knowledge Builder",
@@ -444,9 +417,7 @@
       ],
       "headline": "Hybrid retrieval on PostgreSQL + pgvector, on your own server",
       "cta": [
-        "talk",
-        "book",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Knowledge Builder",
@@ -467,8 +438,7 @@
       ],
       "headline": "See what people ask, and what they could not find",
       "cta": [
-        "talk",
-        "wishlist"
+        "talk"
       ],
       "status": "draft",
       "kicker": "Available in your pilot · Reports",
