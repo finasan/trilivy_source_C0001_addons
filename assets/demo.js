@@ -267,11 +267,13 @@
   // The instructions show each time the prospect ARRIVES at a guardrail page
   // (from another page), not on a reload or a save on the same page (2026-10-16:
   // once per session looked like "the guardrail does not work").
-  function pageLoaded(path) {
+  // slot = where the page is shown (the top window, or one named frame): each keeps
+  // its own "last page", so the chat window's frame does not count as a visit.
+  function pageLoaded(path, slot) {
     if (!path) return;
     var help = document.getElementById("demoHelp");
-    var last = null;
-    try { last = sessionStorage.getItem("trlvGuardLast"); sessionStorage.setItem("trlvGuardLast", path); } catch (e) { last = null; }
+    var last = null, k = "trlvGuardLast_" + (slot || "top");
+    try { last = sessionStorage.getItem(k); sessionStorage.setItem(k, path); } catch (e) { last = null; }
     if (modeOf(path) !== "guard") {
       if (help && guardPath && guardPath === path) help.hidden = true;
       return;
@@ -301,8 +303,10 @@
         try {
           var fd = f.contentDocument;
           if (!fd) return;
+          var loc = f.contentWindow.location;
+          if (loc.protocol.indexOf("http") !== 0) return;   // about:blank (a frame not loaded yet)
           watchDoc(fd);
-          pageLoaded(keyOf(new URL(f.contentWindow.location.href)));
+          pageLoaded(keyOf(new URL(loc.href)), f.id || f.name || "frame");
         } catch (e) { /* another origin: leave it */ }
       };
       f.addEventListener("load", onload);
@@ -311,7 +315,10 @@
   }
   function startMap() {
     watchDoc(document);
-    pageLoaded(keyOf(new URL(location.href)));
+    // inside a frame, demo.js of the framed page uses that frame's slot
+    var slot = "top";
+    try { if (window.self !== window.top && window.frameElement) slot = window.frameElement.id || window.frameElement.name || "frame"; } catch (e) {}
+    pageLoaded(keyOf(new URL(location.href)), slot);
     var help = document.getElementById("demoHelp");
     if (help) help.addEventListener("click", function (e) { e.preventDefault(); if (guardPath) openGuard(guardPath, "help"); });
   }
