@@ -160,6 +160,9 @@ component output="false" {
         var d = demo.sessionDemo();
         if (d.missing ?: true) return;
         var ws = urlEncodedFormat(d.db);
+        // The AGENT button (support chat) stays in both experiences, talking to the
+        // prospect's own sandbox assistant (its background KB is ragt_trilivy).
+        demo.ensureInstanceContext(d);
         if (d.mode == "explorer") {
             // Full platform: the platform's own menu (its items follow the session
             // rights), with the demo home in front and the account menu trimmed.
@@ -170,7 +173,7 @@ component output="false" {
             // Resources (the platform's own list: docs via docs_go, support page) stays: reading is free.
             ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
             ctx.flags.resources = 1;
-            ctx.flags.supportChat = 0;
+            ctx.flags.supportChat = 1;
             return;
         }
         var nav = [
@@ -185,7 +188,7 @@ component output="false" {
         ctx.nav = nav;
         ctx.acct = [{label: "📝 Change Password", href: "/ain5py/manage/changepass.cfm"}];
         ctx.flags.resources = 1;
-        ctx.flags.supportChat = 0;
+        ctx.flags.supportChat = 1;
     }
 
     // ------------------------------------------------------------- menu_filter

@@ -118,6 +118,20 @@ component output="false" {
         return r;
     }
 
+    /**
+     * The platform's "current instance" (session.instanceContext) for a prospect is
+     * always their own sandbox. The header's AGENT button (the support chat) opens
+     * the instance named there, else the box's default instance, which the instance
+     * guard refuses for a prospect.
+     */
+    public void function ensureInstanceContext(required struct d) {
+        if (lCase(session.instanceContext.db_name ?: "") == d.dbLower) return;
+        var q = queryExecute("SELECT inst_id, instance_name, db_name, db_host, txt_title FROM ai_instance WHERE instance_name = :n",
+            {n: d.instance}, {datasource: "ai_data"});
+        if (!q.recordCount) return;
+        session.instanceContext = {inst_id: q.inst_id, instance_name: q.instance_name, db_name: q.db_name, db_host: q.db_host, txt_title: q.txt_title};
+    }
+
     /** session.demo for a signed-in demo_user, refreshed every 60 s. */
     public struct function sessionDemo(boolean fresh = false) {
         if ((session.account_type ?: "") != "demo_user") return {};

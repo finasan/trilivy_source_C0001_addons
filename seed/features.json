@@ -40,7 +40,11 @@
         "/ain5py/boty/api_handoff.cfm",
         "/ain5py/boty/api_rag_summary_filters.cfm",
         "/ain5py/boty/api_rag_summary_keys.cfm",
-        "/ain5py/boty/support/agentsup_*"
+        "/ain5py/boty/support/agentsup_*",
+        "/ain5py/boty/agentsup.cfm",
+        "/ain5py/boty/agentsup_popup_embed.cfm",
+        "/ain5py/boty/agentsup_handoff_ui.cfm",
+        "/ain5py/boty/support/api_transcribe.cfm"
       ],
       "mode": "open",
       "sort": 10,
