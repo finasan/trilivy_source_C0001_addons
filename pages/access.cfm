@@ -119,7 +119,7 @@
 </style>
 <h1>Access map</h1>
 <p class="muted" style="margin-top:-6px">Page by page, what a prospect gets in each experience. <b>Open</b>: the page works. <b>Open + guardrail</b>: it works, with your instructions in a popup the first time (and a "What can I do here?" button); tick read-only to turn saving off on that page.
-<b>Locked</b>: the sales popup, with the page's own card or else its group's. <b>Hidden</b>: removed from the menus. <b>Inherit</b> follows the feature map.</p>
+<b>Locked</b>: the sales popup, with the page's own card or else its group's. <b>Hidden</b>: removed from the menus in Guided; in <b>Full platform</b> the menus always stay complete, so Hidden shows there as Locked. <b>Inherit</b> follows the feature map.</p>
 <cfif len(msg)><div class="note #msgKind#">#encodeForHTML(msg)#</div></cfif>
 
 <div class="grid">

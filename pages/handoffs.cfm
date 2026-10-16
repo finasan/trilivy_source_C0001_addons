@@ -3,6 +3,51 @@
 <!--- Requests for a person, from every sandbox: the popup's "Talk to a person"
       (talk_request events) and the assistant's own handoff tickets (each
       sandbox's ai_handoff_requests, answered in the platform's handoff inbox). --->
+<!--- Contact us settings: who receives the e-mails, and the prospect's confirmation --->
+<cfset cfgMsg = ""><cfset cfgKind = "ok">
+<cfif cgi.request_method EQ "POST" AND (form.action ?: "") EQ "contactcfg">
+    <cftry>
+        <cfif NOT listFind("admin,se", op.role)><cfthrow message="Only operators with role admin or se can change who receives Contact us e-mails."></cfif>
+        <cfset ex = []>
+        <cfloop list="#form.extra_to ?: ''#" item="a" delimiters=",; #chr(10)##chr(13)#">
+            <cfif NOT isValid("email", trim(a))><cfthrow message="Not an e-mail address: #trim(a)#"></cfif>
+            <cfset arrayAppend(ex, lCase(trim(a)))>
+        </cfloop>
+        <cfset demo.setSetting("contact_extra_to", arrayToList(ex, ","), op.email ?: "")>
+        <cfset demo.setSetting("mail_contact_confirm", (form.confirm ?: "") EQ "1" ? "1" : "0", op.email ?: "")>
+        <cfloop list="#form.pids ?: ''#" item="pp">
+            <cfif reFind("^p[0-9]{4}$", pp) AND structKeyExists(form, "to_" & pp) AND trim(form["to_" & pp]) NEQ demo.contactEmailTo(pp)>
+                <cfset demo.setContactEmailTo(pp, form["to_" & pp])>
+                <cfset demo.logEvent(pp, "contact_to_changed", {detail: {to: left(form["to_" & pp], 500), by: op.oid}})>
+            </cfif>
+        </cfloop>
+        <cfset cfgMsg = "Saved.">
+        <cfcatch><cfset cfgMsg = cfcatch.message><cfset cfgKind = "err"></cfcatch>
+    </cftry>
+</cfif>
+<cfset cfgProspects = queryExecute("SELECT pid, fname, lname, company, email FROM cx_demo_prospects WHERE status IN ('invited','active','expiring','converted','suspended') ORDER BY seq DESC", {}, {datasource: "addon_demo"})>
+<cfoutput>
+<h1>Contact requests</h1>
+<form method="post" class="card"><input type="hidden" name="action" value="contactcfg">
+    <h2 style="margin-top:0">Contact us settings</h2>
+    <cfif len(cfgMsg)><div class="note #cfgKind#">#encodeForHTML(cfgMsg)#</div></cfif>
+    <label>Every prospect's Contact us messages also go to (comma-separated)</label>
+    <input type="text" name="extra_to" value="#encodeForHTMLAttribute(demo.setting('contact_extra_to', ''))#" placeholder="sales@yourcompany.com, presales@yourcompany.com">
+    <label style="font-weight:400;margin-top:10px"><input type="checkbox" name="confirm" value="1" #demo.setting('mail_contact_confirm', '1') EQ '1' ? 'checked' : ''#>
+        Send the prospect a confirmation e-mail with the request number and a private link to follow it</label>
+    <h3>Per prospect (starts as the sales owner)</h3>
+    <table><tr><th>Prospect</th><th>Their Contact us messages go to</th></tr>
+    <cfset pl = []>
+    <cfloop query="cfgProspects">
+        <cfset arrayAppend(pl, cfgProspects.pid)>
+        <tr><td><b>#encodeForHTML(trim(cfgProspects.fname & " " & cfgProspects.lname))#</b> <span class="mono small">#cfgProspects.pid#</span><br><span class="small muted">#encodeForHTML(cfgProspects.company)#</span></td>
+            <td><input type="text" name="to_#cfgProspects.pid#" value="#encodeForHTMLAttribute(demo.contactEmailTo(cfgProspects.pid))#" placeholder="nobody (only the addresses above)"></td></tr>
+    </cfloop>
+    </table>
+    <input type="hidden" name="pids" value="#arrayToList(pl)#">
+    <button class="btn primary">Save</button>
+</form>
+</cfoutput>
 <cfset talks = queryExecute("
     SELECT e.ts, e.pid, e.feature_key, e.detail, p.fname, p.lname, p.company, p.email, p.status
     FROM cx_demo_events e JOIN cx_demo_prospects p ON p.pid = e.pid
@@ -23,7 +68,6 @@
     </cftry>
 </cfloop>
 <cfoutput>
-<h1>Contact requests</h1>
 <h2>From the demo popups and the assistant (last 30 days)</h2>
 <table><tr><th>When</th><th>Prospect</th><th>About</th><th>Message</th><th></th></tr>
 <cfloop query="talks">

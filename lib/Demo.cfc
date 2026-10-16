@@ -371,10 +371,15 @@ component output="false" {
         if (structKeyExists(c, arguments.experience) && dateDiff("s", c[arguments.experience].at, now()) LT 120) return c[arguments.experience].m;
         var ex = arguments.experience == "explorer";
         var pg = {};
-        for (var p in pages()) pg[p] = classify(p, arguments.experience).mode;
+        // Full platform keeps every menu item: "hidden" is shown as locked there
+        for (var p in pages()) {
+            var md = classify(p, arguments.experience).mode;
+            pg[p] = (ex && md == "hidden") ? "pitch" : md;
+        }
         var rx = [];
         for (var f in features()) {
-            for (var r in f.rx) arrayAppend(rx, [r, ex ? f.explorer_mode : f.mode]);
+            var fm = ex ? f.explorer_mode : f.mode;
+            for (var r in f.rx) arrayAppend(rx, [r, (ex && fm == "hidden") ? "pitch" : fm]);
         }
         var m = {pages: pg, rx: rx};
         c[arguments.experience] = {at: now(), m: m};

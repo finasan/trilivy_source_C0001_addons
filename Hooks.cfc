@@ -110,6 +110,8 @@ component output="false" {
         }
 
         var f = demo.classify(path, d.mode);
+        // Full platform keeps every menu item, so a "hidden" page is shown as locked (its popup)
+        if (d.mode == "explorer" && f.mode == "hidden") f.mode = "pitch";
         // Safety audit of the Full platform map (setting explorer_audit_pid, set
         // only while an operator runs it): that one prospect may OPEN any page,
         // read-only, so the crawl can see what each page would show.
@@ -194,6 +196,9 @@ component output="false" {
         if (!isProspect()) return;
         var d = demo.sessionDemo();
         if (d.missing ?: true) return;
+        // Full platform: the menus stay 100% the real ones; what is not open shows
+        // its popup when clicked (request_gate). Only Guided trims them.
+        if (d.mode == "explorer") return;
         ctx.menu = pruneMenu(ctx.menu, base, d.mode);
     }
 
