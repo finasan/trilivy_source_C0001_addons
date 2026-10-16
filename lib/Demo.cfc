@@ -329,10 +329,8 @@ component output="false" {
         var out = {};
         for (var area in ["manage", "kb", "quick"]) {
             try {
-                var box = {menu: []};
-                module template="/trlvaddons/demo/lib/menu_probe.cfm" attributeCollection={area: area, out: box};
                 var rows = [];
-                walkMenu(box.menu, "", "/ain5py/" & area & "/", rows);
+                walkMenu(new trlvaddons.demo.lib.MenuProbe().menu(area), "", "/ain5py/" & area & "/", rows);
                 upsertPages(area, rows, "menu");
                 out[area] = arrayLen(rows);
             } catch (any e) { out[area] = "error: " & e.message; }
