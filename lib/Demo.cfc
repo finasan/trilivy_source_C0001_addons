@@ -301,7 +301,10 @@ component output="false" {
     /** A menu link as a lower-case site path ("" for external links, anchors, expressions). */
     public string function normPath(required string href, string base = "/ain5py/") {
         var h = trim(arguments.href);
-        if (!len(h) || find("##", h) || reFindNoCase("^(https?:|//|javascript:|mailto:)", h)) return "";
+        if (!len(h) || reFindNoCase("^(https?:|//|javascript:|mailto:)", h)) return "";
+        // an anchor or a CF expression in the PATH is not a page; one in the query
+        // string (?wsDsn=#encodeForUrl(x)#) is just the instance and is dropped
+        if (find("##", listFirst(h, "?")) || left(h, 1) == "?") return "";
         var qs = {};
         if (find("?", h)) {
             for (var pair in listToArray(listRest(h, "?"), "&")) qs[lCase(listFirst(pair, "="))] = listRest(pair, "=");
@@ -408,9 +411,19 @@ component output="false" {
         }
         var srcs = [
             {area: "main_ai",   base: "/ain5py/frontmenu/",  files: ["frontmenu/menu.cfm", "frontmenu/menu_agents.cfm", "frontmenu/menu_rag_ingest.cfm", "frontmenu/menu_ragmgt.cfm", "frontmenu/menu_smart.cfm", "frontmenu/menu_training.cfm"]},
-            {area: "jumpstart", base: "/ain5py/menucenter/", files: ["menucenter/index_V2.cfm", "menucenter/mc_appsbar.cfm", "menucenter/mc_nav_V2.cfm", "menucenter/mc_shell.cfm"]},
+            // JumpStart is a hub: its tools sit in the three Centers it opens (Build, Use, Agents)
+            {area: "jumpstart", base: "/ain5py/menucenter/", files: ["menucenter/mc_nav_V2.cfm", "menucenter/index_V2.cfm", "menucenter/mc_appsbar.cfm", "menucenter/mc_shell.cfm",
+                                                                     "menucenter/ingestion_center_V2.cfm", "menucenter/retrieve_center_V2.cfm", "menucenter/agent_center.cfm", "menucenter/examples_center.cfm"]},
             {area: "rag",       base: "/ain5py/frontend/",   files: [], tools: "frontend/rag_dashboard.cfm"}
         ];
+        // the group each source file stands for, in the words of its menu
+        var fileGroups = {
+            "menu": "Main AI home", "menu_agents": "Agents & Prompts", "menu_rag_ingest": "RAG Maker · Ingestion", "menu_ragmgt": "RAG management tools",
+            "menu_smart": "Smart Prompts", "menu_training": "Training Hub",
+            "mc_nav_v2": "Top bar", "index_v2": "Platform home", "mc_appsbar": "Apps bar", "mc_shell": "Shell",
+            "ingestion_center_v2": "1 · Build (Ingestion Center)", "retrieve_center_v2": "2 · Use (Retrieve Center)",
+            "agent_center": "Agents (Agent Center)", "examples_center": "Examples"
+        };
         for (var s in srcs) {
             if (len(arguments.only) && arguments.only != s.area) continue;
             var rows = [];
@@ -419,13 +432,16 @@ component output="false" {
                 var fp = expandPath("/ain5py/" & fn);
                 if (!fileExists(fp)) continue;
                 var src = fileRead(fp);
-                var grp = reReplace(listLast(fn, "/"), "\.cfm$", "");
+                var grp = lCase(reReplace(listLast(fn, "/"), "\.cfm$", ""));
+                grp = fileGroups[grp] ?: grp;
                 for (var a in reMatchNoCase("<a\s[^>]*href\s*=\s*""[^""]+""[^>]*>[\s\S]*?</a>", src)) {
                     var href = reReplaceNoCase(a, "^[\s\S]*?href\s*=\s*""([^""]+)""[\s\S]*$", "\1");
                     var p = normPath(href, s.base);
                     if (!len(p)) continue;
                     var lbl = trim(reReplace(reReplace(reReplace(a, "<[^>]*>", " ", "all"), "&[a-z##0-9]+;", " ", "all"), "\s+", " ", "all"));
-                    if (find("##", lbl) || !len(lbl)) lbl = listLast(p, "/");
+                    // drop the arrows cards end with ("Open Explorer →")
+                    lbl = trim(reReplace(lbl, "\s*(→|»|›)\s*$", ""));
+                    if (find("##", lbl) || find("' +", lbl) || !len(lbl)) lbl = listLast(listFirst(p, "?"), "/");
                     // a whole card is often one link: keep its first words
                     if (len(lbl) GT 60) lbl = reReplace(left(lbl, 60), "\s+\S*$", "") & "…";
                     arrayAppend(rows, {path: p, label: left(lbl, 120), grp: grp});
