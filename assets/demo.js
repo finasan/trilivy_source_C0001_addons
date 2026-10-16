@@ -215,6 +215,8 @@
       a.dataset.demoMk = "1";
       var p = pathOf(a.getAttribute("href"), doc);
       if (!p || p === "/ain5py/addon.cfm" || p === "/ain5py/addon_api.cfm" || p.indexOf("/ain5py/login/") === 0) return;
+      // the front door (logo links) goes to the demo home, and image links get no lock
+      if (/^\/ain5py\/(index\.cfm|menu\.cfm)?$/.test(p) || a.querySelector("img,svg")) return;
       var m = modeOf(p);
       if (m === "hidden") {
         var li = a.closest("li");
