@@ -109,7 +109,9 @@ component output="false" {
             return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=welcome"};
         }
 
-        var f = demo.classify(path, d.mode);
+        // the Instance Control Panel's sections are separate Access map rows (path?section=x)
+        var key = demo.requestKey(path);
+        var f = demo.classify(key, d.mode);
         // Full platform keeps every menu item, so a "hidden" page is shown as locked (its popup)
         if (d.mode == "explorer" && f.mode == "hidden") f.mode = "pitch";
         // Safety audit of the Full platform map (setting explorer_audit_pid, set
@@ -120,7 +122,7 @@ component output="false" {
             return {action: "continue"};
         }
         // A page no menu lists yet shows up in the Access map (it stays inherited).
-        if (!f.page && !isAddon && !isApiPath(path) && cgi.request_method == "GET" && reFind("\.cfm$", path)) demo.registerSeen(path);
+        if (!f.page && !isAddon && !isApiPath(path) && cgi.request_method == "GET" && reFind("\.cfm$", path)) demo.registerSeen(key);
         if (f.mode == "open" || f.mode == "capped" || f.mode == "guard") {
             // "Open with guardrail" + read-only: the page shows, saving on it does not
             if (f.readonly && cgi.request_method != "GET") {

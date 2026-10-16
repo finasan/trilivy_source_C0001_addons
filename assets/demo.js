@@ -190,17 +190,36 @@
   var RX = (MAP.rx || []).map(function (r) {
     try { return [new RegExp(r[0]), r[1]]; } catch (e) { return null; }
   }).filter(Boolean);
+  // A sectioned page (the Instance Control Panel's own sections) is keyed
+  // path?section=x[&lms_tab=y]; the most specific Access map row wins.
   function modeOf(path) {
     path = String(path || "").toLowerCase();
-    if (MAP.pages && Object.prototype.hasOwnProperty.call(MAP.pages, path)) return MAP.pages[path];
+    var k = path;
+    while (true) {
+      if (MAP.pages && Object.prototype.hasOwnProperty.call(MAP.pages, k)) return MAP.pages[k];
+      if (k.indexOf("?") < 0) break;
+      k = k.indexOf("&") >= 0 ? k.replace(/&[^&]*$/, "") : k.split("?")[0];
+    }
+    path = path.split("?")[0];
     for (var i = 0; i < RX.length; i++) if (RX[i][0].test(path)) return RX[i][1];
     return "pitch";
+  }
+  function keyOf(u) {
+    var p = u.pathname.toLowerCase(), sp = (MAP.sect || {})[p];
+    if (!sp) return p;
+    var parts = [];
+    for (var i = 0; i < sp.params.length; i++) {
+      var v = (u.searchParams.get(sp.params[i]) || "").replace(/[^A-Za-z0-9_-]/g, "").toLowerCase();
+      if (!v || (i === 0 && v === sp.dflt)) break;
+      parts.push(sp.params[i] + "=" + v);
+    }
+    return parts.length ? p + "?" + parts.join("&") : p;
   }
   function pathOf(href, doc) {
     try {
       var u = new URL(href, doc.baseURI);
       if (u.origin !== location.origin) return null;
-      return u.pathname.toLowerCase();
+      return keyOf(u);
     } catch (e) { return null; }
   }
   var LINK_CSS = "a.demo-lk::after{content:' \\1F512';font-size:.85em;opacity:.7}";
@@ -280,7 +299,7 @@
           var fd = f.contentDocument;
           if (!fd) return;
           watchDoc(fd);
-          pageLoaded(f.contentWindow.location.pathname.toLowerCase());
+          pageLoaded(keyOf(new URL(f.contentWindow.location.href)));
         } catch (e) { /* another origin: leave it */ }
       };
       f.addEventListener("load", onload);
@@ -289,7 +308,7 @@
   }
   function startMap() {
     watchDoc(document);
-    pageLoaded(location.pathname.toLowerCase());
+    pageLoaded(keyOf(new URL(location.href)));
     var help = document.getElementById("demoHelp");
     if (help) help.addEventListener("click", function (e) { e.preventDefault(); if (guardPath) openGuard(guardPath, "help"); });
   }

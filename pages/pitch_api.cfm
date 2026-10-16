@@ -35,7 +35,8 @@
 
     <cfcase value="guard">
         <!--- the instructions popup of an "Open with guardrail" page (Access map) --->
-        <cfset pth = lCase(left(reReplace(url.path ?: "", "[^A-Za-z0-9/_.-]", "", "all"), 255))>
+        <!--- ? = & stay: a sectioned page's key is path?section=x[&lms_tab=y] --->
+        <cfset pth = lCase(left(reReplace(url.path ?: "", "[^A-Za-z0-9/_.?=&-]", "", "all"), 255))>
         <cfset g = demo.guardInfo(pth, d.mode)>
         <cfif NOT g.ok><cfset demo.json({ok: false}, 404)></cfif>
         <cfset demo.logEvent(d.pid, (url.via ?: "") EQ "help" ? "guard_help" : "guard_shown", {page: pth})>

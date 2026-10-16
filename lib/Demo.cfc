@@ -8,6 +8,21 @@
 component output="false" {
 
     variables.dsn = "addon_demo";
+    // Pages that are several menu items, told apart by URL parameters (the
+    // Instance Control Panel's built-in sections): the Access map keys them as
+    // path?section=x[&lms_tab=y]. dflt = the section the bare page shows.
+    variables.SECTIONED = {"/ain5py/menuinst/icp_menu.cfm": {params: ["section", "lms_tab"], dflt: "overview"}};
+    // The Access map's sections, in menu order: key, label, where the pages come from
+    variables.AREAS = [
+        {key: "main_ai",   label: "Main AI",          src: "frontmenu/menu*.cfm"},
+        {key: "jumpstart", label: "JumpStart",        src: "menucenter/index_V2.cfm + mc_*.cfm"},
+        {key: "rag",       label: "RAG dashboard",    src: "frontend/rag_dashboard.cfm"},
+        {key: "manage",    label: "Manage menu",      src: "manage/menu_config.cfm"},
+        {key: "instance",  label: "Instance menu",    src: "menuinst/icp_menu_config.cfm (Instance Control Panel)"},
+        {key: "kb",        label: "Knowledge menu",   src: "kb/menu_config.cfm"},
+        {key: "quick",     label: "Quick menu",       src: "quick/menu_config.cfm"},
+        {key: "other",     label: "Other pages",      src: "pages prospects opened that no menu lists"}
+    ];
 
     public any function init() { return this; }
 
@@ -206,7 +221,8 @@ component output="false" {
     /** {key, mode, title} for a lower-case path, for the prospect's experience
         (guided | explorer = Full platform). Nothing matched = pitch "platform". */
     public struct function classify(required string path, string experience = "guided") {
-        var p = lCase(arguments.path);
+        var key = lCase(arguments.path);
+        var p = listFirst(key, "?");          // the feature map matches the bare path
         var ex = arguments.experience == "explorer";
         var f = {key: "platform", mode: "pitch", title: "Everything else in the full platform"};
         var hit = false;
@@ -219,7 +235,15 @@ component output="false" {
         // The Access map (cx_demo_pages) decides page by page; an empty mode inherits
         // the feature map above. "guard" = open with an instructions popup.
         f.page = false; f.readonly = false; f.card = f.key; f.label = f.title; f.safety = ""; f.inherited = f.mode;
-        var pg = pages()[p] ?: {};
+        // most specific row first: path?section=x&lms_tab=y, path?section=x, path
+        var pg = {};
+        var all = pages();
+        var cand = key;
+        while (true) {
+            if (structKeyExists(all, cand)) { pg = all[cand]; break; }
+            if (!find("?", cand)) break;
+            cand = find("&", cand) ? reReplace(cand, "&[^&]*$", "") : listFirst(cand, "?");
+        }
         if (!structIsEmpty(pg)) {
             f.page = true; f.label = pg.label; f.safety = pg.safety; f.readonly = val(pg.readonly) == 1;
             var m = ex ? (pg.explorer_mode ?: "") : (pg.guided_mode ?: "");
@@ -252,10 +276,36 @@ component output="false" {
         structDelete(application, "demo_features");
     }
 
+    public array function areas() { return variables.AREAS; }
+    public struct function sectioned() { return variables.SECTIONED; }
+
+    /** The Access map key of a sectioned page: path + its section parameters (lower case, in order). */
+    public string function sectionKey(required string path, required struct params) {
+        var sp = variables.SECTIONED[arguments.path] ?: {};
+        if (structIsEmpty(sp)) return arguments.path;
+        var parts = [];
+        for (var k in sp.params) {
+            var v = lCase(reReplace(arguments.params[k] ?: "", "[^A-Za-z0-9_-]", "", "all"));
+            if (!len(v)) break;
+            if (k == sp.params[1] && v == sp.dflt) break;   // the default section = the bare page
+            arrayAppend(parts, k & "=" & v);
+        }
+        return arrayLen(parts) ? arguments.path & "?" & arrayToList(parts, "&") : arguments.path;
+    }
+
+    /** The key of the page being requested (request_gate). */
+    public string function requestKey(required string path) {
+        return sectionKey(lCase(arguments.path), url);
+    }
+
     /** A menu link as a lower-case site path ("" for external links, anchors, expressions). */
     public string function normPath(required string href, string base = "/ain5py/") {
         var h = trim(arguments.href);
         if (!len(h) || find("##", h) || reFindNoCase("^(https?:|//|javascript:|mailto:)", h)) return "";
+        var qs = {};
+        if (find("?", h)) {
+            for (var pair in listToArray(listRest(h, "?"), "&")) qs[lCase(listFirst(pair, "="))] = listRest(pair, "=");
+        }
         h = listFirst(h, "?");
         if (left(h, 1) != "/") h = arguments.base & h;
         var parts = [];
@@ -265,7 +315,7 @@ component output="false" {
         }
         var p = lCase("/" & arrayToList(parts, "/"));
         if (!reFind("\.(cfm|html?)$", p)) return "";
-        return left(p, 255);
+        return left(sectionKey(p, qs), 255);
     }
 
     /** Records the pages of a platform menu (menu_filter: manage, kb, quick); at most every 10 minutes per area. */
@@ -286,23 +336,34 @@ component output="false" {
                 var p = normPath(it.url, arguments.base);
                 if (len(p)) arrayAppend(arguments.rows, {path: p, label: len(lbl) ? lbl : listLast(p, "/"), grp: arguments.grp});
             }
-            if (isArray(it.children ?: "")) walkMenu(it.children, lbl, arguments.base, arguments.rows);
+            // groups keep their whole trail ("Controls › Agents"), so the Access map shows the menu's own tree
+            if (isArray(it.children ?: "")) walkMenu(it.children, len(arguments.grp) ? arguments.grp & " › " & lbl : lbl, arguments.base, arguments.rows);
         }
     }
 
     public numeric function upsertPages(required string area, required array rows, string source = "menu") {
         var n = 0;
         var i = 0;
+        var done = {};
         for (var r in arguments.rows) {
             i++;
+            // a page linked twice in one menu keeps its first label and place
+            if (structKeyExists(done, r.path)) continue;
+            done[r.path] = 1;
             // A row first met as "seen" (a prospect opened it) takes the menu's label and place.
-            queryExecute("INSERT INTO cx_demo_pages (path, area, grp, label, sort, source) VALUES (:p, :a, :g, :l, :s, :src)
+            // A row of the same menu follows the menu (label, group, order); one listed by an
+            // other menu too keeps its first place. Operators never edit these columns, and
+            // updated_at is kept so a scan is not "changed here since the last export".
+            // MySQL applies the SET list left to right: same_ is decided before area/source change.
+            queryExecute("INSERT INTO cx_demo_pages (path, area, grp, label, sort, source, menu_seen_at) VALUES (:p, :a, :g, :l, :s, :src, NOW())
                 ON DUPLICATE KEY UPDATE
-                  label = IF(source = 'seen', VALUES(label), label),
-                  grp   = IF(source = 'seen' OR grp IS NULL, VALUES(grp), grp),
+                  label = IF(source = 'seen' OR area = VALUES(area), VALUES(label), label),
+                  grp   = IF(source = 'seen' OR area = VALUES(area) OR grp IS NULL, VALUES(grp), grp),
+                  sort  = IF(source = 'seen' OR area = VALUES(area), VALUES(sort), sort),
+                  menu_seen_at = IF(source = 'seen' OR area = VALUES(area), NOW(), menu_seen_at),
                   area  = IF(source = 'seen', VALUES(area), area),
-                  sort  = IF(source = 'seen', VALUES(sort), sort),
-                  source = IF(source = 'seen', VALUES(source), source)", {
+                  source = IF(source = 'seen', VALUES(source), source),
+                  updated_at = updated_at", {
                 p: r.path, a: arguments.area, g: {value: left(r.grp ?: "", 80), null: !len(r.grp ?: "")},
                 l: left(r.label, 120), s: {value: i, cfsqltype: "cf_sql_integer"}, src: arguments.source
             }, {datasource: variables.dsn, result: "local.res"});
@@ -326,14 +387,18 @@ component output="false" {
      * Reads the menus that are plain pages (Main AI, JumpStart, RAG dashboard) and
      * the three menu_config areas, and records every link. Returns {area: count}.
      */
-    public struct function scanMenus() {
+    public struct function scanMenus(string only = "") {
         var out = {};
-        for (var area in ["manage", "kb", "quick"]) {
+        var bases = {manage: "/ain5py/manage/", kb: "/ain5py/kb/", quick: "/ain5py/quick/", instance: "/ain5py/menuinst/"};
+        for (var area in ["manage", "instance", "kb", "quick"]) {
+            if (len(arguments.only) && arguments.only != area) continue;
             try {
                 var rows = [];
-                walkMenu(new trlvaddons.demo.lib.MenuProbe().menu(area), "", "/ain5py/" & area & "/", rows);
+                walkMenu(new trlvaddons.demo.lib.MenuProbe().menu(area), "", bases[area], rows);
+                if (!arrayLen(rows)) throw(message="the menu came back empty");
                 upsertPages(area, rows, "menu");
                 out[area] = arrayLen(rows);
+                scanned(area, arrayLen(rows));
             } catch (any e) { out[area] = "error: " & e.message; }
         }
         var srcs = [
@@ -342,6 +407,7 @@ component output="false" {
             {area: "rag",       base: "/ain5py/frontend/",   files: ["frontend/rag_dashboard.cfm"]}
         ];
         for (var s in srcs) {
+            if (len(arguments.only) && arguments.only != s.area) continue;
             var rows = [];
             for (var fn in s.files) {
                 var fp = expandPath("/ain5py/" & fn);
@@ -361,8 +427,25 @@ component output="false" {
             }
             upsertPages(s.area, rows, "menu");
             out[s.area] = arrayLen(rows);
+            if (arrayLen(rows)) scanned(s.area, arrayLen(rows));
         }
         return out;
+    }
+
+    /** When a section was last scanned and how many links it had (state_scan_<area> = "yyyy-mm-dd HH:nn:ss|n"). */
+    private void function scanned(required string area, required numeric n) {
+        // the database's clock, the same one that wrote menu_seen_at
+        var t = queryExecute("SELECT DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') AS t", {}, {datasource: variables.dsn}).t;
+        setSetting("state_scan_" & arguments.area, t & "|" & arguments.n, operator().email ?: "");
+    }
+
+    /** {ok, n, mins}: when a section was last scanned (minutes ago, by the database's clock) and how many links it had. */
+    public struct function lastScan(required string area) {
+        var v = setting("state_scan_" & arguments.area, "");
+        if (!len(v)) return {ok: false, n: 0, mins: 0};
+        var q = queryExecute("SELECT TIMESTAMPDIFF(MINUTE, STR_TO_DATE(:t, '%Y-%m-%d %H:%i:%s'), NOW()) AS m",
+            {t: listFirst(v, "|")}, {datasource: variables.dsn});
+        return {ok: true, n: val(listLast(v, "|")), mins: val(q.m)};
     }
 
     /** What demo.js needs to mark links: the Access map rows' effective modes + the feature map's patterns. */
@@ -381,7 +464,7 @@ component output="false" {
             var fm = ex ? f.explorer_mode : f.mode;
             for (var r in f.rx) arrayAppend(rx, [r, (ex && fm == "hidden") ? "pitch" : fm]);
         }
-        var m = {pages: pg, rx: rx};
+        var m = {pages: pg, rx: rx, sect: variables.SECTIONED};
         c[arguments.experience] = {at: now(), m: m};
         application.demo_clientmap = c;
         return m;
