@@ -128,7 +128,10 @@ component output="false" {
             if (isApiPath(path) || cgi.request_method != "GET") {
                 return {action: "deny", message: "This feature is not part of the demo."};
             }
-            return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=pitch_page&arg=" & urlEncodedFormat(f.key)};
+            // Inside a frame (the Manage / JumpStart menus) keep embed=1, or the card
+            // page brings its own platform header and the frame shows a second one.
+            var framed = (url.embed ?: "") == "1" || (form.embed ?: "") == "1" || lCase(cgi.http_sec_fetch_dest ?: "") == "iframe";
+            return {action: "redirect", url: "/ain5py/addon.cfm?a=demo&p=pitch_page&arg=" & urlEncodedFormat(f.key) & (framed ? "&embed=1" : "")};
         }
         demo.logEvent(d.pid, "page_denied", {feature: f.key, page: path});
         return {action: "deny", message: "This page is not part of the demo."};
@@ -200,6 +203,21 @@ component output="false" {
              & demo.switchHtml(d.mode)
              & '<span class="demo-locks">' & locked & '</span>'
              & '<a href="##" class="demo-talk" data-demo-action="talk">Talk to a person</a></div>'
+             & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'
+             & '<script src="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.js" defer></script>';
+    }
+
+    /** The popup script without the DEMO bar, for pages shown inside a frame (embed=1). */
+    public string function frameScripts() {
+        if (!isProspect()) return "";
+        var d = demo.sessionDemo();
+        if ((d.missing ?: true) || !d.consent) return "";
+        var cfg = {
+            pid: d.pid, audience: d.audience, lang: d.language, daysLeft: d.daysLeft,
+            company: d.company, where: "frame", wsDsn: d.db,
+            api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon"
+        };
+        return '<link rel="stylesheet" href="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.css">'
              & '<script>window.TRLV_DEMO = ' & demo.toJson(cfg) & ';</script>'
              & '<script src="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.js" defer></script>';
     }
