@@ -62,7 +62,7 @@
             <cfif NOT listFind("standard,generous", form.caps ?: "")><cfthrow message="bad limits"></cfif>
             <cfset queryExecute("UPDATE cx_demo_prospects SET caps_preset = :c, owner_oid = :o, notes = :n, audience = :a WHERE pid = :p", {
                 c: form.caps, o: {value: val(form.owner_oid ?: 0), null: NOT val(form.owner_oid ?: 0)},
-                n: form.notes ?: "", a: listFind("business,it,finance,hr,exec", form.audience ?: "") ? form.audience : p.audience, p: pid
+                n: form.notes ?: "", a: listFind("business,it", form.audience ?: "") ? form.audience : p.audience, p: pid
             }, {datasource: "addon_demo"})>
             <cfset msg = "Saved.">
         </cfcase>
@@ -190,7 +190,7 @@
     </div>
     <form method="post" class="grid" style="margin-top:10px;align-items:end"><input type="hidden" name="action" value="settings">
         <div><label>Owner</label><select name="owner_oid"><cfloop array="#demo.operators()#" item="o"><cfif o.role NEQ "system"><option value="#o.oid#" #p.owner_oid EQ o.oid ? "selected" : ""#>#encodeForHTML(o.display_name ?: o.email)#</option></cfif></cfloop></select></div>
-        <div><label>Audience</label><select name="audience"><cfloop list="business,it,finance,hr,exec" item="a"><option #p.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
+        <div><label>Audience</label><select name="audience"><cfloop list="business,it" item="a"><option #p.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
         <div><label>Limits</label><select name="caps"><option #p.caps_preset EQ "standard" ? "selected" : ""#>standard</option><option #p.caps_preset EQ "generous" ? "selected" : ""#>generous</option></select></div>
         <div style="grid-column:1/-1"><label>Notes</label><textarea name="notes" rows="2">#encodeForHTML(p.notes ?: "")#</textarea></div>
         <div><button class="btn">Save</button></div>

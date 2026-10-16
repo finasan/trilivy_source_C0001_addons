@@ -561,6 +561,18 @@ component output="false" {
         return c;
     }
 
+    /** The card a prospect sees (2026-10-16): business prospects the business card only;
+        IT prospects the business card with the IT card in c.it, shown under "For IT teams". */
+    public struct function cardFor(required string feature, string audience = "business", string lang = "en", string fallback = "") {
+        if (arguments.audience != "it") return card(arguments.feature, "business", arguments.lang, arguments.fallback);
+        var c = card(arguments.feature, "it", arguments.lang, arguments.fallback);
+        if (structIsEmpty(c) || c.audience != "it") return c;          // no IT card: the business one alone
+        var b = card(c.feature_key, "business", arguments.lang);
+        if (structIsEmpty(b) || b.audience != "business") return c;    // IT card only: show it as the card
+        b.it = c;
+        return b;
+    }
+
     // ------------------------------------------------------------------ welcome
     /** A one-time set-password link through the platform's own reset page. */
     public string function passwordLink(required struct p) {

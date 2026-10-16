@@ -19,7 +19,7 @@
         <cfif listFind("verified,live", st) AND NOT canVerify><cfthrow message="Only operators with role admin or se can verify or publish a card."></cfif>
         <cfif listFind("verified,live", st) AND (form.checked ?: "") NEQ "1"><cfthrow message="Tick 'every claim on this card has been checked' to verify or publish it."></cfif>
         <cfset fk = reReplace(lCase(form.feature_key ?: ""), "[^a-z0-9_]", "", "all")>
-        <cfset aud = listFind("business,it,finance,hr,exec", form.audience ?: "") ? form.audience : "business">
+        <cfset aud = listFind("business,it", form.audience ?: "") ? form.audience : "business">
         <cfset lang = reReplace(lCase(form.lang ?: "en"), "[^a-z]", "", "all")>
         <cfset prm = {fk: fk, aud: aud, lang: left(lang, 2), st: st, kicker: left(form.kicker ?: "", 120), headline: left(form.headline ?: "", 200),
                       why: form.why_html ?: "", how: form.how_html ?: "", objs: demo.toJson(objs), proof: form.proof_html ?: "",
@@ -73,7 +73,7 @@
                 <cfloop array="#feats#" item="f"><cfif f.mode EQ "pitch"><option value="#f.feature_key#" #c.feature_key EQ f.feature_key ? "selected" : ""#>#f.feature_key#</option></cfif></cfloop>
                 <cfloop list="moment_citations,moment_10q,moment_upload,moment_expiring" item="m"><option value="#m#" #c.feature_key EQ m ? "selected" : ""#>#m# (tip)</option></cfloop>
             </select></div>
-            <div><label>Audience</label><select name="audience"><cfloop list="business,it,finance,hr,exec" item="a"><option #c.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
+            <div><label>Audience</label><select name="audience"><cfloop list="business,it" item="a"><option #c.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
             <div><label>Language</label><input type="text" name="lang" value="#encodeForHTMLAttribute(c.lang)#" maxlength="2"></div>
             <div><label>Status</label><select name="status"><cfloop list="draft,verified,live,retired" item="s"><option #c.status EQ s ? "selected" : ""#>#s#</option></cfloop></select></div>
         </div>

@@ -73,26 +73,38 @@
       var c = j.card;
       var ov = shell(c.kicker || "Part of the full platform", c.headline, c.draft);
       current = { feature: feature };
-      var tabs = [["why", "Why it matters", c.why]];
-      if (c.how) tabs.push(["how", "How it works", c.how]);
-      if (c.objections && c.objections.length) tabs.push(["obj", "You might be wondering…", null]);
-      if (c.proof) tabs.push(["proof", "Proof", c.proof]);
+      // IT prospects: the business card plus the IT card's text under "For IT teams" in each tab (2026-10-16)
+      var it = c.it && c.it.headline ? c.it : null;
+      var objs = (c.objections || []).concat(it ? it.objections || [] : []);
+      var nBiz = (c.objections || []).length;
+      var tabs = [["why", "Why it matters", c.why, it && it.why]];
+      if (c.how || (it && it.how)) tabs.push(["how", "How it works", c.how, it && it.how]);
+      if (objs.length) tabs.push(["obj", "You might be wondering…", null, null]);
+      if (c.proof || (it && it.proof)) tabs.push(["proof", "Proof", c.proof, it && it.proof]);
       var tabBar = ov.querySelector(".dp-tabs"), body = ov.querySelector(".dp-body");
       tabBar.style.display = tabs.length > 1 ? "" : "none";
+      function itHead() {
+        return '<div class="dp-it"><div class="dp-it-sub">For IT teams' + (it.draft ? '<span class="dp-draft">DRAFT</span>' : "")
+          + '</div><div class="dp-it-h">' + esc(it.headline) + '</div>';
+      }
+      function objHtml(from, to) {
+        return objs.slice(from, to).map(function (o, i) {
+          return '<details class="dp-obj" data-i="' + (from + i) + '"><summary>' + esc(o.q) + '</summary><p>' + esc(o.a) + '</p></details>';
+        }).join("");
+      }
       function show(key) {
         tabBar.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", b.dataset.k === key); });
         var t = tabs.filter(function (x) { return x[0] === key; })[0];
         if (key === "obj") {
-          body.innerHTML = c.objections.map(function (o, i) {
-            return '<details class="dp-obj" data-i="' + i + '"><summary>' + esc(o.q) + '</summary><p>' + esc(o.a) + '</p></details>';
-          }).join("");
+          body.innerHTML = objHtml(0, nBiz) + (it && objs.length > nBiz ? itHead() + objHtml(nBiz) + '</div>' : "");
           body.querySelectorAll("details").forEach(function (d) {
             d.addEventListener("toggle", function () {
-              if (d.open) ev("objection_open", feature, { q: c.objections[+d.dataset.i].q });
+              if (d.open) ev("objection_open", feature, { q: objs[+d.dataset.i].q });
             });
           });
         } else {
-          body.innerHTML = t[2] || ""; // card HTML is written and verified by operators (cx_demo_pitch)
+          // card HTML is written and verified by operators (cx_demo_pitch)
+          body.innerHTML = (t[2] || "") + (t[3] ? itHead() + t[3] + '</div>' : "");
         }
         if (c.canask) {
           var a = document.createElement("div");

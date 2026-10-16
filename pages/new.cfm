@@ -24,7 +24,7 @@
     <cfif NOT isValid("email", em)><cfset err = "Enter a valid e-mail address.">
     <cfelseif NOT len(trim(form.fname))><cfset err = "Enter the first name.">
     <cfelseif NOT len(trim(form.company))><cfset err = "Enter the company.">
-    <cfelseif NOT listFind("business,it,finance,hr,exec", form.audience)><cfset err = "Choose an audience.">
+    <cfelseif NOT listFind("business,it", form.audience)><cfset err = "Choose an audience.">
     <cfelseif NOT isNumeric(form.days) OR form.days LT 1 OR form.days GT 90><cfset err = "Days must be between 1 and 90.">
     <cfelseif NOT listFind("standard,generous", form.caps)><cfset err = "Choose limits.">
     <cfelseif NOT listFind("invite,password", form.access)><cfset err = "Choose how the prospect gets in.">
@@ -97,7 +97,7 @@
     </div>
     <div class="grid">
         <div><label>Audience (decides the wording of the popups)</label><select name="audience">
-            <cfloop list="business,it,finance,hr,exec" item="a"><option value="#a#" #form.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
+            <cfloop list="business,it" item="a"><option value="#a#" #form.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
         <div><label>Industry</label><input type="text" name="industry" value="#encodeForHTMLAttribute(form.industry)#" maxlength="80" placeholder="e.g. logistics"></div>
         <div><label>Language</label><select name="language"><option value="en">English</option></select></div>
     </div>

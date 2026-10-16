@@ -7,7 +7,7 @@
 
 <cfswitch expression="#opn#">
     <cfcase value="card">
-        <cfset c = demo.card(feature, d.audience, d.language, reReplace(lCase(url.fb ?: ""), "[^a-z0-9_]", "", "all"))>
+        <cfset c = demo.cardFor(feature, d.audience, d.language, reReplace(lCase(url.fb ?: ""), "[^a-z0-9_]", "", "all"))>
         <cfif structIsEmpty(c)><cfset demo.json({ok: false, error: "no card"}, 404)></cfif>
         <cfset via = reReplace(url.via ?: "popup", "[^a-z_]", "", "all")>
         <cfif left(feature, 7) EQ "moment_">
@@ -17,11 +17,19 @@
         </cfif>
         <cfset queryExecute("INSERT INTO cx_demo_pitch_seen (pid, card_key) VALUES (:p, :k)
                              ON DUPLICATE KEY UPDATE last_at = NOW(), times = times + 1", {p: d.pid, k: c.key}, {datasource: "addon_demo"})>
+        <!--- IT prospects: the IT card rides along under "For IT teams" (2026-10-16) --->
+        <cfset itPart = {}>
+        <cfif structKeyExists(c, "it")>
+            <cfset queryExecute("INSERT INTO cx_demo_pitch_seen (pid, card_key) VALUES (:p, :k)
+                                 ON DUPLICATE KEY UPDATE last_at = NOW(), times = times + 1", {p: d.pid, k: c.it.key}, {datasource: "addon_demo"})>
+            <cfset itPart = {headline: c.it.headline, why: c.it.why_html ?: "", how: c.it.how_html ?: "",
+                             objections: c.it.objections, proof: c.it.proof_html ?: "", draft: c.it.isDraft}>
+        </cfif>
         <!--- the only button is Talk to a person (2026-10-15) --->
         <cfset demo.json({ok: true, card: {
             feature: feature, kicker: c.kicker ?: "", headline: c.headline, why: c.why_html ?: "", how: c.how_html ?: "",
             objections: c.objections, proof: c.proof_html ?: "", cta: ["talk"], draft: c.isDraft,
-            canAsk: len(trim(demo.setting("sales_engineer_instance", ""))) GT 0
+            canAsk: len(trim(demo.setting("sales_engineer_instance", ""))) GT 0, it: itPart
         }})>
     </cfcase>
 
