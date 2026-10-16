@@ -625,45 +625,104 @@ component output="false" {
         var recent = queryExecute("SELECT COUNT(*) AS c FROM ai_handoff_requests WHERE contact_email = :e AND created_at > NOW() - INTERVAL 1 HOUR",
             {e: p.email}, {datasource: dsn});
         if (recent.c GTE 5) return {ok: false, message: "You have sent several messages in the last hour. Please try again later."};
-        var look = queryExecute("SELECT bot_title, handoff_email_to FROM ai_instance_look LIMIT 1", {}, {datasource: dsn});
-        var summary = left("Message from the demo" & (len(arguments.about) ? " (" & arguments.about & ")" : "") & ": "
-                         & (len(trim(arguments.message)) ? trim(arguments.message) : "(no text, the prospect asked to talk to a person)"), 2000);
+        var look = queryExecute("SELECT * FROM ai_instance_look LIMIT 1", {}, {datasource: dsn});
+        var subject = "Message from the demo" & (len(arguments.about) ? ": " & arguments.about : "");
+        var msg = len(trim(arguments.message)) ? trim(arguments.message) : "(no text)";
         var name = trim((p.fname ?: "") & " " & (p.lname ?: ""));
+        // The platform's own "Contact us" ticket (2026-10-16): the same shape as its
+        // website contact form (trigger_source from_contact), so the Handoff Inbox of
+        // the sandbox answers it by e-mail (contact_reply) and the prospect can follow
+        // and answer it on its private request page.
         queryExecute("INSERT INTO ai_handoff_requests (conversation_id, user_id, contact_name, contact_email, summary, trigger_source, status)
-                      VALUES (:c, :u, :n, :e, :s, 'button', 'open')", {
-            c: "demo-" & lCase(createUUID()), u: p.email, n: {value: left(name, 200), null: !len(name)}, e: p.email,
-            s: {value: summary, cfsqltype: "cf_sql_longvarchar"}
+                      VALUES (:c, :u, :n, :e, :s, 'from_contact', 'open')", {
+            c: "contact-" & lCase(createUUID()), u: "contact:" & left(lCase(p.email), 240), n: {value: left(name, 200), null: !len(name)}, e: p.email,
+            s: {value: left(subject & chr(10) & chr(10) & msg, 4000), cfsqltype: "cf_sql_longvarchar"}
         }, {datasource: dsn, result: "local.ins"});
         var id = local.ins.generatedKey;
-        // staff = the assistant's operators + handoff_email_to, as the platform does
+        var label = "H-" & id;
+        var to = contactRecipients(arguments.pid);
+        var botName = len(trim(look.bot_title ?: "")) ? trim(look.bot_title) : "Trilivy demo";
+        var cf = createObject("component", "ain5py.platform.services.ContactForm").init();
+        var vars = {
+            "ticket": label, "name": len(name) ? name : "(not given)", "email": p.email, "subject": subject,
+            "summary": msg, "summary_short": left(reReplace(subject, "\s+", " ", "all"), 60),
+            "opened": dateTimeFormat(now(), "d mmm yyyy, HH:nn"), "website": "Trilivy demo (" & p.pid & ", " & (p.company ?: "") & ")",
+            "bot_name": botName, "instance": botName,
+            "custom_message": len(trim(look.handoff_message ?: "")) ? trim(look.handoff_message) : setting("contact_confirm_message", "")
+        };
+        var hm = createObject("component", "ain5py.platform.services.HandoffMail").init(dsn);
+        var sent = 0;
+        var userSent = 0;
+        if (arrayLen(to)) {
+            try {
+                var sv = duplicate(vars);
+                sv.link = cf.baseUrl() & "/ain5py/botinstances/handoff_inbox.cfm?wsDsn=" & urlEncodedFormat(n.db) & "&ticket=" & id;
+                sv.button_label = "Open the ticket";
+                savecontent variable="local.junk" { sent = hm.send("contact_staff_new", arrayToList(to), sv, botName) == "sent" ? 1 : 0; }
+            } catch (any e) {
+                cflog(file="addons", type="error", text="demo contact #arguments.pid# #label# staff mail: #e.message#");
+            }
+        }
+        // the prospect's confirmation with the ticket number and the private link (setting mail_contact_confirm)
+        if (setting("mail_contact_confirm", "1") == "1") {
+            try {
+                var uv = duplicate(vars);
+                uv.link = cf.ticketUrl(n.db, id);
+                uv.button_label = "View your request";
+                uv.footer_hint = "To answer, use the link to your request in this email.";
+                savecontent variable="local.junk2" { userSent = hm.send("contact_confirm", p.email, uv, botName) == "sent" ? 1 : 0; }
+            } catch (any e) {
+                cflog(file="addons", type="error", text="demo contact #arguments.pid# #label# confirmation: #e.message#");
+            }
+        }
+        queryExecute("UPDATE ai_handoff_requests SET staff_email_sent = :s, user_email_sent = :u WHERE id = :i",
+            {s: sent, u: userSent, i: id}, {datasource: dsn});
+        logEvent(arguments.pid, "talk_request", {feature: arguments.about, detail: {message: left(arguments.message, 1000), ticket: label, mailed: sent, confirmed: userSent, to: arrayToList(to)}});
+        return {ok: true, ticket: label, message: "Your message has been sent. Your request number is " & label
+            & (userSent ? "; a confirmation is on its way to " & p.email & "." : ".")};
+    }
+
+    /**
+     * Who gets a prospect's Contact us messages: the operators of the sandbox, its
+     * Talk to a Person "extra staff addresses" (handoff_email_to: the sales owner by
+     * default, editable on the prospect page) and the setting contact_extra_to
+     * (Package & settings), for every prospect.
+     */
+    public array function contactRecipients(required string pid) {
+        var n = names(arguments.pid);
         var to = [];
         try {
             var ops = application.auth.getInstanceOperators(n.db);
             for (var o in ops) if (len(o.email ?: "") && !arrayFindNoCase(to, o.email)) arrayAppend(to, o.email);
         } catch (any e) {}
-        for (var a in listToArray(look.handoff_email_to ?: "", ",;")) if (len(trim(a)) && !arrayFindNoCase(to, trim(a))) arrayAppend(to, trim(a));
-        var sent = 0;
-        if (arrayLen(to)) {
-            try {
-                var base = len(trim(application.env.OBTX_DOMAIN ?: "")) ? reReplace(trim(application.env.OBTX_DOMAIN), "/+$", "") : publicHost();
-                var botName = len(trim(look.bot_title ?: "")) ? trim(look.bot_title) : n.db;
-                var vars = {
-                    "ticket": "H-" & id, "name": len(name) ? name : "(not given)", "email": p.email, "summary": summary,
-                    "summary_short": left(reReplace(summary, "\s+", " ", "all"), 60),
-                    "opened": dateTimeFormat(now(), "d mmm yyyy, HH:nn"), "bot_name": botName, "instance": n.db,
-                    "link": base & "/ain5py/botinstances/handoff_inbox.cfm?wsDsn=" & urlEncodedFormat(n.db) & "&ticket=" & id,
-                    "button_label": "Open the ticket", "transcript": [], "trigger": "Talk to a person (demo)"
-                };
-                var hm = createObject("component", "ain5py.platform.services.HandoffMail").init(dsn);
-                savecontent variable="local.junk" { sent = hm.send("staff_new", arrayToList(to), vars, botName) == "sent" ? 1 : 0; }
-            } catch (any e) {
-                cflog(file="addons", type="error", text="demo talk #arguments.pid# H-#id#: #e.message#");
-            }
+        var extra = "";
+        try {
+            extra = queryExecute("SELECT handoff_email_to FROM ai_instance_look LIMIT 1", {}, {datasource: instanceDsn(n.db)}).handoff_email_to ?: "";
+        } catch (any e) {}
+        extra &= "," & setting("contact_extra_to", "");
+        for (var a in listToArray(extra, ",; ")) {
+            a = trim(a);
+            if (isValid("email", a) && !arrayFindNoCase(to, a)) arrayAppend(to, a);
         }
-        queryExecute("UPDATE ai_handoff_requests SET staff_email_sent = :s, user_email_sent = 0 WHERE id = :i",
-            {s: sent, i: id}, {datasource: dsn});
-        logEvent(arguments.pid, "talk_request", {feature: arguments.about, detail: {message: left(arguments.message, 1000), ticket: "H-" & id, mailed: sent}});
-        return {ok: true, ticket: "H-" & id, message: "Your message has been sent."};
+        return to;
+    }
+
+    /** The sandbox's extra staff addresses for Contact us (prospect page). */
+    public string function contactEmailTo(required string pid) {
+        try {
+            return queryExecute("SELECT handoff_email_to FROM ai_instance_look LIMIT 1", {}, {datasource: instanceDsn(names(arguments.pid).db)}).handoff_email_to ?: "";
+        } catch (any e) { return ""; }
+    }
+
+    public void function setContactEmailTo(required string pid, required string emails) {
+        var ok = [];
+        for (var a in listToArray(arguments.emails, ",; " & chr(10) & chr(13))) {
+            a = trim(a);
+            if (!isValid("email", a)) throw(message="Not an e-mail address: " & a);
+            if (!arrayFindNoCase(ok, a)) arrayAppend(ok, lCase(a));
+        }
+        queryExecute("UPDATE `#names(arguments.pid).db#`.ai_instance_look SET handoff_email_to = :e", {e: {value: left(arrayToList(ok, ","), 500), null: !arrayLen(ok)}},
+            {datasource: new trlvaddons.demo.lib.Sandbox().adminDS()});
     }
 
     // ------------------------------------------------------------------ helpers

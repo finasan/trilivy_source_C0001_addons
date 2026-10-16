@@ -59,6 +59,15 @@
     },
     {
       "path_patterns": [
+        "/ain5py/public/contact/ticket.cfm"
+      ],
+      "mode": "open",
+      "sort": 24,
+      "feature_key": "contact_ticket",
+      "title": "Contact us: the prospect's private request page (from the confirmation e-mail)"
+    },
+    {
+      "path_patterns": [
         "/ain5py/supportpages/aboutdoc.cfm",
         "/ain5py/supportpages/support_text.cfm"
       ],

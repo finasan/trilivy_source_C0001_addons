@@ -58,6 +58,11 @@
             <cfset msg = r.ok ? "Content updated: " & r.message : "Could not update: " & r.message>
             <cfset msgKind = r.ok ? "ok" : "err">
         </cfcase>
+        <cfcase value="contactto">
+            <cfset demo.setContactEmailTo(pid, form.contact_to ?: "")>
+            <cfset demo.logEvent(pid, "contact_to_changed", {detail: {to: left(form.contact_to ?: "", 500), by: op.oid}})>
+            <cfset msg = "Contact us messages from this prospect now go to: " & arrayToList(demo.contactRecipients(pid), ", ")>
+        </cfcase>
         <cfcase value="settings">
             <cfif NOT listFind("standard,generous", form.caps ?: "")><cfthrow message="bad limits"></cfif>
             <cfset queryExecute("UPDATE cx_demo_prospects SET caps_preset = :c, owner_oid = :o, notes = :n, audience = :a WHERE pid = :p", {
@@ -195,6 +200,15 @@
         <div style="grid-column:1/-1"><label>Notes</label><textarea name="notes" rows="2">#encodeForHTML(p.notes ?: "")#</textarea></div>
         <div><button class="btn">Save</button></div>
     </form>
+    <h3>Contact us</h3>
+    <form method="post" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap"><input type="hidden" name="action" value="contactto">
+        <div style="flex:1;min-width:280px"><label>Contact us e-mails from this prospect go to (comma-separated; the sales owner when the demo was built)</label>
+            <input type="text" name="contact_to" value="#encodeForHTMLAttribute(demo.contactEmailTo(pid))#" placeholder="owner@company.com, sales@company.com"></div>
+        <button class="btn">Save</button>
+    </form>
+    <cfset _ex = trim(demo.setting("contact_extra_to", ""))>
+    <p class="small muted" style="margin:4px 0 0">Also every prospect's messages: <cfif len(_ex)><b>#encodeForHTML(_ex)#</b><cfelse>nobody</cfif> (setting <span class="mono">contact_extra_to</span> under Package &amp; settings).
+        The prospect gets a confirmation with the request number: <b>#demo.setting("mail_contact_confirm", "1") EQ "1" ? "on" : "off"#</b> (setting <span class="mono">mail_contact_confirm</span>).</p>
 </div>
 
 <div class="card" id="delete" style="border-color:##f3c7c1">
