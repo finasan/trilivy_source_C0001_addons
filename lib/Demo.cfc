@@ -354,6 +354,8 @@ component output="false" {
                     if (!len(p)) continue;
                     var lbl = trim(reReplace(reReplace(reReplace(a, "<[^>]*>", " ", "all"), "&[a-z##0-9]+;", " ", "all"), "\s+", " ", "all"));
                     if (find("##", lbl) || !len(lbl)) lbl = listLast(p, "/");
+                    // a whole card is often one link: keep its first words
+                    if (len(lbl) GT 60) lbl = reReplace(left(lbl, 60), "\s+\S*$", "") & "…";
                     arrayAppend(rows, {path: p, label: left(lbl, 120), grp: grp});
                 }
             }
