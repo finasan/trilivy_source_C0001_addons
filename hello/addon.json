@@ -1,0 +1,36 @@
+{
+  "name": "hello",
+  "version": "0.1.0",
+  "hook_api": 1,
+  "title": "Hook framework test add-on",
+  "hooks": [
+    "login_check",
+    "session_init",
+    "request_gate",
+    "page_access",
+    "nav_items",
+    "page_top",
+    "menu_filter",
+    "chat_pre",
+    "event"
+  ],
+  "pages": {
+    "ping": {
+      "access": "signed_in",
+      "api": true
+    },
+    "hello": {
+      "access": "signed_in"
+    },
+    "secret": {
+      "access": "operator",
+      "api": true
+    }
+  },
+  "claims": {
+    "account_types": [
+      "hello_test"
+    ]
+  },
+  "database": true
+}
