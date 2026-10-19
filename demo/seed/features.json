@@ -1,0 +1,357 @@
+{
+  "features": [
+    {
+      "path_patterns": [
+        "/ain5py/login/*",
+        "/ain5py/manage/changepass.cfm"
+      ],
+      "mode": "open",
+      "sort": 1,
+      "feature_key": "signin",
+      "title": "Sign-in pages"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/addon.cfm",
+        "/ain5py/addon_api.cfm"
+      ],
+      "mode": "open",
+      "sort": 2,
+      "feature_key": "addon",
+      "title": "Demo pages"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/boty/support/agentsup_upload.cfm",
+        "/ain5py/boty/support/agentsup_dev_ragtable.cfm",
+        "/ain5py/boty/support/test_*",
+        "/ain5py/boty/test_*",
+        "/ain5py/boty/api_rag_summary_rebuild_all.cfm"
+      ],
+      "mode": "hidden",
+      "sort": 3,
+      "feature_key": "chat_upload",
+      "title": "File upload inside the chat"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/boty/boty_full.cfm",
+        "/ain5py/boty/chat_entry.cfm",
+        "/ain5py/boty/api_handoff.cfm",
+        "/ain5py/boty/api_rag_summary_filters.cfm",
+        "/ain5py/boty/api_rag_summary_keys.cfm",
+        "/ain5py/boty/support/agentsup_*",
+        "/ain5py/boty/agentsup.cfm",
+        "/ain5py/boty/agentsup_popup_embed.cfm",
+        "/ain5py/boty/agentsup_handoff_ui.cfm",
+        "/ain5py/boty/support/api_transcribe.cfm"
+      ],
+      "mode": "open",
+      "sort": 10,
+      "feature_key": "chat",
+      "title": "The assistant (chat)"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/lms_workshop/player/*",
+        "/ain5py/lms_workshop/api/*"
+      ],
+      "mode": "open",
+      "sort": 20,
+      "feature_key": "courses",
+      "title": "Courses (learner)"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/public/contact/ticket.cfm"
+      ],
+      "mode": "open",
+      "sort": 24,
+      "feature_key": "contact_ticket",
+      "title": "Contact us: the prospect's private request page (from the confirmation e-mail)"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/supportpages/aboutdoc.cfm",
+        "/ain5py/supportpages/support_text.cfm"
+      ],
+      "mode": "open",
+      "sort": 25,
+      "feature_key": "resources",
+      "title": "Resources (documentation)"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/ai_docs/deprecated_auditrep/*",
+        "/ain5py/ai_docs/xray/*"
+      ],
+      "mode": "hidden",
+      "sort": 29,
+      "feature_key": "internal_docs",
+      "title": "Internal audits and reviews"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/kb/*",
+        "/ain5py/ai_docs/kbn/*",
+        "/ain5py/ai_docs/ugc/*"
+      ],
+      "mode": "open",
+      "sort": 30,
+      "feature_key": "knowledge_docs",
+      "title": "Trilivy knowledge pages"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/menucenter/restapi_center.cfm",
+        "/ain5py/menucenter/agent_center.cfm",
+        "/ain5py/menucenter/retrieve_center*",
+        "/ain5py/menucenter/deprec_*",
+        "/ain5py/menucenter/live_bridge/*",
+        "/ain5py/menucenter/folder_copy/*",
+        "/ain5py/menucenter/connect*",
+        "/ain5py/menucenter/mcp*",
+        "/ain5py/menucenter/one_click.cfm",
+        "/ain5py/menucenter/api_code_assistant_token.cfm",
+        "/ain5py/boty/admin/agentsup_prompt_inspector.cfm",
+        "/ain5py/boty/admin/test_*",
+        "/ain5py/tips/ai_buzzwords_crud.cfm",
+        "/ain5py/tips/ai_buzzwords_genall.cfm",
+        "/ain5py/tips/ai_buzzwords_code.cfm",
+        "/ain5py/tips/faqm.cfm",
+        "/ain5py/tips/ragm_buzzwords_export.cfm",
+        "/ain5py/coursemaker/*"
+      ],
+      "mode": "pitch",
+      "sort": 31,
+      "explorer_mode": "pitch",
+      "feature_key": "ex_locked",
+      "title": "Server-wide administration"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/menucenter/index_v2.cfm",
+        "/ain5py/menucenter/index.cfm",
+        "/ain5py/menucenter/mc_*",
+        "/ain5py/menucenter/agent_factory_center.cfm",
+        "/ain5py/menucenter/examples_center.cfm",
+        "/ain5py/menucenter/code_assistant_center.cfm",
+        "/ain5py/menucenter/model_app_download.cfm",
+        "/ain5py/menucenter/_mode_badges.cfm",
+        "/ain5py/quick/menu.cfm",
+        "/ain5py/quick/menu_config.cfm",
+        "/ain5py/quick/welcome.cfm",
+        "/ain5py/tips/faq_view.cfm",
+        "/ain5py/tips/faq_a.cfm",
+        "/ain5py/tips/ai_buzzwords_browser.cfm",
+        "/ain5py/tips/ai_judge.cfm"
+      ],
+      "mode": "pitch",
+      "sort": 32,
+      "explorer_mode": "open",
+      "feature_key": "jumpstart__ex",
+      "title": "JumpStart"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/frontmenu/*",
+        "/ain5py/frontend/rag_dashboard.cfm"
+      ],
+      "mode": "pitch",
+      "sort": 33,
+      "explorer_mode": "open",
+      "feature_key": "rag_maker__ex",
+      "title": "Main AI and the RAG dashboard"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/boty/admin/manage_guardrails.cfm",
+        "/ain5py/boty/admin/manage_look_feel.cfm",
+        "/ain5py/boty/admin/manage_personas.cfm",
+        "/ain5py/boty/admin/ragm_agent_tools.cfm",
+        "/ain5py/boty/admin/icp_agent_factory.cfm",
+        "/ain5py/boty/admin/_schema_guide.cfm"
+      ],
+      "mode": "pitch",
+      "sort": 34,
+      "explorer_mode": "open",
+      "feature_key": "agent_factory__ex",
+      "title": "Assistant setup"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/botinstances/handoff_config.cfm",
+        "/ain5py/botinstances/handoff_inbox.cfm",
+        "/ain5py/botinstances/handoff_live.cfm",
+        "/ain5py/botinstances/api_handoff_live.cfm",
+        "/ain5py/botinstances/conversation_audit.cfm"
+      ],
+      "mode": "pitch",
+      "sort": 35,
+      "explorer_mode": "open",
+      "feature_key": "instances__ex",
+      "title": "Talk to a Person"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/manage/menu.cfm",
+        "/ain5py/manage/welcome.cfm",
+        "/ain5py/manage/menu_config.cfm",
+        "/ain5py/manage/view_myprofile.cfm",
+        "/ain5py/supportpages/aboutdoc.cfm",
+        "/ain5py/supportpages/support_text.cfm"
+      ],
+      "mode": "pitch",
+      "sort": 36,
+      "explorer_mode": "open",
+      "feature_key": "admin__ex",
+      "title": "Manage"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/lms_workshop/*",
+        "/ain5py/coursemaker/*"
+      ],
+      "mode": "pitch",
+      "sort": 40,
+      "explorer_mode": "open",
+      "nav_label": "Course Maker",
+      "feature_key": "lms_authoring",
+      "nav_group": "Build",
+      "title": "Course authoring"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/frontend/*",
+        "/ain5py/frontmenu/*"
+      ],
+      "mode": "pitch",
+      "sort": 50,
+      "nav_label": "Knowledge Builder",
+      "feature_key": "rag_maker",
+      "nav_group": "Build",
+      "title": "Knowledge builder (RAG Maker)"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/answer_bank/*"
+      ],
+      "mode": "pitch",
+      "sort": 55,
+      "explorer_mode": "open",
+      "nav_label": "Answer Bank",
+      "feature_key": "answer_bank",
+      "nav_group": "Build",
+      "title": "Answer Bank"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/qa_ext/*"
+      ],
+      "mode": "pitch",
+      "sort": 60,
+      "nav_label": "Quality Lab",
+      "feature_key": "quality_lab",
+      "nav_group": "Build",
+      "title": "Quality Lab and Response Grading"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/actionregistry/*",
+        "/ain5py/agentfactory_v2/*"
+      ],
+      "mode": "pitch",
+      "sort": 70,
+      "explorer_mode": "open",
+      "nav_label": "Agent Factory",
+      "feature_key": "agent_factory",
+      "nav_group": "Build",
+      "title": "Agent Factory and agent tools"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/appconnect/*",
+        "/ain5py/agentapi/*"
+      ],
+      "mode": "pitch",
+      "sort": 80,
+      "nav_label": "Connections",
+      "feature_key": "connections",
+      "nav_group": "Connect",
+      "title": "Connections, MCP and Live Bridge"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/botinstances/*",
+        "/ain5py/menuinst/*"
+      ],
+      "mode": "pitch",
+      "sort": 90,
+      "nav_label": "Assistants",
+      "feature_key": "instances",
+      "nav_group": "Admin",
+      "title": "Assistants and branding"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/repgen/*",
+        "/ain5py/reports-examples/*"
+      ],
+      "mode": "pitch",
+      "sort": 95,
+      "nav_label": "Reports",
+      "feature_key": "reports",
+      "nav_group": "Admin",
+      "title": "Reports and analytics"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/menucenter/*",
+        "/ain5py/quick/*",
+        "/ain5py/tips/*"
+      ],
+      "mode": "pitch",
+      "sort": 96,
+      "feature_key": "jumpstart",
+      "title": "JumpStart and the platform tour"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/manage/system/*",
+        "/ain5py/manage/updates/*",
+        "/ain5py/cflogger/*",
+        "/ain5py/mllm_api/*",
+        "/ain5py/ollama/*",
+        "/ain5py/preproc/*",
+        "/ain5py/menugen/*",
+        "/ain5py/botsimple/*",
+        "/ain5py/public/*"
+      ],
+      "mode": "hidden",
+      "sort": 97,
+      "feature_key": "system",
+      "title": "Server and system settings"
+    },
+    {
+      "path_patterns": [
+        "/ain5py/manage/*",
+        "/ain5py/supportpages/*",
+        "/ain5py/platform/*"
+      ],
+      "mode": "pitch",
+      "sort": 98,
+      "nav_label": "Administration",
+      "feature_key": "admin",
+      "nav_group": "Admin",
+      "title": "Platform administration (users, roles, settings)"
+    },
+    {
+      "path_patterns": [],
+      "mode": "pitch",
+      "sort": 999,
+      "feature_key": "platform",
+      "title": "Everything else in the full platform"
+    }
+  ],
+  "_comment": "Exported from the Demo Console 2026-10-16 15:29"
+}

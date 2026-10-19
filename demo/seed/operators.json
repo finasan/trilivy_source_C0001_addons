@@ -1,0 +1,10 @@
+{
+  "operators": [
+    {
+      "display_name": "Administrator",
+      "role": "admin",
+      "email": "octavioslemer4@gmail.com"
+    }
+  ],
+  "_comment": "Accounts must exist on the box; bootstrap links them by e-mail."
+}

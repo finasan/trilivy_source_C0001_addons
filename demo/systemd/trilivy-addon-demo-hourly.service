@@ -1,0 +1,7 @@
+[Unit]
+Description=Trilivy Demo add-on - hourly housekeeping (expiry, e-mails, purge)
+After=lucee.service mysql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/python3.13 /home/trilivyapp/addons/demo/py/cron_call.py hourly
