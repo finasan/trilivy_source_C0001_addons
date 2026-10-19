@@ -137,7 +137,7 @@
 <script>
 // the DEMO bar was drawn before this page moved the story on: show the step we are on
 (function () {
-  var a = document.querySelector('#demoBar .demo-story[href*="arg=#encodeForJavaScript(key)#"]');
+  var a = document.querySelector('##demoBar .demo-story[href*="arg=#encodeForJavaScript(key)#"]');
   if (a) a.textContent = "▶ #encodeForJavaScript(s.title)# · #n#/#total#";
 })();
 // ← / → move through the slides (not while typing)
