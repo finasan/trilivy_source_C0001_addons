@@ -136,6 +136,12 @@
   // Contact us on every card; plus "Open it now" (SPO) or "Continue to the page" (the page is open behind it).
   function ctas(bar, feature, opts) {
     opts = opts || {};
+    if (opts.closed) {
+      var nt = document.createElement("span");
+      nt.className = "dp-note";
+      nt.textContent = "Opens in your own pilot: in this shared demo it would show more than your sandbox.";
+      bar.appendChild(nt);
+    }
     if (opts.open || opts.cont) {
       var go = document.createElement("button");
       go.className = "dp-btn p";
@@ -242,6 +248,7 @@
   }
   var LINK_CSS = "a.demo-lk::after{content:' \\1F512';font-size:.85em;opacity:.7}"
     + "a.demo-spo::after{content:' \\2726';font-size:.8em;opacity:.8}"
+    + "a.demo-ci::after{content:' \\24D8';font-size:.85em;opacity:.7}"
     + ".demo-gi{display:inline-grid;place-items:center;width:17px;height:17px;margin-left:6px;border-radius:50%;"
     + "background:rgba(255,179,0,.9);color:#1b2333;font:700 11px/1 Arial,sans-serif;cursor:pointer;vertical-align:1px}";
 
@@ -299,7 +306,8 @@
         return;
       }
       el.dataset.demoMk = "1";
-      if (n[0] === "pitch") el.classList.add("demo-lk");
+      // ✦ = its card, then the real page; ⓘ = its card only (the page is not safe to open in a shared demo yet)
+      if (n[0] === "pitch") el.classList.add("demo-ci");
       else if (n[0] === "guard") el.classList.add("demo-spo");
     });
   }
@@ -324,7 +332,7 @@
       if (!seen) { ev("group_card", card, { trail: trailOf(el) }); setTimeout(function () { openCard(card, "group"); }, 250); }
       return;
     }
-    if (mode === "pitch") { e.preventDefault(); e.stopPropagation(); openCard(card, "menu"); return; }
+    if (mode === "pitch") { e.preventDefault(); e.stopPropagation(); openCard(card, "menu", { closed: true }); return; }
     if (mode === "guard") {
       e.preventDefault(); e.stopPropagation();
       var path = null;

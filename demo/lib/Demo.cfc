@@ -274,8 +274,10 @@ component output="false" {
                 if (!f.page) f.label = cn.label;
             }
         }
-        // never open a page that shows other prospects' data or changes the server
+        // never open a page that shows other prospects' data or changes the server; a menu code
+        // opens only pages audited as sandbox-safe (a page never audited shows its card)
         if (listFind("boxwide,server", f.safety) && listFind("open,capped,guard", f.mode)) { f.mode = "pitch"; f.unsafe = true; }
+        if (len(f.code) && f.safety != "sandbox" && listFind("open,capped,guard", f.mode)) { f.mode = "pitch"; f.unsafe = true; }
         if (f.mode != "guard") f.readonly = false;
         return f;
     }
@@ -395,7 +397,9 @@ component output="false" {
     }
 
     // ------------------------------------------------------------------ menu codes
-    variables.CODE_MODE = {SPT: "pitch", SPS: "pitch", SPO: "guard", OPE: "open", HID: "hidden"};
+    // 2026-10-19 (the user): SPT / SPS / SPO all show their sales card first, then the real page
+    // opens ("Open it now"); only the card differs (the group's, or the item's own)
+    variables.CODE_MODE = {SPT: "guard", SPS: "guard", SPO: "guard", OPE: "open", HID: "hidden"};
     // a page linked from several places takes the most open of their codes
     variables.CODE_RANK = {OPE: 4, SPO: 3, SPS: 2, SPT: 2, HID: 1};
 
@@ -668,9 +672,9 @@ component output="false" {
                 var n = nm.byArea[ar][tr];
                 if (!len(n.code)) continue;
                 var md2 = codeMode(n.code);
-                if (n.kind == "link" && len(n.path) && listFind("open,guard", md2)) {
-                    var row = pageRow(n.path);
-                    if (listFind("boxwide,server", row.safety ?: "")) md2 = "pitch";
+                if (n.kind == "link" && listFind("open,guard", md2)) {
+                    var row = len(n.path) ? pageRow(n.path) : {};
+                    if ((row.safety ?: "") != "sandbox") md2 = "pitch";
                 }
                 t[tr] = [md2, n.card, len(n.own) ? 1 : 0, n.kind == "group" ? 1 : 0, n.code];
             }
@@ -688,8 +692,8 @@ component output="false" {
         if (f.mode != "guard") return {ok: false};
         var pg = pageRow(arguments.path);
         var lbl = pg.label ?: f.label;
-        // SPO (menu codes): the guardrail is the item's own sales card, then the page works
-        if (f.code == "SPO") return {ok: true, card: f.card, fb: f.key, label: lbl, readonly: f.readonly};
+        // menu codes SPT / SPS / SPO: the guardrail is the sales card, then the page works
+        if (listFind("SPT,SPS,SPO", f.code)) return {ok: true, card: f.card, fb: f.key, label: lbl, readonly: f.readonly};
         var html = trim(pg.guard_html ?: "");
         if (!len(html)) {
             html = "<p>This is the real <b>" & encodeForHTML(lbl) & "</b> page, working on your own private copy of Trilivy. "

@@ -14,7 +14,8 @@
 <cfset msg = ""><cfset msgKind = "ok">
 <cfset canEdit = listFind("admin,se", op.role) GT 0>
 <cfset CODES = "SPT,SPS,SPO,OPE,HID">
-<cfset CODE_LBL = {SPT: "SPT · group card, inherited", SPS: "SPS · own card (locked)", SPO: "SPO · card + Open it now", OPE: "OPE · open", HID: "HID · hidden"}>
+<!--- 2026-10-19 (the user): SPT / SPS / SPO all = card first, then "Open it now" runs the real page --->
+<cfset CODE_LBL = {SPT: "SPT · group card + open, inherited", SPS: "SPS · own card + open", SPO: "SPO · own card + open", OPE: "OPE · open, no card", HID: "HID · hidden"}>
 <cfset AREA_OK = {manage: "Manage menu", kb: "Knowledge menu", quick: "Quick menu", instance: "Instance menu"}>
 <cfset PREFIX = {manage: "mg", kb: "kb", quick: "qk", instance: "ic"}>
 <cfparam name="url.area" default="manage">
@@ -199,9 +200,9 @@
         <cfloop array="#nodes#" item="n">
             <cfset e = tree[n.trail] ?: {code: "", card: "", from: ""}>
             <cfset row = len(n.path ?: "") ? demo.pageRow(n.path) : {}>
-            <cfset unsafe = listFind("boxwide,server", row.safety ?: "") GT 0>
             <cfset effMode = len(e.code) ? demo.codeMode(e.code) : "">
-            <cfset blocked = unsafe AND listFind("open,guard", effMode) AND n.kind EQ "link">
+            <!--- a code opens only pages audited as sandbox-safe --->
+            <cfset blocked = (row.safety ?: "") NEQ "sandbox" AND listFind("open,guard", effMode) AND n.kind EQ "link">
             <tr class="#n.kind EQ 'group' ? 'grp' : ''#">
                 <td class="nm" style="padding-left:#8 + (n.depth - 1) * 20#px" title="#encodeForHTMLAttribute(n.trail)#">
                     #n.kind EQ "group" ? "▸ <b>" & encodeForHTML(n.label) & "</b>" : encodeForHTML(n.label)#
@@ -217,7 +218,7 @@
                     <cfif len(e.code)>
                         <span class="cd #e.code#">#e.code#</span>
                         <cfif e.from NEQ n.trail><span class="small muted">from #encodeForHTML(listLast(e.from, "›"))#</span></cfif>
-                        <cfif blocked><div class="warn">⚠ #row.safety#: shows its card until the page is made safe</div></cfif>
+                        <cfif blocked><div class="warn">⚠ #len(row.safety ?: "") ? row.safety : "not audited"#: card only until the page is audited / made safe</div></cfif>
                         <cfif listFind("SPT,SPS,SPO", e.code) AND (e.from EQ n.trail OR n.kind EQ "link")>
                             <cfif structKeyExists(cards, e.card)><div class="okc">card #encodeForHTML(e.card)# ✓ (#cards[e.card]#)</div>
                             <cfelse><div class="warn">no card #encodeForHTML(e.card)# yet: <a href="/ain5py/addon.cfm?a=demo&p=library&new=1&feature=#encodeForURL(e.card)#">write it</a> (else the feature card shows)</div></cfif>
