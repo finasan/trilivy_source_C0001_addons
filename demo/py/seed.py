@@ -46,9 +46,19 @@ def conn(db=None):
                            charset="utf8mb4", autocommit=False, cursorclass=pymysql.cursors.DictCursor)
 
 
+def all_cards():
+    """pitch.json plus any seed/pitch_*.json (e.g. pitch_manage.json: the menu-code cards, 2026-10-19)."""
+    cards = list(load("pitch.json").get("cards", []))
+    seed_dir = os.path.join(ADDON_DIR, "seed")
+    for fn in sorted(os.listdir(seed_dir)):
+        if fn.startswith("pitch_") and fn.endswith(".json"):
+            cards += load(fn).get("cards", [])
+    return cards
+
+
 def seed_cards(cur):
     added = updated = 0
-    for k in load("pitch.json").get("cards", []):
+    for k in all_cards():
         # Only "talk" exists (2026-10-15: no booking, no wish list).
         cta = [c for c in k.get("cta", []) if c == "talk"]
         vals = (k.get("kicker", ""), k["headline"], k.get("why_html", ""), k.get("how_html", ""),
