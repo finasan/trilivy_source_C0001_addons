@@ -1,0 +1,161 @@
+{
+  "_comment": "Stories (Demo Console > Stories): slides and live steps. {wsDsn} = the prospect's own sandbox. Written 2026-10-19 from ai_docs/UGC/quickstart_steps_v2.cfm.",
+  "stories": [
+    {
+      "story_key": "quickstart",
+      "title": "Quick Start",
+      "subtitle": "From nothing to a working AI answer, on the real platform",
+      "minutes": 10,
+      "status": "live",
+      "sort": 10,
+      "steps": [
+        {
+          "kind": "slide",
+          "kicker": "Quick Start · about 10 minutes",
+          "title": "From nothing to a working AI answer, in about ten minutes",
+          "body_html": "<p>In the next few minutes you will build a real knowledge base, test it, put it in front of people and machines, and see where agents take it next.</p><p>Every step starts with a short explanation like this one. Then the <b>real</b> Trilivy page opens and you do it yourself; a small panel in the corner tells you what to do and takes you to the next step. Everything happens in your own private copy of Trilivy: what you upload and ask stays in your sandbox.</p>",
+          "benefits": [
+            "An assistant that answers from your own documents",
+            "Every answer shows the sources it used",
+            "The same knowledge served to people, apps and AI assistants",
+            "Runs on your own server, with your data under your control"
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "slide",
+          "kicker": "Step 1 · Gather",
+          "title": "Pick 10 to 50 documents worth answering about",
+          "body_html": "<p>A good assistant starts with good documents, not with many documents. Pick the ones people ask about every week: policies, procedures, FAQs, product sheets, price lists, manuals.</p><ul><li><b>Quality beats quantity.</b> Twenty current, well-written documents give better answers than two thousand old ones.</li><li><b>Skip the shared drive.</b> Old versions and drafts confuse an assistant just as they confuse a new colleague.</li><li><b>In this demo</b>, please no personal data or secrets.</li></ul><p>No files at hand? Download our sample pack: fifteen short documents of a fictional logistics company, Brightwater Logistics, with a list of good test questions inside.</p>",
+          "benefits": [
+            "Start small: one team, one use case",
+            "Answers improve as soon as the documents do",
+            "Nothing to prepare: PDF, Word, PowerPoint, Excel, HTML, e-mail, even audio and video"
+          ],
+          "buttons": [
+            {"label": "Download the sample documents", "href": "/ain5py/addon_api.cfm?a=demo&p=asset&f=sample_docs.zip"}
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "live",
+          "kicker": "Step 2 · Build",
+          "title": "Upload them and let Trilivy build the knowledge base",
+          "body_html": "<p>The RAG Maker reads your files, splits them into passages, adds meaning (embeddings) and stores them in your own knowledge base. Scanned PDFs are read with OCR, audio and video are transcribed. The defaults are chosen for you; processing runs on the server, so you can close the page.</p>",
+          "task_html": "<p>Choose your knowledge base, then upload 3 to 10 files (or the unzipped sample pack with <b>Entire Directory</b>). Watch them arrive in the <b>Queue</b>.</p><p>Prefer a simpler screen? <a href=\"/ain5py/addon.cfm?a=demo&p=my_docs\">My documents</a> does the same in one step.</p>",
+          "target_path": "/ain5py/frontend/ragw_maker.cfm",
+          "allow_paths": ["/ain5py/frontend/ragw_queue.cfm"],
+          "card_key": "mg_rag_maker",
+          "buttons": [
+            {"label": "Use My documents instead", "href": "/ain5py/addon.cfm?a=demo&p=my_docs"}
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "slide",
+          "kicker": "Step 3 · Test",
+          "title": "Ask a question you already know the answer to",
+          "body_html": "<p>Before you trust an assistant, check what it <i>finds</i>. The Explorer shows the passages Trilivy retrieves for a question, each with its score, before any AI writes an answer.</p><ul><li><b>The right passage is there</b>: the assistant will answer well.</li><li><b>It is not there at all</b>: a content gap. Add or fix the document.</li><li><b>It is there but low</b>: a retrieval question. Trilivy's Quality Lab measures and tunes exactly this.</li></ul>",
+          "benefits": [
+            "See why an answer is right, not just that it is",
+            "Find content gaps before your users do",
+            "Hybrid search with reranking, on PostgreSQL + pgvector"
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "live",
+          "kicker": "Step 3 · Test",
+          "title": "Look inside the search",
+          "task_html": "<p>Type a question whose answer you know is in your documents (sample pack: <i>How many days of annual leave after five years?</i>). Check the top passages and their scores.</p>",
+          "target_path": "/ain5py/frontend/ragm_explorer.cfm",
+          "card_key": "mg_rag_mgmt",
+          "status": "live"
+        },
+        {
+          "kind": "slide",
+          "kicker": "Step 4 · Use",
+          "title": "Put it in front of a person",
+          "body_html": "<p>Now the part your colleagues will see: a chat assistant that answers in plain language and shows the documents it used, so anyone can check the answer in one click.</p><p>Ask it something that is <b>not</b> in your documents as well. A good assistant says it does not know instead of inventing an answer; Trilivy is built to do exactly that.</p>",
+          "benefits": [
+            "Written answers with their sources",
+            "Honest \"I don't know\" when the documents don't say",
+            "Your look, your persona, your guardrails",
+            "A real person one click away (Talk to a person)"
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "live",
+          "kicker": "Step 4 · Use",
+          "title": "Ask the assistant",
+          "task_html": "<ol><li>Ask a question your documents answer, and open one of the sources.</li><li>Ask one they do not answer (sample pack: <i>What is the CEO's favourite colour?</i>).</li></ol>",
+          "target_path": "/ain5py/boty/boty_full.cfm?wsDsn={wsDsn}",
+          "card_key": "mg_ret_conversational",
+          "done_when": {"event": "chat_answer", "count": 2},
+          "status": "live"
+        },
+        {
+          "kind": "slide",
+          "kicker": "Step 5 · Connect",
+          "title": "Now let a machine use it",
+          "body_html": "<p>The same knowledge base can answer your other systems, not only people. Your intranet, your ticketing tool or your own app calls Trilivy's REST API with a key; AI assistants such as Claude or Copilot connect through MCP.</p><p>Each key decides which knowledge bases it may read, up to which confidentiality level, how often and until when, and every call is logged.</p>",
+          "benefits": [
+            "One knowledge base, every channel: chat, apps, AI assistants",
+            "REST answers with citations, or the passages only",
+            "MCP for Claude, ChatGPT, Copilot and other AI clients",
+            "Keys with limits, expiry and a full call log"
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "live",
+          "kicker": "Step 5 · Connect",
+          "title": "The Retrieve Center",
+          "task_html": "<p>Look at the four doors: people, REST answers, REST knowledge only, and MCP. Open the one your team would use first.</p>",
+          "target_path": "/ain5py/menucenter/retrieve_center_V2.cfm",
+          "card_key": "mg_retrieve",
+          "status": "live"
+        },
+        {
+          "kind": "slide",
+          "kicker": "Step 6 · Act",
+          "title": "From answers to actions: agents",
+          "body_html": "<p>An answer tells you what the policy says. An agent goes one step further: it looks up the order, checks the stock, files the ticket, using tools you allow and nothing else.</p><p>In Trilivy you describe the agent in plain words, review what it will do, test it automatically and publish it only when it passes. Every run is logged with its cost.</p>",
+          "benefits": [
+            "Describe, review, test, publish: no code to write",
+            "Read-only data tools with time and row limits",
+            "Automatic tests before anything goes live",
+            "Agents work in the chat, the API and MCP"
+          ],
+          "status": "live"
+        },
+        {
+          "kind": "live",
+          "kicker": "Step 6 · Act",
+          "title": "The Agent Center",
+          "task_html": "<p>See what an agent is, where it meets the Retrieve Center, and the agents already running. Then go on.</p>",
+          "target_path": "/ain5py/menucenter/agent_center.cfm",
+          "card_key": "mg_agent_center",
+          "status": "live"
+        },
+        {
+          "kind": "slide",
+          "kicker": "Done · What's next",
+          "title": "Make it stick",
+          "body_html": "<p>You have just done in minutes what usually takes a project: documents in, a tested knowledge base, an assistant for people and a door for machines.</p><ul><li><b>Appoint an AI Champion</b>: one person who owns the documents and the answers.</li><li><b>Choose the highest-value use case</b>: the questions your team answers most often.</li><li><b>Keep it healthy</b>: the Quality Lab measures answer quality with test questions, so you see when a change helps or hurts.</li></ul><p>Everything you built stays in your sandbox. Keep asking, switch to <b>Full platform</b> on your demo home to explore every menu, or tell us what you would like to see.</p>",
+          "benefits": [
+            "A pilot on your own server, with your own documents",
+            "Measured quality, not a gut feeling",
+            "A team that helps you choose the first use case"
+          ],
+          "buttons": [
+            {"label": "Back to my demo home", "href": "/ain5py/addon.cfm?a=demo&p=welcome"},
+            {"label": "Contact us", "href": "talk"}
+          ],
+          "status": "live"
+        }
+      ]
+    }
+  ]
+}

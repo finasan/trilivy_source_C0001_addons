@@ -112,8 +112,14 @@ component output="false" {
         // the Instance Control Panel's sections are separate Access map rows (path?section=x)
         var key = demo.requestKey(path);
         var f = demo.classify(key, d.mode);
-        // Full platform keeps every menu item, so a "hidden" page is shown as locked (its popup)
-        if (d.mode == "explorer" && f.mode == "hidden") f.mode = "pitch";
+        // Full platform keeps every menu item, so a "hidden" page is shown as locked (its popup);
+        // a page the menu codes set to HID is out of the demo there too (2026-10-19)
+        if (d.mode == "explorer" && f.mode == "hidden" && f.code != "HID") f.mode = "pitch";
+        // the running story's step opens its own pages (never a box-wide or server page)
+        if (listFind("pitch,hidden", f.mode) && !(f.unsafe ?: false) && !listFind("boxwide,server", f.safety) && demo.storyPass(path)) {
+            f.mode = "open";
+            if (cgi.request_method == "GET" && !isApiPath(path)) demo.logEvent(d.pid, "story_pass", {feature: f.key, page: left(path, 255)});
+        }
         // Safety audit of the Full platform map (setting explorer_audit_pid, set
         // only while an operator runs it): that one prospect may OPEN any page,
         // read-only, so the crawl can see what each page would show.
@@ -201,10 +207,32 @@ component output="false" {
         if (!isProspect()) return;
         var d = demo.sessionDemo();
         if (d.missing ?: true) return;
-        // Full platform: the menus stay 100% the real ones; what is not open shows
-        // its popup when clicked (request_gate). Only Guided trims them.
-        if (d.mode == "explorer") return;
+        // Full platform: the menus stay the real ones; what is not open shows its
+        // popup when clicked (request_gate). Only items the menu codes set to HID
+        // are taken out (2026-10-19). Guided trims them.
+        if (d.mode == "explorer") {
+            var tree = demo.nodeMap().byArea[lCase(ctx.area ?: "")] ?: {};
+            if (!structIsEmpty(tree)) ctx.menu = pruneCodes(ctx.menu, "", tree);
+            return;
+        }
         ctx.menu = pruneMenu(ctx.menu, base, d.mode);
+    }
+
+    private array function pruneCodes(required array items, required string grp, required struct tree) {
+        var out = [];
+        for (var it in arguments.items) {
+            if (!isStruct(it)) { arrayAppend(out, it); continue; }
+            var lbl = demo.menuLabel(it);
+            var trail = len(arguments.grp) ? arguments.grp & " › " & lbl : lbl;
+            if ((arguments.tree[trail].code ?: "") == "HID") continue;
+            var c = structCopy(it);
+            if (isArray(it.children ?: "")) {
+                c.children = pruneCodes(it.children, trail, arguments.tree);
+                if (!arrayLen(c.children) && !len(trim(it.url ?: ""))) continue;
+            }
+            arrayAppend(out, c);
+        }
+        return out;
     }
 
     private array function pruneMenu(required array items, required string base, required string mode) {
@@ -240,7 +268,7 @@ component output="false" {
             pid: d.pid, audience: d.audience, lang: d.language, daysLeft: d.daysLeft,
             company: d.company, where: ctx.where ?: "header", wsDsn: d.db,
             api: "/ain5py/addon_api.cfm?a=demo&p=pitch_api", beacon: "/ain5py/addon_api.cfm?a=demo&p=beacon",
-            map: demo.clientMap(d.mode)
+            map: demo.clientMap(d.mode), story: demo.storyClient(d)
         };
         var left_ =d.daysLeft == 1 ? "1 day left" : d.daysLeft & " days left";
         var locked = "";
@@ -248,11 +276,19 @@ component output="false" {
             locked &='<a href="/ain5py/addon.cfm?a=demo&p=pitch_page&arg=' & encodeForURL(f.feature_key) & '" class="demo-lock" data-demo-feature="'
                     & encodeForHTMLAttribute(f.feature_key) & '">🔒 ' & encodeForHTML(f.nav_label) & '</a>';
         }
+        // the stories (Quick Start): start, or where the prospect is now
+        var storyLink = "";
+        for (var sk in demo.stories()) {
+            var s = demo.stories()[sk];
+            var run = (cfg.story.key ?: "") == sk;
+            storyLink &= '<a class="demo-story" href="/ain5py/addon.cfm?a=demo&p=story&arg=' & encodeForURL(sk) & '">▶ ' & encodeForHTML(s.title)
+                       & (run ? ' · ' & cfg.story.n & '/' & cfg.story.total : '') & '</a>';
+        }
         return '<link rel="stylesheet" href="/ain5py/addon_api.cfm?a=demo&p=asset&f=demo.css">'
              & '<div id="demoBar" class="demo-bar"><span class="demo-tag">DEMO</span> '
              & '<span class="demo-co">' & encodeForHTML(d.company) & '</span>'
              & '<span class="demo-left">' & encodeForHTML(left_) & '</span>'
-             & demo.switchHtml(d.mode)
+             & demo.switchHtml(d.mode) & storyLink
              & '<span class="demo-locks">' & locked & '</span>'
              & '<a href="##" class="demo-help" id="demoHelp" hidden>What can I do here?</a>'
              & '<a href="##" class="demo-talk" data-demo-action="talk">Contact us</a></div>'

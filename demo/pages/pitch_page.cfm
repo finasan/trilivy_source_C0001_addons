@@ -1,6 +1,5 @@
-<!--- pitch_page - a locked feature opened by its address: the card as a full page.
-      The popup (assets/demo.js) renders the same card; this page asks it to open
-      the card at once and keeps a plain version for no-JS. --->
+<!--- pitch_page - a locked feature opened by its address: the card as a full page
+      (the popup in assets/demo.js renders the same card). Works without JS. --->
 <cfinclude template="_brand.cfm">
 <cfset demo = new trlvaddons.demo.lib.Demo()>
 <cfset d = demo.sessionDemo()>
@@ -12,7 +11,7 @@
 <cfif structIsEmpty(c)>
     <h1>Part of the full platform</h1><p>This part of Trilivy is not open in the demo. Ask us for a walkthrough.</p>
 <cfelse>
-    <div class="demo-card-static" data-demo-autoopen="#encodeForHTMLAttribute(feature)#" style="border:1px solid ##e3e7ef;border-radius:14px;overflow:hidden">
+    <div class="demo-card-static" style="border:1px solid ##e3e7ef;border-radius:14px;overflow:hidden">
         <div style="background:##2457d6;color:##fff;padding:16px 20px">
             <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;opacity:.85">#encodeForHTML(c.kicker ?: "")##c.isDraft ? " · DRAFT" : ""#</div>
             <div style="font-size:21px;font-weight:700;line-height:1.25">#encodeForHTML(c.headline)#</div>

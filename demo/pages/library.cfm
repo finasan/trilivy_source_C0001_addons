@@ -58,7 +58,7 @@
 </cfif>
 
 <cfif editId OR structKeyExists(url, "new")>
-    <cfset c = {id: 0, feature_key: url.feature ?: "", audience: "business", lang: "en", status: "draft", kicker: "", headline: "", why_html: "", how_html: "", objections: "[]", proof_html: "", cta: '["talk"]'}>
+    <cfset c = {id: 0, feature_key: url.feature ?: "", audience: listFind("business,it", url.audience ?: "") ? url.audience : "business", lang: "en", status: "draft", kicker: "", headline: "", why_html: "", how_html: "", objections: "[]", proof_html: "", cta: '["talk"]'}>
     <cfif editId>
         <cfset q = queryExecute("SELECT * FROM cx_demo_pitch WHERE id = :i", {i: editId}, {datasource: "addon_demo"})>
         <cfif q.recordCount><cfset c = queryGetRow(q, 1)></cfif>
@@ -69,10 +69,14 @@
     <form method="post">
         <input type="hidden" name="id" value="#c.id#">
         <div class="grid">
-            <div><label>Feature</label><select name="feature_key">
-                <cfloop array="#feats#" item="f"><cfif f.mode EQ "pitch"><option value="#f.feature_key#" #c.feature_key EQ f.feature_key ? "selected" : ""#>#f.feature_key#</option></cfif></cfloop>
-                <cfloop list="moment_citations,moment_10q,moment_upload,moment_expiring" item="m"><option value="#m#" #c.feature_key EQ m ? "selected" : ""#>#m# (tip)</option></cfloop>
-            </select></div>
+            <!--- any card key (2026-10-19): a feature, a page's own card (pg_<id>), a menu code's card (mg_...), a tip --->
+            <div><label>Card key</label><input type="text" name="feature_key" list="cardKeys" value="#encodeForHTMLAttribute(reReplace(lCase(c.feature_key), '[^a-z0-9_]', '', 'all'))#" maxlength="60" required>
+                <datalist id="cardKeys">
+                <cfloop array="#feats#" item="f"><option value="#f.feature_key#">#encodeForHTML(f.title)#</option></cfloop>
+                <cfloop list="moment_citations,moment_10q,moment_upload,moment_expiring" item="m"><option value="#m#">tip</option></cfloop>
+                <cfset nk = queryExecute("SELECT DISTINCT card_key, label FROM cx_demo_nodes WHERE card_key IS NOT NULL ORDER BY card_key", {}, {datasource: "addon_demo"})>
+                <cfloop query="nk"><option value="#nk.card_key#">menu: #encodeForHTML(nk.label)#</option></cfloop>
+                </datalist></div>
             <div><label>Audience</label><select name="audience"><cfloop list="business,it" item="a"><option #c.audience EQ a ? "selected" : ""#>#a#</option></cfloop></select></div>
             <div><label>Language</label><input type="text" name="lang" value="#encodeForHTMLAttribute(c.lang)#" maxlength="2"></div>
             <div><label>Status</label><select name="status"><cfloop list="draft,verified,live,retired" item="s"><option #c.status EQ s ? "selected" : ""#>#s#</option></cfloop></select></div>

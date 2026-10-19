@@ -54,6 +54,30 @@
             arrayAppend(pgs, row6);
         }
         out.pages = {"_comment": "Access map (Demo Console). Empty mode = inherit from features.json.", pages: pgs};
+        // menu codes (only the nodes that carry a code or a card; the structure comes from the menu scan)
+        var nq = queryExecute("SELECT area, trail, kind, code, card_key FROM cx_demo_nodes WHERE code IS NOT NULL OR card_key IS NOT NULL ORDER BY area, sort, trail", {}, {datasource: "addon_demo"});
+        var nds = [];
+        for (var r7 in nq) {
+            var row7 = {area: r7.area, trail: r7.trail, kind: r7.kind};
+            if (len(r7.code ?: "")) row7.code = r7.code;
+            if (len(r7.card_key ?: "")) row7.card_key = r7.card_key;
+            arrayAppend(nds, row7);
+        }
+        out.nodes = {"_comment": "Menu codes (Demo Console > Menu codes), Full platform. SPT/SPS/SPO/OPE/HID; no code = the nearest group's.", nodes: nds};
+        var sq = queryExecute("SELECT * FROM cx_demo_story WHERE status <> 'retired' ORDER BY sort, story_key", {}, {datasource: "addon_demo"});
+        var sts = [];
+        for (var r8 in sq) {
+            var stp = [];
+            var tq = queryExecute("SELECT * FROM cx_demo_story_step WHERE story_key = :k AND status <> 'retired' ORDER BY step_no", {k: r8.story_key}, {datasource: "addon_demo"});
+            for (var r9 in tq) {
+                var s9 = {kind: r9.kind, title: r9.title, status: r9.status};
+                for (var k9 in ["kicker", "body_html", "task_html", "target_path", "card_key"]) if (len(r9[k9] ?: "")) s9[k9] = r9[k9];
+                for (var j9 in ["benefits", "allow_paths", "done_when", "buttons"]) if (len(r9[j9] ?: "")) s9[j9] = deserializeJSON(r9[j9]);
+                arrayAppend(stp, s9);
+            }
+            arrayAppend(sts, {story_key: r8.story_key, title: r8.title, subtitle: r8.subtitle ?: "", minutes: r8.minutes, status: r8.status, sort: r8.sort, steps: stp});
+        }
+        out.stories = {"_comment": "Stories (Demo Console > Stories): slides and live steps.", stories: sts};
         return out;
     }
 </cfscript>
@@ -67,7 +91,7 @@
                 <cfset dir = exportRoot & "/" & stamp>
                 <cfdirectory action="create" directory="#dir#" recurse="true">
                 <cfset data = exportData()>
-                <cfloop list="features,pitch,settings,operators,pages" item="k">
+                <cfloop list="features,pitch,settings,operators,pages,nodes,stories" item="k">
                     <cffile action="write" file="#dir#/#k#.json" output="#demo.toJson(data[k])#" charset="utf-8">
                 </cfloop>
                 <cffile action="write" file="#dir#/EXPORT.json" output="#demo.toJson({addon: 'demo', from_version: meta.version, at: dateTimeFormat(now(), 'yyyy-mm-dd HH:nn:ss'), by: op.email ?: op.oid, host: cgi.server_name})#">
@@ -120,6 +144,9 @@
     UNION ALL SELECT 'setting', k, updated_at FROM cx_demo_settings WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND k NOT LIKE 'state\_%' AND updated_at > :t
     UNION ALL SELECT 'operator', email, created_at FROM cx_demo_operators WHERE role <> 'system' AND created_at > :t
     UNION ALL SELECT 'access map', path, updated_at FROM cx_demo_pages WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
+    UNION ALL SELECT 'menu code', CONCAT(area, ': ', trail), updated_at FROM cx_demo_nodes WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
+    UNION ALL SELECT 'story', story_key, updated_at FROM cx_demo_story WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
+    UNION ALL SELECT 'story step', CONCAT(story_key, ' step ', step_no), updated_at FROM cx_demo_story_step WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
     ORDER BY 3 DESC", {t: {value: lastExport, cfsqltype: "cf_sql_timestamp"}}, {datasource: "addon_demo"})>
 <cfset settings = queryExecute("SELECT k, v, updated_at, updated_by FROM cx_demo_settings WHERE k NOT LIKE 'state\_%' ORDER BY k", {}, {datasource: "addon_demo"})>
 

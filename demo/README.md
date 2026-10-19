@@ -13,7 +13,21 @@ Never part of a platform release. Built from this git repository by the fleet
 - `pages/`       Demo Console (operators) and the prospect pages
 - `assets/`      demo.js / demo.css (popups, tour, beacon)
 - `sql/`         migrations (never edit a shipped one)
-- `seed/`        features, pitch cards, settings, operators (Export to package refreshes them)
+- `seed/`        features, pitch cards, settings, operators, Access map pages, menu codes (nodes.json),
+                 stories (stories.json) - Export to package refreshes them
+- `assets/samples/` the Quick Start's sample documents (served zipped: asset f=sample_docs.zip)
+
+## Stories and menu codes (0.6, 2026-10-19)
+
+- **Stories** (`cx_demo_story*`, Console > Stories, `pages/story.cfm`): a guided flow that alternates
+  full-page slides with the real platform page plus a coach panel (demo.js). While a live step runs,
+  its page gets a "story pass" in `request_gate` (also in Guided); a box-wide or server page never
+  opens - the step is then shown as a slide with its card. The Quick Start is the first story.
+- **Menu codes** (`cx_demo_nodes`, Console > Menu codes): per place in a menugen menu (Manage, KB,
+  Quick) and the Instance menu, Full platform only. SPT group card inherited downwards, SPS own card,
+  SPO own card + "Open it now", OPE open, HID removed. No code = the nearest group's code and card.
+  A page's address follows the most open of its places; codes win over the Access map's Full-platform
+  choice; the safety label still wins over everything.
 - `install/`     bootstrap.sh (every install), backup.sh, restore.sh
 - `py/`          seed.py, cron_call.py
 - `systemd/`     hourly + daily timers

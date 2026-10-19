@@ -106,8 +106,8 @@
     <cfset pg = queryGetRow(rows, rows.currentRow)>
     <cfset pg.fg = demo.classify(pg.path, "guided")>
     <cfset pg.fe = demo.classify(pg.path, "explorer")>
-    <!--- Full platform keeps every menu item: Hidden works as Locked there --->
-    <cfif pg.fe.mode EQ "hidden"><cfset pg.fe.mode = "pitch"><cfset pg.fe.asHidden = true></cfif>
+    <!--- Full platform keeps every menu item: Hidden works as Locked there (not a menu code HID) --->
+    <cfif pg.fe.mode EQ "hidden" AND pg.fe.code NEQ "HID"><cfset pg.fe.mode = "pitch"><cfset pg.fe.asHidden = true></cfif>
     <cfset pg.chosen = len((pg.guided_mode ?: "") & (pg.explorer_mode ?: "")) GT 0>
     <cfset byPath[pg.path] = pg><cfset alsoIn[pg.path] = []>
     <cfset tot.n++><cfset tot.guided[pg.fg.mode]++><cfset tot.explorer[pg.fe.mode]++>
@@ -314,6 +314,10 @@
                 <button class="btn" #canEdit ? "" : "disabled"#>Scan this section</button></form>
         </cfif>
     </div>
+    <cfif NOT searching AND listFind("manage,kb,quick,instance", curArea.key)>
+        <div class="note small"><b>Full platform follows the Menu codes here</b> where an item has one (SPT / SPS / SPO / OPE / HID, set per place in the menu):
+            <a href="/ain5py/addon.cfm?a=demo&p=codes&area=#curArea.key#">open the Menu codes of this menu</a>. A page whose Full-platform setting comes from a code shows a "code" tag; its Full-platform choice below no longer applies.</div>
+    </cfif>
     <cfif NOT searching AND curArea.key EQ "instance">
         <div class="note small">The Instance Control Panel (Manage › an instance) opens one instance's own tools. Its sidebar has no menu hook, so in Guided it is not trimmed:
             a Hidden item stays in the sidebar there, and clicking it says "not part of the demo". Every item is still gated when it opens.
@@ -372,7 +376,7 @@
                     <cfset ownKey = len(r.card_key ?: "") ? r.card_key : "pg_" & r.id>
                     <cfset hasGuard = len(r.guard_html ?: "") OR len(r.guard_title ?: "")>
                     <tr>
-                        <td class="lbl" title="#encodeForHTMLAttribute(r.label & ' — ' & r.path)#"><b>#encodeForHTML(r.label)#<cfif r.gone><span class="tag gone">no longer in the menu</span></cfif><cfif r.source EQ "seen"><span class="tag">opened by a prospect</span></cfif><cfif structKeyExists(demo.sectioned(), r.path)><span class="tag" title="Locked or Hidden here closes the whole panel, whatever its sections say">the panel itself</span></cfif><cfif arrayLen(r.others)><span class="tag" title="One setting for this page: a change here is a change there too">also in #encodeForHTML(arrayToList(r.others, ", "))#</span></cfif></b>
+                        <td class="lbl" title="#encodeForHTMLAttribute(r.label & ' — ' & r.path)#"><b>#encodeForHTML(r.label)#<cfif r.gone><span class="tag gone">no longer in the menu</span></cfif><cfif r.source EQ "seen"><span class="tag">opened by a prospect</span></cfif><cfif structKeyExists(demo.sectioned(), r.path)><span class="tag" title="Locked or Hidden here closes the whole panel, whatever its sections say">the panel itself</span></cfif><cfif arrayLen(r.others)><span class="tag" title="One setting for this page: a change here is a change there too">also in #encodeForHTML(arrayToList(r.others, ", "))#</span></cfif><cfif len(r.fe.code ?: "")><span class="tag" style="background:##efe9fb;color:##6b46c1" title="Full platform: menu code #encodeForHTMLAttribute(r.fe.code)# from #encodeForHTMLAttribute(r.fe.codeTrail ?: '')#">code #r.fe.code#</span></cfif></b>
                             <span class="mono small muted">#encodeForHTML(r.path)#</span></td>
                         <td><cfif canEdit><select name="sf_#r.id#" class="sf" data-cur="#r.safety#"><cfloop list="sandbox,boxwide,server,unknown" item="s"><option value="#s#" #r.safety EQ s ? "selected" : ""#>#s#</option></cfloop></select>
                             <cfelse><span class="dbadge #unsafe ? 'b-red' : (r.safety EQ 'sandbox' ? 'b-green' : 'b-grey')#">#r.safety#</span></cfif></td>

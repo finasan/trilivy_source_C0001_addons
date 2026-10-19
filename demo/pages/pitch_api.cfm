@@ -40,14 +40,21 @@
         <cfset g = demo.guardInfo(pth, d.mode)>
         <cfif NOT g.ok><cfset demo.json({ok: false}, 404)></cfif>
         <cfset demo.logEvent(d.pid, (url.via ?: "") EQ "help" ? "guard_help" : "guard_shown", {page: pth})>
+        <!--- SPO (menu codes): the item's own sales card, then the page works --->
+        <cfif structKeyExists(g, "card")><cfset demo.json({ok: true, card: g.card, fb: g.fb, label: g.label, readonly: g.readonly})></cfif>
         <cfset demo.json({ok: true, title: g.title, html: g.html, label: g.label, readonly: g.readonly})>
+    </cfcase>
+
+    <cfcase value="story_check">
+        <!--- the coach panel asks whether the running step's task is done (done_when) --->
+        <cfset demo.json({ok: true, done: demo.storyStepDone(d.pid)})>
     </cfcase>
 
     <cfcase value="event">
         <cfset t = lCase(form.type ?: "")>
-        <cfif NOT listFind("pitch_tab,objection_open,cta_click,popup_closed", t)><cfset demo.json({ok: false, error: "type"}, 400)></cfif>
+        <cfif NOT listFind("pitch_tab,objection_open,cta_click,popup_closed,card_open_now,group_card", t)><cfset demo.json({ok: false, error: "type"}, 400)></cfif>
         <cfset det = {}>
-        <cfloop list="tab,q,cta,ms,where" item="k"><cfif structKeyExists(form, k)><cfset det[k] = left(form[k], 300)></cfif></cfloop>
+        <cfloop list="tab,q,cta,ms,where,trail,href" item="k"><cfif structKeyExists(form, k)><cfset det[k] = left(form[k], 300)></cfif></cfloop>
         <cfset evOpts = {feature: feature, detail: det}>
         <cfif t EQ "popup_closed" AND isNumeric(form.ms ?: "")><cfset evOpts.duration = int(form.ms)></cfif>
         <cfset demo.logEvent(d.pid, t, evOpts)>

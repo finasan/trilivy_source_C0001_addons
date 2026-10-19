@@ -58,6 +58,8 @@
     <a href="/ain5py/addon.cfm?a=demo&p=handoffs" class="#activeTab EQ 'handoffs' ? 'on' : ''#">Contact requests</a>
     <a href="/ain5py/addon.cfm?a=demo&p=library" class="#activeTab EQ 'library' ? 'on' : ''#">Pitch library</a>
     <a href="/ain5py/addon.cfm?a=demo&p=access" class="#activeTab EQ 'access' ? 'on' : ''#">Access map</a>
+    <a href="/ain5py/addon.cfm?a=demo&p=codes" class="#activeTab EQ 'codes' ? 'on' : ''#">Menu codes</a>
+    <a href="/ain5py/addon.cfm?a=demo&p=stories" class="#activeTab EQ 'stories' ? 'on' : ''#">Stories</a>
     <a href="/ain5py/addon.cfm?a=demo&p=reports" class="#activeTab EQ 'reports' ? 'on' : ''#">Reports</a>
     <a href="/ain5py/addon.cfm?a=demo&p=operators" class="#activeTab EQ 'operators' ? 'on' : ''#">Operators</a>
     <a href="/ain5py/addon.cfm?a=demo&p=package" class="#activeTab EQ 'package' ? 'on' : ''#">Package &amp; settings</a>

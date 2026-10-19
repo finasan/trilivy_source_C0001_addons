@@ -160,7 +160,8 @@ component output="false" {
      * by page (cx_demo_features.explorer_mode), so box-wide pages stay locked.
      */
     public void function applyRights(required string mode) {
-        var full = arguments.mode == "explorer";
+        // a running story (Quick Start) opens the real pages of its steps, in Guided too
+        var full = arguments.mode == "explorer" || structKeyExists(session, "demo_story");
         session.ur_bot = 1; session.ur_kb = 1; session.ur_courses = 1;
         for (var k in ["ur_panel", "ur_rag", "ur_jumpstart", "ur_manage", "ur_quick", "ur_tips"]) session[k] = full ? 1 : 0;
         session.ur_resources = 1;   // Resources (documentation) is free to read in both experiences
@@ -258,16 +259,37 @@ component output="false" {
             if (!find("?", cand)) break;
             cand = find("&", cand) ? reReplace(cand, "&[^&]*$", "") : listFirst(cand, "?");
         }
+        f.code = "";
         if (!structIsEmpty(pg)) {
             f.page = true; f.label = pg.label; f.safety = pg.safety; f.readonly = val(pg.readonly) == 1;
             var m = ex ? (pg.explorer_mode ?: "") : (pg.guided_mode ?: "");
             if (len(m)) f.mode = m;
             if (len(pg.card_key ?: "")) f.card = pg.card_key;
-            // never open a page that shows other prospects' data or changes the server
-            if (listFind("boxwide,server", pg.safety) && listFind("open,capped,guard", f.mode)) f.mode = "pitch";
         }
+        // Full platform: the menu codes (Access map > Menu codes) decide the pages their menus link to
+        if (ex) {
+            var cn = codeForPath(key);
+            if (!structIsEmpty(cn)) {
+                f.code = cn.code; f.mode = codeMode(cn.code); f.card = cn.card; f.codeTrail = cn.trail;
+                if (!f.page) f.label = cn.label;
+            }
+        }
+        // never open a page that shows other prospects' data or changes the server
+        if (listFind("boxwide,server", f.safety) && listFind("open,capped,guard", f.mode)) { f.mode = "pitch"; f.unsafe = true; }
         if (f.mode != "guard") f.readonly = false;
         return f;
+    }
+
+    /** The Access map row of a key, most specific first (path?section=x&lms_tab=y, path?section=x, path). */
+    public struct function pageRow(required string key) {
+        var all = pages();
+        var cand = lCase(arguments.key);
+        while (true) {
+            if (structKeyExists(all, cand)) return all[cand];
+            if (!find("?", cand)) break;
+            cand = find("&", cand) ? reReplace(cand, "&[^&]*$", "") : listFirst(cand, "?");
+        }
+        return {};
     }
 
     // ------------------------------------------------------------------ access map
@@ -288,6 +310,8 @@ component output="false" {
         structDelete(application, "demo_pages");
         structDelete(application, "demo_clientmap");
         structDelete(application, "demo_features");
+        structDelete(application, "demo_nodes");
+        structDelete(application, "demo_stories");
     }
 
     public array function areas() { return variables.AREAS; }
@@ -341,21 +365,124 @@ component output="false" {
         if (!arguments.force && structKeyExists(application, key) && dateDiff("n", application[key], now()) LT 10) return;
         application[key] = now();
         var rows = [];
-        walkMenu(arguments.menu, "", arguments.base, rows);
+        var nodes = [];
+        walkMenu(arguments.menu, "", arguments.base, rows, nodes);
         upsertPages(arguments.area, rows, "menu");
+        upsertNodes(arguments.area, nodes);
     }
 
-    private void function walkMenu(required array items, required string grp, required string base, required array rows) {
+    /** The label of a menu item as the menu shows it (trimmed, one space between words). */
+    public string function menuLabel(any it) {
+        return trim(reReplace(it.label ?: (it.title ?: ""), "\s+", " ", "all"));
+    }
+
+    private void function walkMenu(required array items, required string grp, required string base, required array rows, array nodes = [], numeric depth = 1) {
         for (var it in arguments.items) {
             if (!isStruct(it)) continue;
-            var lbl = trim(it.label ?: (it.title ?: ""));
+            var lbl = menuLabel(it);
+            var trail = len(arguments.grp) ? arguments.grp & " › " & lbl : lbl;
+            var hasKids = isArray(it.children ?: "") && arrayLen(it.children);
+            var p = "";
             if (len(it.url ?: "")) {
-                var p = normPath(it.url, arguments.base);
+                p = normPath(it.url, arguments.base);
                 if (len(p)) arrayAppend(arguments.rows, {path: p, label: len(lbl) ? lbl : listLast(p, "/"), grp: arguments.grp});
             }
+            // every item is a node (menu codes): a group, or a link (its page, "" when it leaves the box)
+            if (len(lbl)) arrayAppend(arguments.nodes, {trail: trail, label: lbl, kind: hasKids ? "group" : "link", path: hasKids ? "" : p, depth: arguments.depth});
             // groups keep their whole trail ("Controls › Agents"), so the Access map shows the menu's own tree
-            if (isArray(it.children ?: "")) walkMenu(it.children, len(arguments.grp) ? arguments.grp & " › " & lbl : lbl, arguments.base, arguments.rows);
+            if (hasKids) walkMenu(it.children, trail, arguments.base, arguments.rows, arguments.nodes, arguments.depth + 1);
         }
+    }
+
+    // ------------------------------------------------------------------ menu codes
+    variables.CODE_MODE = {SPT: "pitch", SPS: "pitch", SPO: "guard", OPE: "open", HID: "hidden"};
+    // a page linked from several places takes the most open of their codes
+    variables.CODE_RANK = {OPE: 4, SPO: 3, SPS: 2, SPT: 2, HID: 1};
+
+    /** Records the items of a menu as nodes (structure only: an operator's code and card stay). */
+    public void function upsertNodes(required string area, required array nodes) {
+        var i = 0;
+        var done = {};
+        for (var n in arguments.nodes) {
+            i++;
+            var t = left(n.trail, 255);
+            if (structKeyExists(done, t)) continue;
+            done[t] = 1;
+            queryExecute("INSERT INTO cx_demo_nodes (area, trail, label, kind, path, depth, sort, seen_at) VALUES (:a, :t, :l, :k, :p, :d, :s, NOW())
+                ON DUPLICATE KEY UPDATE label = VALUES(label), kind = VALUES(kind), path = VALUES(path), depth = VALUES(depth),
+                  sort = VALUES(sort), seen_at = NOW(), updated_at = updated_at", {
+                a: arguments.area, t: t, l: left(n.label, 120), k: n.kind,
+                p: {value: left(n.path, 255), null: !len(n.path)},
+                d: {value: n.depth, cfsqltype: "cf_sql_integer"}, s: {value: i, cfsqltype: "cf_sql_integer"}
+            }, {datasource: variables.dsn});
+        }
+        structDelete(application, "demo_nodes");
+        structDelete(application, "demo_clientmap");
+    }
+
+    /** The parent trail of a node ("" at the top). */
+    public string function parentTrail(required string trail) {
+        var pos = 0;
+        var at = 1;
+        while (true) {
+            var f = find(" › ", arguments.trail, at);
+            if (!f) break;
+            pos = f; at = f + 1;
+        }
+        return pos ? left(arguments.trail, pos - 1) : "";
+    }
+
+    /**
+     * Every node with its effective code: its own, else the nearest ancestor's
+     * (with that ancestor's card). {byArea: {area: {trail: node}}, byPath: {path: best link}}.
+     * Cached 2 minutes.
+     */
+    public struct function nodeMap() {
+        var c = application.demo_nodes ?: {};
+        if (structKeyExists(c, "at") && dateDiff("s", c.at, now()) LT 120) return c.m;
+        var byArea = {};
+        var byPath = {};
+        try {
+            var q = queryExecute("SELECT * FROM cx_demo_nodes ORDER BY area, depth, sort", {}, {datasource: variables.dsn});
+            for (var r in q) {
+                if (!structKeyExists(byArea, r.area)) byArea[r.area] = {};
+                var tree = byArea[r.area];
+                var par = tree[parentTrail(r.trail)] ?: {};
+                var n = {id: r.id, trail: r.trail, label: r.label, kind: r.kind, path: r.path ?: "", depth: r.depth, sort: r.sort,
+                         own: r.code ?: "", ownCard: r.card_key ?: "", code: "", card: "", from: ""};
+                if (len(n.own)) {
+                    n.code = n.own;
+                    n.card = len(n.ownCard) ? n.ownCard : "nd_" & r.id;
+                    n.from = r.trail;
+                } else if (len(par.code ?: "")) {
+                    n.code = par.code;
+                    n.card = par.card;
+                    n.from = par.from;
+                }
+                tree[r.trail] = n;
+                if (n.kind == "link" && len(n.path) && len(n.code)) {
+                    var best = byPath[n.path] ?: {};
+                    if (structIsEmpty(best) || variables.CODE_RANK[n.code] GT variables.CODE_RANK[best.code]) byPath[n.path] = n;
+                }
+            }
+        } catch (any e) {}
+        var m = {byArea: byArea, byPath: byPath};
+        application.demo_nodes = {at: now(), m: m};
+        return m;
+    }
+
+    public string function codeMode(required string code) { return variables.CODE_MODE[arguments.code] ?: ""; }
+
+    /** The Full-platform rule the menu codes give a page (most specific key first), or {} . */
+    public struct function codeForPath(required string key) {
+        var bp = nodeMap().byPath;
+        var cand = lCase(arguments.key);
+        while (true) {
+            if (structKeyExists(bp, cand)) return bp[cand];
+            if (!find("?", cand)) break;
+            cand = find("&", cand) ? reReplace(cand, "&[^&]*$", "") : listFirst(cand, "?");
+        }
+        return {};
     }
 
     public numeric function upsertPages(required string area, required array rows, string source = "menu") {
@@ -416,9 +543,11 @@ component output="false" {
             if (len(arguments.only) && arguments.only != area) continue;
             try {
                 var rows = [];
-                walkMenu(new trlvaddons.demo.lib.MenuProbe().menu(area), "", bases[area], rows);
+                var nodes = [];
+                walkMenu(new trlvaddons.demo.lib.MenuProbe().menu(area), "", bases[area], rows, nodes);
                 if (!arrayLen(rows)) throw(message="the menu came back empty");
                 upsertPages(area, rows, "menu");
+                upsertNodes(area, nodes);
                 out[area] = arrayLen(rows);
                 scanned(area, arrayLen(rows));
             } catch (any e) { out[area] = "error: " & e.message; }
@@ -513,17 +642,41 @@ component output="false" {
         if (structKeyExists(c, arguments.experience) && dateDiff("s", c[arguments.experience].at, now()) LT 120) return c[arguments.experience].m;
         var ex = arguments.experience == "explorer";
         var pg = {};
-        // Full platform keeps every menu item: "hidden" is shown as locked there
+        // Full platform keeps every menu item: "hidden" is shown as locked there,
+        // except an item the menu codes set to HID (2026-10-19): that one is removed
         for (var p in pages()) {
-            var md = classify(p, arguments.experience).mode;
-            pg[p] = (ex && md == "hidden") ? "pitch" : md;
+            var cf = classify(p, arguments.experience);
+            pg[p] = (ex && cf.mode == "hidden" && cf.code != "HID") ? "pitch" : cf.mode;
+        }
+        var nm = ex ? nodeMap() : {byArea: {}, byPath: {}};
+        // pages the codes reach that the Access map has no row for
+        for (var cp in nm.byPath) {
+            if (!structKeyExists(pg, cp)) pg[cp] = classify(cp, arguments.experience).mode;
         }
         var rx = [];
         for (var f in features()) {
             var fm = ex ? f.explorer_mode : f.mode;
             for (var r in f.rx) arrayAppend(rx, [r, (ex && fm == "hidden") ? "pitch" : fm]);
         }
-        var m = {pages: pg, rx: rx, sect: variables.SECTIONED};
+        // menu codes per item, for the menus drawn by menugen (Manage, KB, Quick):
+        // trail -> [mode, card, own code?, group?, code]; the effective mode follows the page's safety.
+        // toJson lower-cases the keys: demo.js looks the trail up in lower case.
+        var nodes = {};
+        for (var ar in nm.byArea) {
+            var t = {};
+            for (var tr in nm.byArea[ar]) {
+                var n = nm.byArea[ar][tr];
+                if (!len(n.code)) continue;
+                var md2 = codeMode(n.code);
+                if (n.kind == "link" && len(n.path) && listFind("open,guard", md2)) {
+                    var row = pageRow(n.path);
+                    if (listFind("boxwide,server", row.safety ?: "")) md2 = "pitch";
+                }
+                t[tr] = [md2, n.card, len(n.own) ? 1 : 0, n.kind == "group" ? 1 : 0, n.code];
+            }
+            if (!structIsEmpty(t)) nodes[ar] = t;
+        }
+        var m = {pages: pg, rx: rx, sect: variables.SECTIONED, nodes: nodes};
         c[arguments.experience] = {at: now(), m: m};
         application.demo_clientmap = c;
         return m;
@@ -533,8 +686,10 @@ component output="false" {
     public struct function guardInfo(required string path, string experience = "guided") {
         var f = classify(arguments.path, arguments.experience);
         if (f.mode != "guard") return {ok: false};
-        var pg = pages()[lCase(arguments.path)] ?: {};
+        var pg = pageRow(arguments.path);
         var lbl = pg.label ?: f.label;
+        // SPO (menu codes): the guardrail is the item's own sales card, then the page works
+        if (f.code == "SPO") return {ok: true, card: f.card, fb: f.key, label: lbl, readonly: f.readonly};
         var html = trim(pg.guard_html ?: "");
         if (!len(html)) {
             html = "<p>This is the real <b>" & encodeForHTML(lbl) & "</b> page, working on your own private copy of Trilivy. "
@@ -551,6 +706,147 @@ component output="false" {
             if ((ex ? f.explorer_mode : f.mode) == "pitch" && len(f.nav_label ?: "")) arrayAppend(out, f);
         }
         return out;
+    }
+
+    // ------------------------------------------------------------------ stories
+    /** Stories with their steps (live steps only; drafts too while pitch_show_drafts=1), cached 2 minutes. */
+    public struct function stories() {
+        var c = application.demo_stories ?: {};
+        if (structKeyExists(c, "at") && dateDiff("s", c.at, now()) LT 120) return c.m;
+        var m = {};
+        try {
+            var drafts = setting("pitch_show_drafts", "0") == "1";
+            var qs = queryExecute("SELECT * FROM cx_demo_story WHERE status <> 'retired' ORDER BY sort, story_key", {}, {datasource: variables.dsn});
+            for (var s in qs) {
+                if (s.status == "draft" && !drafts) continue;
+                s.steps = [];
+                var qp = queryExecute("SELECT * FROM cx_demo_story_step WHERE story_key = :k AND status " & (drafts ? "<> 'retired'" : "= 'live'") & " ORDER BY step_no",
+                    {k: s.story_key}, {datasource: variables.dsn});
+                for (var st in qp) {
+                    for (var jk in ["benefits", "allow_paths", "done_when", "buttons"]) {
+                        var v = st[jk] ?: "";
+                        try { st[jk] = len(v) ? deserializeJSON(v) : (jk == "done_when" ? {} : []); } catch (any e) { st[jk] = jk == "done_when" ? {} : []; }
+                    }
+                    arrayAppend(s.steps, st);
+                }
+                if (arrayLen(s.steps)) m[s.story_key] = s;
+            }
+        } catch (any e) {}
+        application.demo_stories = {at: now(), m: m};
+        return m;
+    }
+
+    /** A story's text with the prospect's values: {wsDsn}, {instance}, {fname}, {company}. */
+    public string function storyText(required string s, required struct d) {
+        var out = arguments.s;
+        out = replace(out, "{wsDsn}", urlEncodedFormat(d.db ?: ""), "all");
+        out = replace(out, "{instance}", urlEncodedFormat(d.instance ?: ""), "all");
+        out = replace(out, "{fname}", encodeForHTML(d.fname ?: ""), "all");
+        out = replace(out, "{company}", encodeForHTML(d.company ?: ""), "all");
+        return out;
+    }
+
+    /** Where a step happens: a live step's real page, else the story page itself. */
+    public string function storyStepUrl(required string key, required struct step, required struct d, numeric n = 1) {
+        if (step.kind == "live" && len(trim(step.target_path ?: ""))) return storyText(trim(step.target_path), d);
+        return "/ain5py/addon.cfm?a=demo&p=story&arg=" & urlEncodedFormat(arguments.key) & "&step=" & arguments.n;
+    }
+
+    /**
+     * Moves a prospect to step n of a story (n past the last = finished). Sets the
+     * session's running story, which gives the step's pages a pass (request_gate).
+     * Returns {done, step, n, total}.
+     */
+    public struct function storyGo(required string pid, required string key, required numeric n) {
+        var s = stories()[arguments.key] ?: {};
+        if (structIsEmpty(s)) throw(message="no such story");
+        var total = arrayLen(s.steps);
+        var n = max(1, int(arguments.n));
+        if (n GT total) {
+            queryExecute("INSERT INTO cx_demo_story_progress (pid, story_key, step_no, done_at) VALUES (:p, :k, :n, NOW())
+                          ON DUPLICATE KEY UPDATE step_no = VALUES(step_no), step_at = NOW(), done_at = NOW()",
+                {p: arguments.pid, k: arguments.key, n: {value: total, cfsqltype: "cf_sql_integer"}}, {datasource: variables.dsn});
+            storyStop(arguments.pid, "story_done", arguments.key, total);
+            return {done: true, n: total, total: total};
+        }
+        var step = s.steps[n];
+        queryExecute("INSERT INTO cx_demo_story_progress (pid, story_key, step_no) VALUES (:p, :k, :n)
+                      ON DUPLICATE KEY UPDATE step_no = VALUES(step_no), step_at = NOW(), done_at = NULL",
+            {p: arguments.pid, k: arguments.key, n: {value: n, cfsqltype: "cf_sql_integer"}}, {datasource: variables.dsn});
+        // the pages this step may open (bare lower-case paths; * = anything)
+        var allow = [];
+        if (step.kind == "live" && len(trim(step.target_path ?: ""))) arrayAppend(allow, lCase(listFirst(trim(step.target_path), "?")));
+        for (var a in step.allow_paths) if (isSimpleValue(a) && len(trim(a))) arrayAppend(allow, lCase(trim(a)));
+        var rx = [];
+        for (var a2 in allow) {
+            a2 = reReplace(a2, "[^a-z0-9/_.*-]", "", "all");
+            arrayAppend(rx, "^" & replace(replace(a2, ".", "\.", "all"), "*", ".*", "all") & "$");
+        }
+        session.demo_story = {key: arguments.key, n: n, total: total, kind: step.kind, rx: rx, at: now()};
+        applyRights(session.demo.mode ?: "guided");
+        logEvent(arguments.pid, "story_step", {feature: "story_" & arguments.key, page: left(step.title, 255), detail: {story: arguments.key, step: n, kind: step.kind}});
+        return {done: false, step: step, n: n, total: total};
+    }
+
+    /** Ends the running story (finished, or the prospect left it). */
+    public void function storyStop(required string pid, string ev = "story_exit", string key = "", numeric n = 0) {
+        var k = len(arguments.key) ? arguments.key : (session.demo_story.key ?: "");
+        var at = arguments.n ? arguments.n : (session.demo_story.n ?: 0);
+        structDelete(session, "demo_story");
+        applyRights(session.demo.mode ?: "guided");
+        if (len(k)) logEvent(arguments.pid, arguments.ev, {feature: "story_" & k, detail: {story: k, step: at}});
+    }
+
+    /** True when the running story's current step may open this page (bare lower-case path). */
+    public boolean function storyPass(required string path) {
+        var st = session.demo_story ?: {};
+        if (structIsEmpty(st)) return false;
+        var p = lCase(listFirst(arguments.path, "?"));
+        for (var r in st.rx) if (reFind(r, p)) return true;
+        return false;
+    }
+
+    /** Where the prospect is in each story: {key: {n, done}}. */
+    public struct function storyProgress(required string pid) {
+        var out = {};
+        var q = queryExecute("SELECT story_key, step_no, done_at FROM cx_demo_story_progress WHERE pid = :p", {p: arguments.pid}, {datasource: variables.dsn});
+        for (var r in q) out[r.story_key] = {n: r.step_no, done: isDate(r.done_at ?: "")};
+        return out;
+    }
+
+    /** What demo.js needs to draw the coach panel of the running story (top window), or {}. */
+    public struct function storyClient(required struct d) {
+        var st = session.demo_story ?: {};
+        if (structIsEmpty(st)) return {};
+        var s = stories()[st.key] ?: {};
+        if (structIsEmpty(s) || st.n GT arrayLen(s.steps)) return {};
+        var step = s.steps[st.n];
+        var base = "/ain5py/addon.cfm?a=demo&p=story&arg=" & urlEncodedFormat(st.key);
+        var dots = [];
+        for (var x in s.steps) arrayAppend(dots, x.title);
+        return {
+            key: st.key, title: s.title, n: st.n, total: arrayLen(s.steps), kind: step.kind,
+            kicker: step.kicker ?: "", heading: step.title, task: storyText(step.task_html ?: "", d),
+            card: step.card_key ?: "", target: storyStepUrl(st.key, step, d, st.n),
+            target_path: lCase(listFirst(trim(step.target_path ?: ""), "?")),
+            next: base & "&step=" & (st.n + 1), prev: st.n GT 1 ? base & "&step=" & (st.n - 1) : "",
+            exit: base & "&go=exit", watch: structKeyExists(step.done_when, "event") ? 1 : 0, dots: dots
+        };
+    }
+
+    /** Has the prospect done the running step's task (done_when) since the step began? */
+    public boolean function storyStepDone(required string pid) {
+        var st = session.demo_story ?: {};
+        if (structIsEmpty(st)) return false;
+        var s = stories()[st.key] ?: {};
+        if (structIsEmpty(s) || st.n GT arrayLen(s.steps)) return false;
+        var dw = s.steps[st.n].done_when;
+        if (!structKeyExists(dw, "event")) return false;
+        // the step's start comes from the database too: MySQL and the JDBC clock differ (one clock only)
+        var q = queryExecute("SELECT COUNT(*) AS n FROM cx_demo_events WHERE pid = :p AND type = :t
+                              AND ts >= (SELECT step_at FROM cx_demo_story_progress WHERE pid = :p AND story_key = :k)",
+            {p: arguments.pid, t: left(dw.event, 40), k: st.key}, {datasource: variables.dsn});
+        return q.n GTE val(dw.count ?: 1);
     }
 
     // ------------------------------------------------------------------ events

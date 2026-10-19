@@ -4,7 +4,9 @@
  *  - one action everywhere: "Talk to a person" (a ticket in the platform's Talk to a Person)
  *  - "Ask about this" opens the Sales Engineer assistant, when one is configured
  *  - moments: one event-triggered tip at a time, never while typing or reading
- *  - beacon: time on page and the welcome tour, via navigator.sendBeacon
+ *  - beacon: time on page, via navigator.sendBeacon
+ *  - menu codes (2026-10-19): menugen menus follow C.map.nodes item by item (SPT/SPS/SPO/OPE/HID)
+ *  - story coach (2026-10-19): the running story's task panel on its live page (C.story)
  * Config: window.TRLV_DEMO (printed by the page_top hook).
  */
 (function () {
@@ -67,8 +69,12 @@
     return ov;
   }
 
-  function openCard(feature, via) {
-    return get("card", "&feature=" + encodeURIComponent(feature) + "&via=" + (via || "popup")).then(function (j) {
+  // opts.fb = the card to use when this one is not written yet; opts.open = {href, target, path}:
+  // the item may run (menu code SPO), so the card ends in "Open it now"; opts.cont: the page
+  // is already open behind the card ("Continue to the page").
+  function openCard(feature, via, opts) {
+    opts = opts || {};
+    return get("card", "&feature=" + encodeURIComponent(feature) + "&via=" + (via || "popup") + (opts.fb ? "&fb=" + encodeURIComponent(opts.fb) : "")).then(function (j) {
       if (!j.ok) return;
       var c = j.card;
       var ov = shell(c.kicker || "Part of the full platform", c.headline, c.draft);
@@ -123,14 +129,26 @@
         tabBar.appendChild(b);
       });
       show("why");
-      ctas(ov.querySelector(".dp-cta"), feature);
+      ctas(ov.querySelector(".dp-cta"), feature, opts);
     });
   }
 
-  // One action only: Talk to a person (2026-10-15: no booking, no wish list).
-  function ctas(bar, feature) {
+  // Contact us on every card; plus "Open it now" (SPO) or "Continue to the page" (the page is open behind it).
+  function ctas(bar, feature, opts) {
+    opts = opts || {};
+    if (opts.open || opts.cont) {
+      var go = document.createElement("button");
+      go.className = "dp-btn p";
+      go.textContent = opts.open ? "Open it now →" : "Continue to the page";
+      go.onclick = function () {
+        ev("card_open_now", feature, { href: opts.open ? opts.open.href : location.pathname });
+        close();
+        if (opts.open) openNow(opts.open);
+      };
+      bar.appendChild(go);
+    }
     var b = document.createElement("button");
-    b.className = "dp-btn p";
+    b.className = "dp-btn" + (opts.open || opts.cont ? "" : " p");
     b.textContent = "Contact us";
     b.onclick = function () { ev("cta_click", feature, { cta: "talk" }); talk(feature, ""); };
     bar.appendChild(b);
@@ -222,15 +240,112 @@
       return keyOf(u);
     } catch (e) { return null; }
   }
-  var LINK_CSS = "a.demo-lk::after{content:' \\1F512';font-size:.85em;opacity:.7}";
+  var LINK_CSS = "a.demo-lk::after{content:' \\1F512';font-size:.85em;opacity:.7}"
+    + "a.demo-spo::after{content:' \\2726';font-size:.8em;opacity:.8}"
+    + ".demo-gi{display:inline-grid;place-items:center;width:17px;height:17px;margin-left:6px;border-radius:50%;"
+    + "background:rgba(255,179,0,.9);color:#1b2333;font:700 11px/1 Arial,sans-serif;cursor:pointer;vertical-align:1px}";
+
+  // ---------------------------------------------------------------- menu codes
+  // The menus drawn by menugen (Manage, KB, Quick: /ain5py/<area>/menu.cfm) follow
+  // the menu codes item by item (C.map.nodes[area][trail] = [mode, card, own, group, code]),
+  // so the same page can be locked in one place and open in another.
+  var NODES = MAP.nodes || {};
+  function menuArea(doc) {
+    try {
+      var m = /^\/ain5py\/([a-z_]+)\/menu\.cfm$/i.exec(doc.location.pathname);
+      return m && NODES[m[1].toLowerCase()] && doc.querySelector("ul.menu-root") ? m[1].toLowerCase() : "";
+    } catch (e) { return ""; }
+  }
+  function clean(s) { return String(s || "").replace(/\s+/g, " ").trim(); }
+  // a label as the menu config has it (the ⓘ added to a group header is not part of it)
+  function labelOf(lb) {
+    if (!lb) return "";
+    if (!lb.dataset.demoLbl) lb.dataset.demoLbl = clean(lb.textContent);
+    return lb.dataset.demoLbl;
+  }
+  function trailOf(el) {
+    var li = el.closest("li.menu-item"), parts = [];
+    var own = el.querySelector(".menu-label");
+    parts.push(own ? labelOf(own) : clean(el.textContent));
+    var p = li && li.parentElement ? li.parentElement.closest("li.menu-item") : null;
+    while (p) {
+      var lb = p.querySelector(":scope > .menu-link.parent .menu-label");
+      if (lb) parts.unshift(labelOf(lb));
+      p = p.parentElement ? p.parentElement.closest("li.menu-item") : null;
+    }
+    return parts.join(" › ");
+  }
+  function markMenu(doc, area) {
+    var tree = NODES[area];
+    doc.querySelectorAll("ul.menu-root .menu-link").forEach(function (el) {
+      if (el.dataset.demoNd === "1") return;
+      el.dataset.demoNd = "1";
+      // the map's keys arrive lower case (demo.toJson)
+      var n = tree[trailOf(el).toLowerCase()];
+      if (!n) return;
+      var li = el.closest("li.menu-item");
+      if (n[0] === "hidden") { if (li) li.style.display = "none"; return; }
+      el.dataset.demoCode = n[4]; el.dataset.demoMode = n[0]; el.dataset.demoCard = n[1];
+      if (el.classList.contains("parent")) {
+        // a group with its own card (SPT / SPS / SPO): an ⓘ on the header, and the card on the first opening per session
+        if (n[2] && n[0] !== "open") {
+          var lab = el.querySelector(".menu-label");
+          labelOf(lab);
+          var gi = doc.createElement("span");
+          gi.className = "demo-gi"; gi.textContent = "i"; gi.title = "What this is";
+          gi.dataset.demoGi = "1";
+          (lab || el).appendChild(gi);
+        }
+        return;
+      }
+      el.dataset.demoMk = "1";
+      if (n[0] === "pitch") el.classList.add("demo-lk");
+      else if (n[0] === "guard") el.classList.add("demo-spo");
+    });
+  }
+  function openNow(o) {
+    try { sessionStorage.setItem("trlvGuardSkip", o.path || ""); } catch (e) {}
+    var t = o.target || "";
+    if (t === "_blank") { window.open(o.href, "_blank"); return; }
+    var fr = t ? (document.getElementsByName(t)[0] || document.getElementById(t)) : null;
+    if (fr && fr.tagName === "IFRAME") fr.src = o.href; else location.href = o.href;
+  }
+  function menuClick(e) {
+    var gi = e.target.closest ? e.target.closest("[data-demo-gi]") : null;
+    var el = e.target.closest ? e.target.closest(".menu-link[data-demo-code]") : null;
+    if (!el) return;
+    var code = el.dataset.demoCode, mode = el.dataset.demoMode, card = el.dataset.demoCard;
+    if (el.classList.contains("parent")) {
+      if (gi) { e.preventDefault(); e.stopPropagation(); openCard(card, "group"); return; }
+      if (mode === "open" || !el.querySelector("[data-demo-gi]")) return;
+      // first opening of the group in this session: its card (the group still opens)
+      var k = "trlvGrp_" + trailOf(el), seen = false;
+      try { seen = sessionStorage.getItem(k) === "1"; sessionStorage.setItem(k, "1"); } catch (x) { seen = true; }
+      if (!seen) { ev("group_card", card, { trail: trailOf(el) }); setTimeout(function () { openCard(card, "group"); }, 250); }
+      return;
+    }
+    if (mode === "pitch") { e.preventDefault(); e.stopPropagation(); openCard(card, "menu"); return; }
+    if (mode === "guard") {
+      e.preventDefault(); e.stopPropagation();
+      var path = null;
+      try { path = keyOf(new URL(el.getAttribute("href"), el.ownerDocument.baseURI)); } catch (x) {}
+      openCard(card, "menu", { open: { href: el.href, target: el.getAttribute("target") || "", path: path } });
+    }
+  }
+
   function markLinks(doc) {
     if (!doc || !doc.body) return;
     if (!doc.getElementById("demoLkCss")) {
       var st = doc.createElement("style"); st.id = "demoLkCss"; st.textContent = LINK_CSS;
       (doc.head || doc.body).appendChild(st);
     }
+    var area = menuArea(doc);
+    if (area) {
+      markMenu(doc, area);
+      if (!doc.__demoMenuClick) { doc.__demoMenuClick = true; doc.addEventListener("click", menuClick, true); }
+    }
     doc.querySelectorAll("a[href]").forEach(function (a) {
-      if (a.dataset.demoMk === "1" || a.closest("#demoBar,#demoOv,.demo-bar")) return;
+      if (a.dataset.demoMk === "1" || a.closest("#demoBar,#demoOv,.demo-bar,#demoCoach")) return;
       a.dataset.demoMk = "1";
       var p = pathOf(a.getAttribute("href"), doc);
       if (!p || p === "/ain5py/addon.cfm" || p === "/ain5py/addon_api.cfm" || p.indexOf("/ain5py/login/") === 0) return;
@@ -250,6 +365,8 @@
   function openGuard(path, via) {
     return get("guard", "&path=" + encodeURIComponent(path) + "&via=" + (via || "auto")).then(function (j) {
       if (!j.ok) return;
+      // SPO: the item's own sales card over the open page
+      if (j.card) { openCard(j.card, "guard", { fb: j.fb || "", cont: true }); return; }
       var ov = shell("In your demo", j.title, false);
       current = { feature: "guard" };
       ov.querySelector(".dp-tabs").style.display = "none";
@@ -280,6 +397,12 @@
     }
     guardPath = path;
     if (help) help.hidden = false;
+    // opened with "Open it now" from its card: the card was just read
+    var skip = null;
+    try { skip = sessionStorage.getItem("trlvGuardSkip"); if (skip === path) sessionStorage.removeItem("trlvGuardSkip"); } catch (e) {}
+    if (skip === path) return;
+    // the running story's page: the coach panel explains it
+    if (C.story && C.story.target_path && path.split("?")[0] === C.story.target_path) return;
     if (last !== path && !document.getElementById("demoOv")) openGuard(path, "auto");
   }
   function watchDoc(doc) {
@@ -365,41 +488,64 @@
   }
   window.addEventListener("pagehide", flush);
 
-  // ---------------------------------------------------------------- tour
-  function tour() {
-    var KEY = "trlvDemoTour_" + C.pid, done = false;
-    try { done = localStorage.getItem(KEY) === "1"; } catch (e) { done = true; }
-    if (done || location.search.indexOf("p=welcome") < 0) return;
-    var steps = [
-      ["Welcome to your demo", "<p>This is your private copy of Trilivy. Everything you upload or ask stays in your own sandbox.</p>"],
-      ["Start with the assistant", "<p>Open <b>Assistant</b> and ask about the sample company's HR and IT policies. Each answer lists the sources it used.</p>"],
-      ["Try your own documents", "<p>Under <b>My documents</b> you can load a few files and ask about them a minute later.</p>"],
-      ["Explore the locked parts", "<p>Items with a 🔒 are part of the full platform. Click any of them to see what it does, ask questions, or contact us.</p>"]
-    ];
-    var i = 0;
-    function step() {
-      var ov = shell("Quick tour · " + (i + 1) + " of " + steps.length, steps[i][0], false);
-      current = null;
-      ov.querySelector(".dp-tabs").style.display = "none";
-      ov.querySelector(".dp-body").innerHTML = steps[i][1];
-      var bar = ov.querySelector(".dp-cta");
-      var next = document.createElement("button");
-      next.className = "dp-btn p"; next.textContent = i < steps.length - 1 ? "Next" : "Start";
-      next.onclick = function () {
-        beacon([{ type: "tour_step", step: String(i + 1), page: location.pathname }]);
-        i++;
-        if (i < steps.length) step(); else { finish("tour_done"); close(); }
-      };
-      var skip = document.createElement("button");
-      skip.className = "dp-btn"; skip.textContent = "Skip";
-      skip.onclick = function () { finish("tour_skip"); close(); };
-      bar.appendChild(next); bar.appendChild(skip);
+  // ---------------------------------------------------------------- story coach
+  // A running story (Quick Start, 2026-10-19; it replaces the old 4-step tour):
+  // on the step's real page a docked panel shows the task with Back / Next; on
+  // any other page it offers the way back. Slides are drawn by p=story itself.
+  function coach() {
+    var S = C.story;
+    if (!S || !S.key || C.where === "frame" || document.querySelector("[data-demo-story]")) return;
+    var here = location.pathname.toLowerCase();
+    var onStep = S.kind === "live" && S.target_path && here === S.target_path;
+    var MIN = "trlvCoachMin";
+    var box = document.createElement("aside");
+    box.id = "demoCoach"; box.className = "demo-coach";
+    box.setAttribute("aria-label", S.title);
+    var head = '<div class="dc-top"><span class="dc-k">' + esc(S.title) + ' · step ' + S.n + ' of ' + S.total + '</span>'
+      + '<button class="dc-min" aria-label="Minimise">–</button></div>';
+    var dots = '<div class="dc-dots">' + S.dots.map(function (t, i) {
+      return '<i class="' + (i + 1 === S.n ? "on" : (i + 1 < S.n ? "done" : "")) + '" title="' + esc(t) + '"></i>';
+    }).join("") + '</div>';
+    var body;
+    if (onStep) {
+      body = (S.kicker ? '<div class="dc-kick">' + esc(S.kicker) + '</div>' : "")
+        + '<div class="dc-h">' + esc(S.heading) + '</div>'
+        + (S.task ? '<div class="dc-task">' + S.task + '</div>' : "")   // written by operators (Stories)
+        + '<div class="dc-ok" hidden>✓ Done. Well done — go on when you are ready.</div>';
+    } else {
+      body = '<div class="dc-h">' + esc(S.heading) + '</div><p class="dc-p">Your tour is waiting on this step.</p>';
     }
-    function finish(t) {
-      try { localStorage.setItem(KEY, "1"); } catch (e) {}
-      beacon([{ type: t, step: String(i + 1), page: location.pathname }]);
+    var nav = '<div class="dc-nav">'
+      + (S.prev ? '<a class="dc-b" href="' + esc(S.prev) + '">← Back</a>' : "")
+      + (onStep && S.card ? '<a class="dc-b" href="#" data-demo-feature="' + esc(S.card) + '">Why it matters</a>' : "")
+      + (onStep ? '<a class="dc-b p" href="' + esc(S.next) + '">' + (S.n < S.total ? "Next →" : "Finish ✓") + '</a>'
+                : '<a class="dc-b p" href="' + esc(S.target) + '">Take me there →</a>')
+      + '</div><a class="dc-exit" href="' + esc(S.exit) + '">Leave the tour</a>';
+    box.innerHTML = head + dots + '<div class="dc-body">' + body + '</div>' + nav;
+    var pill = document.createElement("button");
+    pill.className = "demo-coach-pill"; pill.hidden = true;
+    pill.textContent = "▶ " + S.title + " · " + S.n + "/" + S.total;
+    document.body.appendChild(box); document.body.appendChild(pill);
+    function setMin(m) {
+      box.hidden = m; pill.hidden = !m;
+      try { sessionStorage.setItem(MIN, m ? "1" : "0"); } catch (e) {}
     }
-    step();
+    box.querySelector(".dc-min").onclick = function () { setMin(true); };
+    pill.onclick = function () { setMin(false); };
+    try { if (sessionStorage.getItem(MIN) === "1") setMin(true); } catch (e) {}
+    // the task is done (done_when): Next lights up
+    if (onStep && S.watch) {
+      var t = setInterval(function () {
+        if (document.hidden) return;
+        get("story_check").then(function (j) {
+          if (!j.ok || !j.done) return;
+          clearInterval(t);
+          var ok = box.querySelector(".dc-ok"); if (ok) ok.hidden = false;
+          var nx = box.querySelector(".dc-b.p"); if (nx) nx.classList.add("pulse");
+          if (box.hidden) setMin(false);
+        });
+      }, 6000);
+    }
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", tour); else tour();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", coach); else coach();
 })();

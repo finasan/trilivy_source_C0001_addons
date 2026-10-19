@@ -1,6 +1,6 @@
 {
   "name": "demo",
-  "version": "0.5.7-dev.20261016191009.ga3af38f811",
+  "version": "0.6.0-dev.20261019.c0002work",
   "hook_api": 1,
   "title": "Trilivy Demo Box",
   "database": true,
@@ -33,6 +33,12 @@
     "access": {
       "access": "operator"
     },
+    "codes": {
+      "access": "operator"
+    },
+    "stories": {
+      "access": "operator"
+    },
     "reports": {
       "access": "operator"
     },
@@ -62,6 +68,9 @@
       "access": "signed_in"
     },
     "pitch_page": {
+      "access": "signed_in"
+    },
+    "story": {
       "access": "signed_in"
     },
     "pitch_api": {

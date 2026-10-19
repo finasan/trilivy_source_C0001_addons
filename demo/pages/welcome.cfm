@@ -9,6 +9,12 @@
 </cfif>
 <cfset ws = urlEncodedFormat(d.db)>
 <cfset pitches = demo.navPitchItems(d.mode)>
+<!--- the stories (Quick Start), in their order --->
+<cfset stories = demo.stories()>
+<cfset prog = demo.storyProgress(d.pid)>
+<cfset storyKeys = []>
+<cfloop collection="#stories#" item="sk"><cfset arrayAppend(storyKeys, {k: sk, s: stories[sk].sort})></cfloop>
+<cfset arraySort(storyKeys, function(a, b) { return a.s - b.s; })>
 <cfoutput>
 <style>
 .dw{font:15px/1.55 var(--fs);color:##1b2333;max-width:1080px;margin:18px auto 60px;padding:0 16px}
@@ -24,6 +30,12 @@
 .dw .lock b{display:block;margin-bottom:2px}.dw .lock span{font-size:13px;color:##5d6779}
 .dw .try{background:##f6f7fb;border-radius:12px;padding:12px 16px;margin-top:14px;font-size:14px}
 .dw .try code{background:##fff;padding:1px 6px;border-radius:6px}
+.dw .qs{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:##fff;color:##1b2333;border-radius:14px;padding:16px 20px;margin-top:18px}
+.dw .qs .qt{flex:1;min-width:220px}.dw .qs .qt b{display:block;font-size:18px}.dw .qs .qt span{color:##5d6779;font-size:14px}
+.dw .qs .qgo{background:##ffb300;color:##1b2333;font-weight:800;font-size:16px;padding:12px 24px;border-radius:999px;text-decoration:none;white-space:nowrap}
+.dw .qs .qgo:hover{background:##ffc233}
+.dw .qs .qre{color:##2457d6;font-size:13px;font-weight:600}
+.dw .qdone{background:##e3f5ee;border-radius:12px;padding:12px 16px;margin-bottom:14px}
 </style>
 <div class="dw">
     <div class="hero">
@@ -33,7 +45,22 @@
             <span style="font-weight:600">Experience:</span> #demo.switchHtml(d.mode, "demo-sw demo-sw-big")#
             <span style="opacity:.85;font-size:13.5px">#d.mode EQ "explorer" ? "The real Trilivy menus on your own copy." : "Switch to Full platform to use the real Trilivy menus on your own copy."#</span>
         </div>
+        <cfloop array="#storyKeys#" item="sx">
+            <cfset s = stories[sx.k]><cfset pr = prog[sx.k] ?: {}>
+            <cfset started = NOT structIsEmpty(pr) AND NOT pr.done AND pr.n GT 1>
+            <div class="qs">
+                <div class="qt"><b>#encodeForHTML(s.title)#</b><span>#encodeForHTML(s.subtitle ?: "")# · about #s.minutes# minutes · #arrayLen(s.steps)# steps</span></div>
+                <a class="qgo" href="/ain5py/addon.cfm?a=demo&p=story&arg=#encodeForURL(sx.k)#" data-demo-nav="story_#encodeForHTMLAttribute(sx.k)#">
+                    #started ? "▶ Continue at step " & pr.n : ((pr.done ?: false) ? "▶ Take it again" : "▶ Start")#</a>
+                <cfif started><a class="qre" href="/ain5py/addon.cfm?a=demo&p=story&arg=#encodeForURL(sx.k)#&restart=1">start over</a></cfif>
+            </div>
+        </cfloop>
     </div>
+    <cfif len(url.story_done ?: "") AND structKeyExists(stories, url.story_done)>
+        <div class="qdone"><b>You finished “#encodeForHTML(stories[url.story_done].title)#”.</b> Everything you built is still in your sandbox: keep asking the assistant,
+            <cfif d.mode NEQ "explorer">switch to <b>Full platform</b> above to explore every menu,<cfelse>explore the menus at the top,</cfif>
+            or use <a href="##" data-demo-action="talk">Contact us</a>.</div>
+    </cfif>
     <div class="grid">
         <div class="card"><h3>💬 Ask the assistant</h3><p>An HR and IT service-desk assistant for a sample company, Orvane Group, built on its policies. Answers show their sources.</p>
             <a class="go" href="/ain5py/boty/boty_full.cfm?wsDsn=#ws#" target="_blank" data-demo-nav="assistant">Open the assistant</a></div>

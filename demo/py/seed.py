@@ -12,6 +12,12 @@ Idempotent; runs on every install and update:
              all yet, every active admin account becomes one (role admin)
   system     the timers' service account (cx_demo_operators role 'system') and
              its password in /etc/trilivy/addon_demo_svc.env (0600 root)
+  nodes      menu codes (seed/nodes.json): a node nobody changed on the box
+             (updated_by NULL or 'seed') follows the seed; a node not scanned yet
+             is added (the next menu scan fills in its kind and page)
+  stories    seed/stories.json: a story or step nobody changed on the box follows the seed
+
+  --only nodes,stories,...   load just those parts (the dev loop on a demo box)
 """
 import hashlib
 import json
@@ -40,10 +46,101 @@ def conn(db=None):
                            charset="utf8mb4", autocommit=False, cursorclass=pymysql.cursors.DictCursor)
 
 
+def seed_cards(cur):
+    added = updated = 0
+    for k in load("pitch.json").get("cards", []):
+        # Only "talk" exists (2026-10-15: no booking, no wish list).
+        cta = [c for c in k.get("cta", []) if c == "talk"]
+        vals = (k.get("kicker", ""), k["headline"], k.get("why_html", ""), k.get("how_html", ""),
+                json.dumps(k.get("objections", [])), k.get("proof_html", ""), json.dumps(cta),
+                k.get("status", "draft"))
+        key = (k["feature_key"], k.get("audience", "business"), k.get("lang", "en"))
+        cur.execute("SELECT id, updated_by FROM cx_demo_pitch WHERE feature_key=%s AND audience=%s AND lang=%s", key)
+        row = cur.fetchone()
+        if not row:
+            cur.execute("INSERT INTO cx_demo_pitch (kicker, headline, why_html, how_html, objections, proof_html, cta, status, "
+                        "feature_key, audience, lang, updated_by, verified_by) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'seed',%s)",
+                        vals + key + (k.get("verified_by") or None,))
+            added += 1
+        elif row["updated_by"] == "seed":
+            cur.execute("UPDATE cx_demo_pitch SET kicker=%s, headline=%s, why_html=%s, how_html=%s, objections=%s, proof_html=%s, "
+                        "cta=%s, status=%s WHERE id=%s", vals + (row["id"],))
+            updated += cur.rowcount
+    return added, updated
+
+
+def seed_nodes(cur):
+    added = updated = 0
+    for n in load("nodes.json").get("nodes", []):
+        area, trail = n["area"], n["trail"][:255]
+        code = (n.get("code") or "").upper() or None
+        key = n.get("card_key") or None
+        cur.execute("SELECT id, updated_by FROM cx_demo_nodes WHERE area=%s AND trail=%s", (area, trail))
+        row = cur.fetchone()
+        if not row:
+            label = trail.split(" › ")[-1][:120]
+            depth = trail.count(" › ") + 1
+            cur.execute("INSERT INTO cx_demo_nodes (area, trail, label, kind, depth, code, card_key, updated_by) "
+                        "VALUES (%s,%s,%s,%s,%s,%s,%s,'seed')", (area, trail, label, n.get("kind", "link"), depth, code, key))
+            added += 1
+        elif row["updated_by"] in (None, "", "seed"):
+            cur.execute("UPDATE cx_demo_nodes SET code=%s, card_key=%s, updated_by='seed' WHERE id=%s", (code, key, row["id"]))
+            updated += cur.rowcount
+    return added, updated
+
+
+def seed_stories(cur):
+    s_n = t_n = 0
+    for s in load("stories.json").get("stories", []):
+        cur.execute("SELECT updated_by FROM cx_demo_story WHERE story_key=%s", (s["story_key"],))
+        row = cur.fetchone()
+        vals = (s["title"], s.get("subtitle"), int(s.get("minutes", 8)), s.get("status", "draft"), int(s.get("sort", 100)))
+        if not row:
+            cur.execute("INSERT INTO cx_demo_story (title, subtitle, minutes, status, sort, story_key, updated_by) "
+                        "VALUES (%s,%s,%s,%s,%s,%s,'seed')", vals + (s["story_key"],))
+            s_n += 1
+        elif row["updated_by"] in (None, "", "seed"):
+            cur.execute("UPDATE cx_demo_story SET title=%s, subtitle=%s, minutes=%s, status=%s, sort=%s, updated_by='seed' "
+                        "WHERE story_key=%s", vals + (s["story_key"],))
+            s_n += cur.rowcount
+        else:
+            continue  # an operator changed the story here: its steps are theirs too
+        # the steps of a seed-owned story follow the seed (a step an operator edited is kept)
+        cur.execute("SELECT id, step_no, updated_by FROM cx_demo_story_step WHERE story_key=%s", (s["story_key"],))
+        have = {r["step_no"]: r for r in cur.fetchall()}
+        if any(r["updated_by"] not in (None, "", "seed") for r in have.values()):
+            continue
+        cur.execute("DELETE FROM cx_demo_story_step WHERE story_key=%s", (s["story_key"],))
+        for i, st in enumerate(s.get("steps", []), start=1):
+            js = lambda k: json.dumps(st[k]) if st.get(k) else None  # noqa: E731
+            cur.execute("INSERT INTO cx_demo_story_step (story_key, step_no, kind, kicker, title, body_html, benefits, task_html, "
+                        "target_path, allow_paths, card_key, done_when, buttons, status, updated_by) "
+                        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'seed')",
+                        (s["story_key"], i, st.get("kind", "slide"), st.get("kicker"), st["title"], st.get("body_html"),
+                         js("benefits"), st.get("task_html"), st.get("target_path"), js("allow_paths"), st.get("card_key"),
+                         js("done_when"), js("buttons"), st.get("status", "live")))
+            t_n += 1
+    return s_n, t_n
+
+
 def main():
     out = {}
+    only = set()
+    if "--only" in sys.argv:
+        only = set(sys.argv[sys.argv.index("--only") + 1].split(","))
     c = conn(DB)
     cur = c.cursor()
+    if only:
+        if "nodes" in only:
+            out["nodes_added"], out["nodes_updated"] = seed_nodes(cur)
+        if "stories" in only:
+            out["stories"], out["story_steps"] = seed_stories(cur)
+        if "pitch" in only:
+            out["cards_added"], out["cards_updated"] = seed_cards(cur)
+        c.commit()
+        c.close()
+        print(json.dumps(out))
+        return
 
     # features
     feats = load("features.json").get("features", [])
@@ -66,27 +163,9 @@ def main():
                      int(m.get("once_per_prospect", 1)), int(m.get("active", 1))))
     out["moments"] = len(pitch.get("moments", []))
 
-    # pitch cards
-    added = updated = 0
-    for k in pitch.get("cards", []):
-        # Only "talk" exists (2026-10-15: no booking, no wish list).
-        cta = [c for c in k.get("cta", []) if c == "talk"]
-        vals = (k.get("kicker", ""), k["headline"], k.get("why_html", ""), k.get("how_html", ""),
-                json.dumps(k.get("objections", [])), k.get("proof_html", ""), json.dumps(cta),
-                k.get("status", "draft"))
-        key = (k["feature_key"], k.get("audience", "business"), k.get("lang", "en"))
-        cur.execute("SELECT id, updated_by FROM cx_demo_pitch WHERE feature_key=%s AND audience=%s AND lang=%s", key)
-        row = cur.fetchone()
-        if not row:
-            cur.execute("INSERT INTO cx_demo_pitch (kicker, headline, why_html, how_html, objections, proof_html, cta, status, "
-                        "feature_key, audience, lang, updated_by, verified_by) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'seed',%s)",
-                        vals + key + (k.get("verified_by") or None,))
-            added += 1
-        elif row["updated_by"] == "seed":
-            cur.execute("UPDATE cx_demo_pitch SET kicker=%s, headline=%s, why_html=%s, how_html=%s, objections=%s, proof_html=%s, "
-                        "cta=%s, status=%s WHERE id=%s", vals + (row["id"],))
-            updated += cur.rowcount
-    out["cards_added"], out["cards_updated"] = added, updated
+    out["cards_added"], out["cards_updated"] = seed_cards(cur)
+    out["nodes_added"], out["nodes_updated"] = seed_nodes(cur)
+    out["stories"], out["story_steps"] = seed_stories(cur)
 
     # settings
     s_added = s_updated = 0
