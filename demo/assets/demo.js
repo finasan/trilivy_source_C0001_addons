@@ -415,8 +415,11 @@
     var skip = null;
     try { skip = sessionStorage.getItem("trlvGuardSkip"); if (skip === path) sessionStorage.removeItem("trlvGuardSkip"); } catch (e) {}
     if (skip === path) return;
-    // the running story's page: the coach panel explains it
-    if (C.story && C.story.target_path && path.split("?")[0] === C.story.target_path) return;
+    // the running story step's pages (its page and its extra pages): the coach panel explains them, no card
+    if (C.story && C.story.key) {
+      var bare = path.split("?")[0];
+      if (bare === C.story.target_path || (C.story.extras || []).some(function (x) { return String(x.url).split("?")[0].toLowerCase() === bare; })) return;
+    }
     if (last !== path && !document.getElementById("demoOv")) openGuard(path, "auto");
   }
   function watchDoc(doc) {

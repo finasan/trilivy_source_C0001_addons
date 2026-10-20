@@ -221,7 +221,8 @@
             <label>Page it opens (target)</label><input type="text" name="target_path" value="#encodeForHTMLAttribute(e.target_path ?: '')#" placeholder="/ain5py/boty/boty_full.cfm?wsDsn={wsDsn}">
             <label>Extra pages the prospect can open during this step (one per line)</label>
             <div class="small muted" style="margin:-2px 0 4px">They are not opened by themselves: each one is shown as a link under the task in the coach panel
-                ("Also on this step: …"), and the prospect may open it from there or from a link inside the step's page. A line with * (e.g. <span class="mono">/ain5py/frontend/ragw_*</span>)
+                ("Also on this step: …"), and the prospect may open it from there or from a link inside the step's page. Give the link a name after a bar:
+                <span class="mono">/ain5py/frontend/ragw_queue.cfm | Queue</span> (no name = the page's menu name). A line with * (e.g. <span class="mono">/ain5py/frontend/ragw_*</span>)
                 only gives permission, without a link. A page labelled box-wide or server in the Access map never opens.</div>
             <textarea name="allow_paths" rows="2">#encodeForHTML(arrayToList(ap, chr(10)))#</textarea>
             <cfif arrayLen(ap)>

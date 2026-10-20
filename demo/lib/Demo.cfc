@@ -780,7 +780,8 @@ component output="false" {
         // the pages this step may open (bare lower-case paths; * = anything)
         var allow = [];
         if (step.kind == "live" && len(trim(step.target_path ?: ""))) arrayAppend(allow, lCase(listFirst(trim(step.target_path), "?")));
-        for (var a in step.allow_paths) if (isSimpleValue(a) && len(trim(a))) arrayAppend(allow, lCase(trim(a)));
+        // a line may carry its link's name: "path | Name" (2026-10-20)
+        for (var a in step.allow_paths) if (isSimpleValue(a) && len(trim(a))) arrayAppend(allow, lCase(trim(listFirst(a, "|"))));
         var rx = [];
         for (var a2 in allow) {
             a2 = reReplace(a2, "[^a-z0-9/_.*-]", "", "all");
@@ -849,23 +850,28 @@ component output="false" {
         for (var a in arguments.step.allow_paths) {
             if (!isSimpleValue(a) || !len(trim(a)) || find("*", a)) continue;
             var info = storyExtraInfo(trim(a), arguments.d.mode ?: "guided");
-            if (info.opens) arrayAppend(out, {label: info.label, url: storyText(trim(a), arguments.d)});
+            if (info.opens) arrayAppend(out, {label: info.label, url: storyText(info.path, arguments.d)});
         }
         return out;
     }
 
-    /** {label, opens, why} of one extra page of a story step (the Stories editor shows why it cannot open). */
-    public struct function storyExtraInfo(required string path, string experience = "guided") {
-        var key = lCase(listFirst(arguments.path, "?"));
+    /**
+     * {path, label, opens, why} of one extra page line "path" or "path | Name". The name
+     * shown: the line's own, else the page's menu name (short), else its Access map label
+     * (cut at 40 characters), else the file name.
+     */
+    public struct function storyExtraInfo(required string line, string experience = "guided") {
+        var path = trim(listFirst(arguments.line, "|"));
+        var given = find("|", arguments.line) ? trim(listRest(arguments.line, "|")) : "";
+        var key = lCase(listFirst(path, "?"));
         var row = pageRow(key);
-        var lbl = row.label ?: "";
-        if (!len(lbl)) {
-            var cp = codeForPath(key);
-            lbl = cp.label ?: reReplace(listLast(key, "/"), "\.cfm$", "");
-        }
+        var lbl = given;
+        if (!len(lbl)) lbl = codeForPath(key).label ?: "";
+        if (!len(lbl) && len(row.label ?: "")) lbl = len(row.label) GT 40 ? reReplace(left(row.label, 40), "\s+\S*$", "") & "…" : row.label;
+        if (!len(lbl)) lbl = reReplace(listLast(key, "/"), "\.(cfm|html?)$", "");
         var safety = row.safety ?: "";
         var opens = !listFind("boxwide,server", safety);
-        return {label: lbl, opens: opens, safety: len(safety) ? safety : "not audited",
+        return {path: path, label: lbl, opens: opens, safety: len(safety) ? safety : "not audited",
                 why: opens ? "" : "labelled " & safety & " in the Access map: a story never opens it"};
     }
 
