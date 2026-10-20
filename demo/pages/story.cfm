@@ -107,9 +107,8 @@
             <cfif arrayLen(step.buttons) OR len(step.card_key ?: "")>
                 <div class="extra">
                 <cfloop array="#step.buttons#" item="b">
-                    <cfif isStruct(b) AND len(b.label ?: "") AND (b.href ?: "") EQ "talk">
-                        <a class="btn" href="##" data-demo-action="talk">#encodeForHTML(b.label)#</a>
-                    <cfelseif isStruct(b) AND len(b.label ?: "") AND len(b.href ?: "")>
+                    <!--- a "talk" button (Contact us) is not drawn any more (2026-10-20): it lives only in the DEMO bar --->
+                    <cfif isStruct(b) AND len(b.label ?: "") AND len(b.href ?: "") AND (b.href ?: "") NEQ "talk">
                         <a class="btn" href="#encodeForHTMLAttribute(demo.storyText(b.href, d))#"<cfif (b.target ?: "") EQ "_blank"> target="_blank" rel="noopener"</cfif>>#encodeForHTML(b.label)#</a>
                     </cfif>
                 </cfloop>

@@ -139,7 +139,8 @@
     });
   }
 
-  // Contact us on every card; plus "Open it now" (SPO) or "Continue to the page" (the page is open behind it).
+  // "Open it now" (SPO) or "Continue to the page" (the page is open behind it), and Close.
+  // No Contact us on the cards (2026-10-20, the user): it lives only in the DEMO bar.
   function ctas(bar, feature, opts) {
     opts = opts || {};
     if (opts.closed) {
@@ -159,11 +160,6 @@
       };
       bar.appendChild(go);
     }
-    var b = document.createElement("button");
-    b.className = "dp-btn" + (opts.open || opts.cont ? "" : " p");
-    b.textContent = "Contact us";
-    b.onclick = function () { ev("cta_click", feature, { cta: "talk" }); talk(feature, ""); };
-    bar.appendChild(b);
     var back = document.createElement("button");
     back.className = "dp-btn"; back.style.marginLeft = "auto"; back.textContent = "Close";
     back.onclick = close; bar.appendChild(back);
@@ -389,10 +385,6 @@
       var ok = document.createElement("button");
       ok.className = "dp-btn p"; ok.textContent = "Got it"; ok.onclick = close;
       bar.appendChild(ok);
-      var t = document.createElement("button");
-      t.className = "dp-btn"; t.style.marginLeft = "auto"; t.textContent = "Contact us";
-      t.onclick = function () { talk("", "About " + (j.label || "") + ": "); };
-      bar.appendChild(t);
     });
   }
   // The instructions show each time the prospect ARRIVES at a guardrail page

@@ -91,7 +91,7 @@
             <input type="text" name="oa#i#" placeholder="Answer" value="#encodeForHTMLAttribute(arrayLen(objs) GTE i ? objs[i].a : "")#"></div>
         </cfloop>
         <label>Proof (HTML, only verifiable claims)</label><textarea name="proof_html" rows="2">#encodeForHTML(c.proof_html ?: "")#</textarea>
-        <p class="small muted" style="margin-top:10px">Every card has one button: <b>Contact us</b> (it opens a ticket in the platform's Talk to a Person).</p>
+        <p class="small muted" style="margin-top:10px">Cards have no Contact us button: prospects use the one in the DEMO bar (it opens a ticket in the platform's Talk to a Person).</p>
         <label style="font-weight:400;margin-top:12px"><input type="checkbox" name="checked" value="1"> Every claim on this card has been checked (needed for verified / live)</label>
         <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary">Save</button><a class="btn" href="/ain5py/addon.cfm?a=demo&p=library">Back to the list</a></div>
     </form>

@@ -68,7 +68,7 @@
     <cfif len(url.story_done ?: "") AND structKeyExists(stories, url.story_done)>
         <div class="qdone"><b>You finished “#encodeForHTML(stories[url.story_done].title)#”.</b> Everything you built is still in your sandbox: keep asking the assistant,
             <cfif d.mode NEQ "explorer">switch to <b>Full platform</b> above to explore every menu,<cfelse>explore the menus at the top,</cfif>
-            or use <a href="##" data-demo-action="talk">Contact us</a>.</div>
+            or use <b>Contact us</b> in the DEMO bar at the top.</div>
     </cfif>
     <div class="grid">
         <div class="card"><h3>💬 Ask the assistant</h3><p>An HR and IT service-desk assistant for a sample company, Orvane Group, built on its policies. Answers show their sources.</p>

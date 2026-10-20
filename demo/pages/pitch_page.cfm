@@ -37,7 +37,7 @@
             </cfif>
         </div>
         <div style="padding:12px 20px;border-top:1px solid ##e3e7ef;display:flex;gap:8px;flex-wrap:wrap">
-            <a href="##" data-demo-action="talk" data-demo-feature="#encodeForHTMLAttribute(feature)#" style="background:##2457d6;color:##fff;padding:7px 14px;border-radius:8px;text-decoration:none;font-weight:600">Contact us</a>
+            <!--- no Contact us here (2026-10-20): it lives only in the DEMO bar --->
             <a href="/ain5py/addon.cfm?a=demo&p=welcome" target="_top" style="margin-left:auto;padding:7px 4px;color:##5d6779">Back to your demo</a>
         </div>
     </div>
