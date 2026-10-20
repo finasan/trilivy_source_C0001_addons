@@ -36,7 +36,8 @@
         for (var r3 in m) arrayAppend(moms, {moment_key: r3.moment_key, title: r3.title, feature_key: r3.feature_key,
             trigger_json: deserializeJSON(r3.trigger_json), once_per_prospect: r3.once_per_prospect, active: r3.active});
         out.pitch = {"_comment": "Exported from the Demo Console", cards: cards, moments: moms};
-        var s = queryExecute("SELECT k, v FROM cx_demo_settings WHERE k NOT LIKE 'state\_%' ORDER BY k", {}, {datasource: "addon_demo"});
+        // test_switch_* (pages/test_switch.cfm) belongs to one test box: never into the package
+        var s = queryExecute("SELECT k, v FROM cx_demo_settings WHERE k NOT LIKE 'state\_%' AND k NOT LIKE 'test\_switch\_%' ORDER BY k", {}, {datasource: "addon_demo"});
         var st = {};
         for (var r4 in s) st[r4.k] = r4.v;
         out.settings = {"_comment": "Exported from the Demo Console", settings: st};
@@ -141,7 +142,7 @@
 <cfset lastExport = demo.setting("state_last_export", "1970-01-01 00:00:00")>
 <cfset unexp = queryExecute("
     SELECT 'pitch card' AS what, CONCAT(feature_key,'/',audience,'/',lang) AS name, updated_at FROM cx_demo_pitch WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
-    UNION ALL SELECT 'setting', k, updated_at FROM cx_demo_settings WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND k NOT LIKE 'state\_%' AND updated_at > :t
+    UNION ALL SELECT 'setting', k, updated_at FROM cx_demo_settings WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND k NOT LIKE 'state\_%' AND k NOT LIKE 'test\_switch\_%' AND updated_at > :t
     UNION ALL SELECT 'operator', email, created_at FROM cx_demo_operators WHERE role <> 'system' AND created_at > :t
     UNION ALL SELECT 'access map', path, updated_at FROM cx_demo_pages WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
     UNION ALL SELECT 'menu code', CONCAT(area, ': ', trail), updated_at FROM cx_demo_nodes WHERE COALESCE(updated_by,'') NOT IN ('seed','') AND updated_at > :t
