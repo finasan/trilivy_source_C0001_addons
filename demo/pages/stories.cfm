@@ -165,7 +165,23 @@
         <tr #val(url.step) EQ steps.step_no ? 'style="background:##f3f6fe"' : ''#>
             <td>#steps.step_no#</td><td>#badge(steps.kind EQ "live" ? "active" : "verified")# #steps.kind#</td>
             <td><a href="/ain5py/addon.cfm?a=demo&p=stories&k=#k#&step=#steps.step_no#"><b>#encodeForHTML(steps.title)#</b></a></td>
-            <td class="small mono">#encodeForHTML(steps.target_path ?: "")##len(steps.card_key ?: "") ? " 🃏 " & steps.card_key : ""#</td>
+            <td class="small">
+                <span class="mono">#encodeForHTML(steps.target_path ?: "")#</span><cfif len(steps.card_key ?: "")> <span title="sales card">🃏 #encodeForHTML(steps.card_key)#</span></cfif>
+                <!--- the step's extra pages, under its page (2026-10-20) --->
+                <cfset xap = []><cftry><cfset xap = len(steps.allow_paths ?: "") ? deserializeJSON(steps.allow_paths) : []><cfcatch></cfcatch></cftry>
+                <cfloop array="#xap#" item="x">
+                    <cfif NOT isSimpleValue(x) OR NOT len(trim(x))><cfcontinue></cfif>
+                    <cfif find("*", x)>
+                        <div class="muted" title="permission only: no link in the coach panel">➕ <span class="mono">#encodeForHTML(x)#</span> <b>*</b> permission</div>
+                    <cfelse><cfset xi = demo.storyExtraInfo(trim(x))>
+                        <cfif xi.opens>
+                            <div style="color:##11845b" title="extra page: shown as a link in the coach panel">➕ ✓ <b>#encodeForHTML(xi.label)#</b> <span class="mono">#encodeForHTML(x)#</span></div>
+                        <cfelse>
+                            <div style="color:##b26a00" title="#encodeForHTMLAttribute(xi.why)#">➕ ⚠ <b>#encodeForHTML(xi.label)#</b> <span class="mono">#encodeForHTML(x)#</span> (blocked: #encodeForHTML(xi.safety)#)</div>
+                        </cfif>
+                    </cfif>
+                </cfloop>
+            </td>
             <td>#badge(steps.status)#</td><td>#reach[steps.step_no] ?: 0#</td>
             <td style="white-space:nowrap"><cfif canEdit>
                 <form method="post" style="display:inline"><input type="hidden" name="action" value="move"><input type="hidden" name="id" value="#steps.id#"><input type="hidden" name="dir" value="up"><button class="btn" title="Move up">↑</button></form>
