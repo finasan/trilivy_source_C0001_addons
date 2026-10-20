@@ -1,23 +1,335 @@
 {
   "pages": [
     {
-      "area": "jumpstart",
+      "area": "instance",
       "source": "menu",
       "sort": 1,
-      "explorer_mode": "open",
+      "path": "/ain5py/menuinst/icp_menu.cfm",
+      "safety": "unknown",
+      "label": "Overview",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 2,
+      "path": "/ain5py/botinstances/manage_instance_config.cfm",
+      "safety": "unknown",
+      "grp": "Bot Setup",
+      "label": "Manage Look&Feel",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 3,
+      "path": "/ain5py/boty/admin/manage_personas.cfm",
+      "safety": "unknown",
+      "grp": "Bot Setup › Persona",
+      "label": "Manage Personas",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 4,
+      "path": "/ain5py/boty/admin/agentsup_prompt_inspector.cfm",
+      "safety": "unknown",
+      "grp": "Bot Setup › Persona",
+      "label": "Prompt Viewer",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 5,
+      "path": "/ain5py/boty/admin/manage_guardrails.cfm",
+      "safety": "unknown",
+      "grp": "Bot Setup",
+      "label": "Guardrails",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 7,
+      "path": "/ain5py/boty/test_auto_summarize.cfm",
+      "safety": "unknown",
+      "grp": "Bot Setup",
+      "label": "Chat Summarize",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 8,
+      "path": "/ain5py/boty/wrapy.cfm",
+      "safety": "unknown",
+      "grp": "Bot Setup",
+      "label": "Wrapper Y Test",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 10,
+      "path": "/ain5py/boty/admin/ragm_agent_tools.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Agents",
+      "label": "Agent Tools",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 11,
+      "path": "/ain5py/boty/admin/test_agent_tools.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Agents",
+      "label": "Test Agents",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 12,
+      "path": "/ain5py/boty/admin/icp_agent_factory.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Agents",
+      "label": "Agent Factory",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 13,
+      "path": "/ain5py/agentfactory_v2/af2_builder.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Agents",
+      "label": "Agent Factory V2",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 14,
+      "path": "/ain5py/menucenter/live_bridge/assistant.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Agents",
+      "label": "Live Bridge",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 15,
+      "path": "/ain5py/actionregistry/manage_actionsregistry.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Actions",
+      "label": "Action Registry",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 16,
+      "path": "/ain5py/actionregistry/action_registry_extractor.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Actions",
+      "label": "Action Extractor",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 17,
+      "path": "/ain5py/frontend/manage_chatsession.cfm",
+      "safety": "unknown",
+      "grp": "Controls",
+      "label": "Chat Sessions",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 18,
+      "path": "/ain5py/botinstances/handoff_config.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Talk to a Person",
+      "label": "Configuration",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 19,
+      "path": "/ain5py/botinstances/handoff_inbox.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Talk to a Person",
+      "label": "Handoff Inbox",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 20,
+      "path": "/ain5py/botinstances/handoff_live.cfm",
+      "safety": "unknown",
+      "grp": "Controls › Talk to a Person",
+      "label": "Live Support",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 21,
+      "explorer_mode": "guard",
+      "path": "/ain5py/answer_bank/manage_answer_bank.cfm",
+      "safety": "unknown",
+      "grp": "Knowledge",
+      "label": "Answer Bank",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 22,
+      "path": "/ain5py/coursemaker/cm_app.cfm",
+      "safety": "unknown",
+      "grp": "AI Learning",
+      "label": "Course Maker",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 23,
+      "path": "/ain5py/menuinst/icp_menu.cfm?section=lms",
+      "safety": "unknown",
+      "grp": "AI Learning › Authoring",
+      "label": "Authoring",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 24,
+      "path": "/ain5py/menuinst/icp_menu.cfm?section=courseextractor",
+      "safety": "unknown",
+      "grp": "AI Learning › Authoring",
+      "label": "Course Extractor",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 25,
+      "path": "/ain5py/menuinst/icp_menu.cfm?section=assessgen",
+      "safety": "unknown",
+      "grp": "AI Learning › Authoring",
+      "label": "Assessment Gen",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 26,
+      "path": "/ain5py/menuinst/icp_menu.cfm?section=topicsextract",
+      "safety": "unknown",
+      "grp": "AI Learning › Authoring",
+      "label": "Topics & Variants",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 27,
+      "path": "/ain5py/lms_workshop/constructors/manage_persona_splitter.cfm",
+      "safety": "unknown",
+      "grp": "AI Learning › Authoring",
+      "label": "Persona Splitter",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 28,
+      "path": "/ain5py/lms_workshop/player/player_launch.cfm",
+      "safety": "unknown",
+      "grp": "AI Learning › Delivery",
+      "label": "Player",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 29,
+      "path": "/ain5py/lms_workshop/constructors/ws_audit.cfm",
+      "safety": "unknown",
+      "grp": "AI Learning › Audits",
+      "label": "Course Audit",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 30,
+      "path": "/ain5py/lms_workshop/constructors/ws_audit_personas.cfm",
+      "safety": "unknown",
+      "grp": "AI Learning › Audits",
+      "label": "Persona Audit",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 31,
+      "path": "/ain5py/menuinst/icp_menu.cfm?section=lms&lms_tab=enrollments",
+      "safety": "unknown",
+      "grp": "AI Learning › Reports",
+      "label": "Enrollments",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 32,
+      "path": "/ain5py/menuinst/icp_menu.cfm?section=lms&lms_tab=progress",
+      "safety": "unknown",
+      "grp": "AI Learning › Reports",
+      "label": "Progress",
+      "readonly": 0
+    },
+    {
+      "area": "instance",
+      "source": "menu",
+      "sort": 33,
+      "path": "/ain5py/lms_workshop/constructors/ws_certificate.cfm",
+      "safety": "unknown",
+      "grp": "AI Learning › Reports",
+      "label": "Certificate",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "guard_title": "This is the RAG MAKER",
+      "sort": 1,
+      "explorer_mode": "guard",
       "path": "/ain5py/menucenter/ingestion_center_v2.cfm",
       "safety": "unknown",
-      "guided_mode": "open",
-      "grp": "index_V2",
+      "guided_mode": "guard",
+      "grp": "Platform home",
       "label": "Step 1 Build the knowledge Ingestion Center RAG Maker…",
-      "readonly": 0
+      "readonly": 0,
+      "guard_html": "You can upload PDF, XLS, Word and much more"
     },
     {
       "area": "jumpstart",
       "source": "menu",
       "sort": 2,
       "path": "/ain5py/menucenter/retrieve_center_v2.cfm",
-      "safety": "boxwide",
+      "safety": "sandbox",
       "grp": "index_V2",
       "label": "Step 2 Put it to work Retrieve Center Assistants REST API…",
       "readonly": 0
@@ -33,12 +345,142 @@
       "readonly": 0
     },
     {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 11,
+      "path": "/ain5py/menucenter/folder_copy/folder_copy.cfm",
+      "safety": "unknown",
+      "grp": "1 · Build (Ingestion Center)",
+      "label": "Cloud folders, kept in sync SharePoint, OneDrive, Google…",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 42,
+      "path": "/ain5py/menucenter/folder_copy/copy.cfm",
+      "safety": "unknown",
+      "grp": "1 · Build (Ingestion Center)",
+      "label": "copy.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 45,
+      "path": "/ain5py/menucenter/live_bridge/source.cfm",
+      "safety": "unknown",
+      "grp": "1 · Build (Ingestion Center)",
+      "label": "source.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 54,
+      "path": "/ain5py/appconnect/new.cfm",
+      "safety": "unknown",
+      "grp": "2 · Use (Retrieve Center)",
+      "label": "Connect an app",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 71,
+      "path": "/ain5py/menucenter/model_app_download.cfm",
+      "safety": "unknown",
+      "grp": "2 · Use (Retrieve Center)",
+      "label": "Model App A complete stand-alone Python app that uses every…",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 83,
+      "path": "/ain5py/appconnect/index.cfm",
+      "safety": "unknown",
+      "grp": "2 · Use (Retrieve Center)",
+      "label": "Connected apps",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 88,
+      "path": "/ain5py/menucenter/connections_admin.cfm",
+      "safety": "unknown",
+      "grp": "2 · Use (Retrieve Center)",
+      "label": "All Connections (keys)",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 91,
+      "path": "/ain5py/menucenter/connection.cfm",
+      "safety": "unknown",
+      "grp": "2 · Use (Retrieve Center)",
+      "label": "connection.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 94,
+      "path": "/ain5py/ai_docs/ugc/integration_guide.cfm",
+      "safety": "unknown",
+      "grp": "Agents (Agent Center)",
+      "label": "Integration Guide",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 98,
+      "path": "/ain5py/agentapi/call_agent_unified.cfm",
+      "safety": "unknown",
+      "grp": "Agents (Agent Center)",
+      "label": "Working call example",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 103,
+      "path": "/ain5py/repgen/repgen_demo.cfm",
+      "safety": "unknown",
+      "grp": "Agents (Agent Center)",
+      "label": "Market research demo",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 104,
+      "path": "/ain5py/repgen/my_reports.cfm",
+      "safety": "unknown",
+      "grp": "Agents (Agent Center)",
+      "label": "Reports library",
+      "readonly": 0
+    },
+    {
+      "area": "jumpstart",
+      "source": "menu",
+      "sort": 110,
+      "path": "/ain5py/reports-examples/finrep.html",
+      "safety": "unknown",
+      "grp": "Agents (Agent Center)",
+      "label": "Finance Comprehensive Financial Advisory The long-form…",
+      "readonly": 0
+    },
+    {
       "area": "kb",
       "source": "menu",
       "sort": 1,
       "path": "/ain5py/ai_docs/kbn/ais02whatis.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "What is AI?",
       "readonly": 0
     },
@@ -48,7 +490,7 @@
       "sort": 2,
       "path": "/ain5py/ai_docs/kbn/ais04leaders.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "Leaders must know",
       "readonly": 0
     },
@@ -58,7 +500,7 @@
       "sort": 3,
       "path": "/ain5py/ai_docs/kbn/ais05noaction.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "Price of No action",
       "readonly": 0
     },
@@ -68,7 +510,7 @@
       "sort": 4,
       "path": "/ain5py/ai_docs/kbn/ai00demystify.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "Demystifying AI",
       "readonly": 0
     },
@@ -78,7 +520,7 @@
       "sort": 5,
       "path": "/ain5py/ai_docs/kbn/aik1_about.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "About AI",
       "readonly": 0
     },
@@ -88,7 +530,7 @@
       "sort": 6,
       "path": "/ain5py/ai_docs/kbn/aik5_courses.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "High Level Courses",
       "readonly": 0
     },
@@ -98,7 +540,7 @@
       "sort": 7,
       "path": "/ain5py/ai_docs/kbn/aik3_ethics.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "Regulations",
       "readonly": 0
     },
@@ -108,7 +550,7 @@
       "sort": 8,
       "path": "/ain5py/ai_docs/kbn/aik31_risks.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "AI Risks",
       "readonly": 0
     },
@@ -118,7 +560,7 @@
       "sort": 9,
       "path": "/ain5py/ai_docs/kbn/aie04phrases.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "What influencers are saying",
       "readonly": 0
     },
@@ -128,7 +570,7 @@
       "sort": 10,
       "path": "/ain5py/ai_docs/kbn/ai_godfather.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "The Godfather of AI",
       "readonly": 0
     },
@@ -138,7 +580,7 @@
       "sort": 11,
       "path": "/ain5py/ai_docs/kbn/aibj.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "Brainstorm & Jumpstart",
       "readonly": 0
     },
@@ -148,7 +590,7 @@
       "sort": 12,
       "path": "/ain5py/ai_docs/kbn/ai_brains.cfm",
       "safety": "sandbox",
-      "grp": "AI Concepts",
+      "grp": "Artificial Intelligence › AI Concepts",
       "label": "Why my brain hurts?",
       "readonly": 0
     },
@@ -158,7 +600,7 @@
       "sort": 13,
       "path": "/ain5py/ai_docs/kbn/ai001_criticalai.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "Critical For AI Success",
       "readonly": 0
     },
@@ -168,7 +610,7 @@
       "sort": 14,
       "path": "/ain5py/ai_docs/kbn/at_define.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "Define What you want to do",
       "readonly": 0
     },
@@ -178,7 +620,7 @@
       "sort": 15,
       "path": "/ain5py/ai_docs/kbn/at_category.cfm",
       "safety": "sandbox",
-      "grp": "Generative or Discriminative",
+      "grp": "Artificial Intelligence › Taming AI › Generative or Discriminative",
       "label": "Select the AI category",
       "readonly": 0
     },
@@ -188,7 +630,7 @@
       "sort": 16,
       "path": "/ain5py/ai_docs/kbn/at_selectllm.cfm",
       "safety": "sandbox",
-      "grp": "Generative or Discriminative",
+      "grp": "Artificial Intelligence › Taming AI › Generative or Discriminative",
       "label": "The Native Model",
       "readonly": 0
     },
@@ -198,7 +640,7 @@
       "sort": 17,
       "path": "/ain5py/ai_docs/kbn/ai01mllm.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "In-house Mini LLM",
       "readonly": 0
     },
@@ -208,7 +650,7 @@
       "sort": 18,
       "path": "/ain5py/ai_docs/kbn/at_finetune.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "Fine tune",
       "readonly": 0
     },
@@ -218,7 +660,7 @@
       "sort": 19,
       "path": "/ain5py/ai_docs/kbn/aik2_rag.cfm",
       "safety": "sandbox",
-      "grp": "RAG",
+      "grp": "Artificial Intelligence › Taming AI › RAG",
       "label": "Concepts",
       "readonly": 0
     },
@@ -228,7 +670,7 @@
       "sort": 20,
       "path": "/ain5py/ai_docs/kbn/aik2_rag_steps.cfm",
       "safety": "sandbox",
-      "grp": "RAG",
+      "grp": "Artificial Intelligence › Taming AI › RAG",
       "label": "Steps-by-Steps",
       "readonly": 0
     },
@@ -238,7 +680,7 @@
       "sort": 21,
       "path": "/ain5py/ai_docs/kbn/aik2_rag_ceo.cfm",
       "safety": "sandbox",
-      "grp": "RAG",
+      "grp": "Artificial Intelligence › Taming AI › RAG",
       "label": "RAG for CEOs",
       "readonly": 0
     },
@@ -248,7 +690,7 @@
       "sort": 22,
       "path": "/ain5py/ai_docs/kbn/ai_annotate.cfm",
       "safety": "sandbox",
-      "grp": "RAG",
+      "grp": "Artificial Intelligence › Taming AI › RAG",
       "label": "RAG x Annotation",
       "readonly": 0
     },
@@ -258,7 +700,7 @@
       "sort": 23,
       "path": "/ain5py/ai_docs/kbn/aik23_tools.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "Functions and Tools",
       "readonly": 0
     },
@@ -268,7 +710,7 @@
       "sort": 24,
       "path": "/ain5py/ai_docs/kbn/aik22_synthetic.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "Synthetic User Messages",
       "readonly": 0
     },
@@ -278,7 +720,7 @@
       "sort": 25,
       "path": "/ain5py/ai_docs/kbn/aik22_prompt.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "Prompt Engineering/Payload",
       "readonly": 0
     },
@@ -288,7 +730,7 @@
       "sort": 26,
       "path": "/ain5py/ai_docs/kbn/tbd.cfm",
       "safety": "sandbox",
-      "grp": "Taming AI",
+      "grp": "Artificial Intelligence › Taming AI",
       "label": "APIs and APP Integration",
       "readonly": 0
     },
@@ -298,7 +740,7 @@
       "sort": 28,
       "path": "/ain5py/ai_docs/kbn/aie02career.cfm",
       "safety": "sandbox",
-      "grp": "AI Career",
+      "grp": "Artificial Intelligence › AI Career",
       "label": "AI as a career booster",
       "readonly": 0
     },
@@ -308,7 +750,7 @@
       "sort": 29,
       "path": "/ain5py/ai_docs/kbn/ai01_mllm_highlevel.cfm",
       "safety": "sandbox",
-      "grp": "AI Career",
+      "grp": "Artificial Intelligence › AI Career",
       "label": "What need to be an Evangelist",
       "readonly": 0
     },
@@ -318,7 +760,7 @@
       "sort": 30,
       "path": "/ain5py/ai_docs/kbn/aie01sell.cfm",
       "safety": "sandbox",
-      "grp": "AI Career",
+      "grp": "Artificial Intelligence › AI Career",
       "label": "How to sell the Evangelist Idea",
       "readonly": 0
     },
@@ -328,7 +770,7 @@
       "sort": 31,
       "path": "/ain5py/ai_docs/kbn/aie03hunters.cfm",
       "safety": "sandbox",
-      "grp": "AI Career",
+      "grp": "Artificial Intelligence › AI Career",
       "label": "What head hunters think",
       "readonly": 0
     },
@@ -338,7 +780,7 @@
       "sort": 32,
       "path": "/ain5py/ai_docs/kbn/ai_resilientcareers.cfm",
       "safety": "sandbox",
-      "grp": "AI Career",
+      "grp": "Artificial Intelligence › AI Career",
       "label": "AI Resilient Careers",
       "readonly": 0
     },
@@ -348,7 +790,7 @@
       "sort": 33,
       "path": "/ain5py/ai_docs/kbn/ait1_host.cfm",
       "safety": "sandbox",
-      "grp": "AI Tech",
+      "grp": "Artificial Intelligence › AI Tech",
       "label": "AI Server - Ubuntu",
       "readonly": 0
     },
@@ -358,7 +800,7 @@
       "sort": 34,
       "path": "/ain5py/ai_docs/kbn/ait2_workflow.cfm",
       "safety": "sandbox",
-      "grp": "AI Tech",
+      "grp": "Artificial Intelligence › AI Tech",
       "label": "Software Workflow",
       "readonly": 0
     },
@@ -368,7 +810,7 @@
       "sort": 35,
       "path": "/ain5py/ai_docs/kbn/ait3_lucee_ub.cfm",
       "safety": "sandbox",
-      "grp": "AI Tech",
+      "grp": "Artificial Intelligence › AI Tech",
       "label": "Lucee Unix - Reverse Proxy",
       "readonly": 0
     },
@@ -378,7 +820,7 @@
       "sort": 36,
       "path": "/ain5py/ai_docs/kbn/ait4_py.cfm",
       "safety": "sandbox",
-      "grp": "AI Tech",
+      "grp": "Artificial Intelligence › AI Tech",
       "label": "Python Packages",
       "readonly": 0
     },
@@ -388,7 +830,7 @@
       "sort": 37,
       "path": "/ain5py/ai_docs/kbn/ait5_flask.cfm",
       "safety": "sandbox",
-      "grp": "AI Tech",
+      "grp": "Artificial Intelligence › AI Tech",
       "label": "Python + Flask Windows",
       "readonly": 0
     },
@@ -398,7 +840,7 @@
       "sort": 38,
       "path": "/ain5py/ai_docs/kbn/at_examp_notes.cfm",
       "safety": "sandbox",
-      "grp": "Prototypes",
+      "grp": "Artificial Intelligence › Prototypes",
       "label": "GPT API + RAG",
       "readonly": 0
     },
@@ -408,7 +850,7 @@
       "sort": 39,
       "path": "/ain5py/ai_docs/kbn/examp_ollama.cfm",
       "safety": "sandbox",
-      "grp": "Prototypes",
+      "grp": "Artificial Intelligence › Prototypes",
       "label": "Dedicated servers",
       "readonly": 0
     },
@@ -418,7 +860,7 @@
       "sort": 41,
       "path": "/ain5py/ai_docs/kbn/at_devel_stockadv.cfm",
       "safety": "sandbox",
-      "grp": "Prototypes",
+      "grp": "Artificial Intelligence › Prototypes",
       "label": "Developing a Stock Advisor",
       "readonly": 0
     },
@@ -428,7 +870,7 @@
       "sort": 44,
       "path": "/ain5py/ai_docs/kbn/at_uvicorn.cfm",
       "safety": "sandbox",
-      "grp": "Examples and Usages",
+      "grp": "Artificial Intelligence › Examples and Usages",
       "label": "FastAPI/Uvicorn",
       "readonly": 0
     },
@@ -438,7 +880,7 @@
       "sort": 45,
       "path": "/ain5py/ai_docs/kbn/at_toolscripts.cfm",
       "safety": "sandbox",
-      "grp": "Examples and Usages",
+      "grp": "Artificial Intelligence › Examples and Usages",
       "label": "Tools AI Scripts",
       "readonly": 0
     },
@@ -448,7 +890,7 @@
       "sort": 48,
       "path": "/ain5py/ai_docs/kbn/cardio.cfm",
       "safety": "sandbox",
-      "grp": "Examples and Usages",
+      "grp": "Artificial Intelligence › Examples and Usages",
       "label": "AI - Coronary Usage Example",
       "readonly": 0
     },
@@ -458,7 +900,7 @@
       "sort": 49,
       "path": "/ain5py/ai_docs/kbn/aie05examplesfin.cfm",
       "safety": "sandbox",
-      "grp": "Examples and Usages",
+      "grp": "Artificial Intelligence › Examples and Usages",
       "label": "AI - Use in Financial World",
       "readonly": 0
     },
@@ -468,7 +910,7 @@
       "sort": 50,
       "path": "/ain5py/ai_docs/kbn/ai03todo.cfm",
       "safety": "sandbox",
-      "grp": "Notes",
+      "grp": "Artificial Intelligence › Notes",
       "label": "To do list - Pendencies",
       "readonly": 0
     },
@@ -478,7 +920,7 @@
       "sort": 51,
       "path": "/ain5py/ai_docs/kbn/aik2_rag_cre.cfm",
       "safety": "sandbox",
-      "grp": "Notes",
+      "grp": "Artificial Intelligence › Notes",
       "label": "RAG Create",
       "readonly": 0
     },
@@ -488,7 +930,7 @@
       "sort": 52,
       "path": "/ain5py/ai_docs/kbn/mobi/kb_flutter.cfm",
       "safety": "sandbox",
-      "grp": "Mobile Apps",
+      "grp": "Artificial Intelligence › Mobile Apps",
       "label": "Flutter & Android Studio",
       "readonly": 0
     },
@@ -498,7 +940,7 @@
       "sort": 53,
       "path": "/ain5py/ai_docs/kbn/mobi/kb_ios.cfm",
       "safety": "sandbox",
-      "grp": "Mobile Apps",
+      "grp": "Artificial Intelligence › Mobile Apps",
       "label": "IPhone/IOS",
       "readonly": 0
     },
@@ -508,7 +950,7 @@
       "sort": 54,
       "path": "/ain5py/ai_docs/kbn/mobi/kb_android.cfm",
       "safety": "sandbox",
-      "grp": "Mobile Apps",
+      "grp": "Artificial Intelligence › Mobile Apps",
       "label": "Android",
       "readonly": 0
     },
@@ -518,7 +960,7 @@
       "sort": 55,
       "path": "/ain5py/ai_docs/kbn/mobi/kb_codemagic.cfm",
       "safety": "sandbox",
-      "grp": "Mobile Apps",
+      "grp": "Artificial Intelligence › Mobile Apps",
       "label": "GITHUB & Publish",
       "readonly": 0
     },
@@ -528,7 +970,7 @@
       "sort": 56,
       "path": "/ain5py/ai_docs/kbn/mobi/kb_other.cfm",
       "safety": "sandbox",
-      "grp": "Mobile Apps",
+      "grp": "Artificial Intelligence › Mobile Apps",
       "label": "Other",
       "readonly": 0
     },
@@ -667,7 +1109,7 @@
       "source": "menu",
       "sort": 27,
       "path": "/ain5py/menucenter/agent_center.cfm",
-      "safety": "boxwide",
+      "safety": "sandbox",
       "grp": "menu_agents",
       "label": "Agent Center & Examples →",
       "readonly": 0
@@ -727,7 +1169,7 @@
       "source": "menu",
       "sort": 3,
       "path": "/ain5py/botinstances/manage_instances_v2.cfm",
-      "safety": "boxwide",
+      "safety": "sandbox",
       "grp": "Instances",
       "label": "Instance Manager",
       "readonly": 0
@@ -790,7 +1232,7 @@
       "source": "menu",
       "sort": 9,
       "path": "/doc3_studio/uiux/manage_doc_factory.cfm",
-      "safety": "unknown",
+      "safety": "boxwide",
       "grp": "Content Studio",
       "label": "Manage Factory",
       "readonly": 0
@@ -800,7 +1242,7 @@
       "source": "menu",
       "sort": 10,
       "path": "/doc3_studio/uiux/manage_doc_project.cfm",
-      "safety": "unknown",
+      "safety": "boxwide",
       "grp": "Content Studio",
       "label": "Manage Project",
       "readonly": 0
@@ -810,7 +1252,7 @@
       "source": "menu",
       "sort": 11,
       "path": "/doc3_studio/uiux/manage_reface_batch.cfm",
-      "safety": "unknown",
+      "safety": "boxwide",
       "grp": "Content Studio",
       "label": "Manage Reface Batch",
       "readonly": 0
@@ -860,8 +1302,8 @@
       "source": "menu",
       "sort": 16,
       "path": "/ain5py/frontend/ragw_maker.cfm",
-      "safety": "boxwide",
-      "grp": "Core Workflow",
+      "safety": "sandbox",
+      "grp": "RAG › Core Workflow",
       "label": "Maker",
       "readonly": 0
     },
@@ -870,8 +1312,8 @@
       "source": "menu",
       "sort": 17,
       "path": "/ain5py/frontend/ragw_queue.cfm",
-      "safety": "boxwide",
-      "grp": "Core Workflow",
+      "safety": "sandbox",
+      "grp": "RAG › Core Workflow",
       "label": "Queue",
       "readonly": 0
     },
@@ -881,7 +1323,7 @@
       "sort": 18,
       "path": "/ain5py/preproc/code_doc_extractor.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Rag Code",
       "readonly": 0
     },
@@ -891,7 +1333,7 @@
       "sort": 19,
       "path": "/ain5py/preproc/ragm_code_audit.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Code Auditor",
       "readonly": 0
     },
@@ -901,7 +1343,7 @@
       "sort": 20,
       "path": "/ain5py/preproc/ragm_preprocessor.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Rag Html",
       "readonly": 0
     },
@@ -911,7 +1353,7 @@
       "sort": 21,
       "path": "/ain5py/preproc/ragm_sql_configs.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Rag Sql",
       "readonly": 0
     },
@@ -921,7 +1363,7 @@
       "sort": 22,
       "path": "/ain5py/preproc/ragm_emails_extractor.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Rag Email",
       "readonly": 0
     },
@@ -931,7 +1373,7 @@
       "sort": 23,
       "path": "/ain5py/preproc/ragm_crawler.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Web Crawler",
       "readonly": 0
     },
@@ -941,7 +1383,7 @@
       "sort": 24,
       "path": "/ain5py/preproc/ragm_sharepoint.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "SharePoint",
       "readonly": 0
     },
@@ -951,7 +1393,7 @@
       "sort": 25,
       "path": "/ain5py/preproc/rag_timing_diagnostic.cfm",
       "safety": "server",
-      "grp": "Connectors",
+      "grp": "RAG › Connectors",
       "label": "Timing Diagnostic",
       "readonly": 0
     },
@@ -960,8 +1402,8 @@
       "source": "menu",
       "sort": 26,
       "path": "/ain5py/frontend/ragm_tables.cfm",
-      "safety": "boxwide",
-      "grp": "Management",
+      "safety": "sandbox",
+      "grp": "RAG › Management",
       "label": "Rag Tables",
       "readonly": 0
     },
@@ -970,8 +1412,8 @@
       "source": "menu",
       "sort": 27,
       "path": "/ain5py/frontend/ragm_explorer.cfm",
-      "safety": "boxwide",
-      "grp": "Management",
+      "safety": "sandbox",
+      "grp": "RAG › Management",
       "label": "Explore",
       "readonly": 0
     },
@@ -981,7 +1423,7 @@
       "sort": 28,
       "path": "/ain5py/frontend/ragm_generate.cfm",
       "safety": "boxwide",
-      "grp": "Management",
+      "grp": "RAG › Management",
       "label": "Generate",
       "readonly": 0
     },
@@ -991,7 +1433,7 @@
       "sort": 29,
       "path": "/ain5py/frontend/ragm_delete.cfm",
       "safety": "boxwide",
-      "grp": "Management",
+      "grp": "RAG › Management",
       "label": "Delete",
       "readonly": 0
     },
@@ -1001,7 +1443,7 @@
       "sort": 30,
       "path": "/ain5py/frontend/ragm_purge.cfm",
       "safety": "boxwide",
-      "grp": "Management",
+      "grp": "RAG › Management",
       "label": "Purge",
       "readonly": 0
     },
@@ -1011,7 +1453,7 @@
       "sort": 31,
       "path": "/ain5py/frontend/ragm_merge.cfm",
       "safety": "boxwide",
-      "grp": "Management",
+      "grp": "RAG › Management",
       "label": "Merge",
       "readonly": 0
     },
@@ -1021,7 +1463,7 @@
       "sort": 32,
       "path": "/ain5py/frontend/ragm_docvault.cfm",
       "safety": "boxwide",
-      "grp": "Management",
+      "grp": "RAG › Management",
       "label": "Doc Vault",
       "readonly": 0
     },
@@ -1031,7 +1473,7 @@
       "sort": 33,
       "path": "/ain5py/frontend/ragm_ingestion.cfm",
       "safety": "boxwide",
-      "grp": "Management",
+      "grp": "RAG › Management",
       "label": "Ingestion Control",
       "readonly": 0
     },
@@ -1039,9 +1481,10 @@
       "area": "manage",
       "source": "menu",
       "sort": 34,
+      "explorer_mode": "guard",
       "path": "/ain5py/ai_docs/ugc/quality_lab_reference.html",
       "safety": "sandbox",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "ℹ What these tools are",
       "readonly": 0
     },
@@ -1049,9 +1492,10 @@
       "area": "manage",
       "source": "menu",
       "sort": 35,
+      "explorer_mode": "guard",
       "path": "/ain5py/ai_docs/ugc/quality_lab_how_to.html",
       "safety": "sandbox",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "📘 How-To: the steps",
       "readonly": 0
     },
@@ -1060,8 +1504,8 @@
       "source": "menu",
       "sort": 36,
       "path": "/ain5py/frontend/ragm_lab_quick.cfm",
-      "safety": "boxwide",
-      "grp": "Quality Lab",
+      "safety": "sandbox",
+      "grp": "RAG › Quality Lab",
       "label": "⚡ Quick Check",
       "readonly": 0
     },
@@ -1071,7 +1515,7 @@
       "sort": 37,
       "path": "/ain5py/frontend/ragm_case_sets.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Test Question Sets",
       "readonly": 0
     },
@@ -1081,7 +1525,7 @@
       "sort": 38,
       "path": "/ain5py/frontend/ragm_eval_runner.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Ground-Truth Eval",
       "readonly": 0
     },
@@ -1091,7 +1535,7 @@
       "sort": 39,
       "path": "/ain5py/frontend/ragm_response_grading.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Response Grading",
       "readonly": 0
     },
@@ -1101,7 +1545,7 @@
       "sort": 40,
       "path": "/ain5py/frontend/ragm_raglogs.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Production Logs",
       "readonly": 0
     },
@@ -1111,7 +1555,7 @@
       "sort": 41,
       "path": "/ain5py/frontend/ragm_curate.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Curate",
       "readonly": 0
     },
@@ -1121,7 +1565,7 @@
       "sort": 42,
       "path": "/ain5py/frontend/ragm_lab_audit.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Health Audit",
       "readonly": 0
     },
@@ -1131,7 +1575,7 @@
       "sort": 43,
       "path": "/ain5py/frontend/ragm_metadata_rag_analyzer.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Meta Analysis",
       "readonly": 0
     },
@@ -1141,7 +1585,7 @@
       "sort": 44,
       "path": "/ain5py/frontend/ragm_stress.cfm",
       "safety": "boxwide",
-      "grp": "Quality Lab",
+      "grp": "RAG › Quality Lab",
       "label": "Capacity Results",
       "readonly": 0
     },
@@ -1149,6 +1593,7 @@
       "area": "manage",
       "source": "menu",
       "sort": 45,
+      "explorer_mode": "guard",
       "path": "/ain5py/menucenter/index_v2.cfm",
       "safety": "sandbox",
       "grp": "Enterprise Integrations",
@@ -1159,6 +1604,76 @@
       "area": "manage",
       "source": "menu",
       "sort": 46,
+      "path": "/ain5py/menucenter/connectors_center.cfm",
+      "safety": "sandbox",
+      "grp": "Integration Center › Ingestion Center",
+      "label": "Connectors",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 47,
+      "path": "/ain5py/menucenter/live_bridge/live_bridge.cfm",
+      "safety": "boxwide",
+      "grp": "Integration Center › Ingestion Center › Live Bridge",
+      "label": "File stores",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 50,
+      "path": "/ain5py/boty/boty_full.cfm",
+      "safety": "sandbox",
+      "grp": "Integration Center › Retrieve Center",
+      "label": "Conversational",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 51,
+      "path": "/ain5py/menucenter/restapi_center.cfm",
+      "safety": "boxwide",
+      "grp": "Integration Center › Retrieve Center",
+      "label": "REST Answer",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 53,
+      "path": "/ain5py/menucenter/mcp_center.cfm",
+      "safety": "boxwide",
+      "grp": "Integration Center › Retrieve Center",
+      "label": "MCP In",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 54,
+      "path": "/ain5py/menucenter/one_click.cfm",
+      "safety": "sandbox",
+      "grp": "Integration Center › Retrieve Center › Examples",
+      "label": "One Click",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 55,
+      "path": "/ain5py/menucenter/examples_center.cfm",
+      "safety": "sandbox",
+      "grp": "Integration Center › Retrieve Center › Examples",
+      "label": "Full App",
+      "readonly": 0
+    },
+    {
+      "area": "manage",
+      "source": "menu",
+      "sort": 57,
       "path": "/ain5py/ai_docs/xray/learning_companions.cfm",
       "safety": "server",
       "grp": "Learning Companion",
@@ -1168,7 +1683,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 48,
+      "sort": 59,
       "explorer_mode": "hidden",
       "path": "/ain5py/botsimple/support_test_loader.cfm",
       "safety": "server",
@@ -1180,7 +1695,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 49,
+      "sort": 60,
       "explorer_mode": "hidden",
       "path": "/ain5py/cflogger/cflogger_test.cfm",
       "safety": "server",
@@ -1192,7 +1707,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 50,
+      "sort": 61,
       "explorer_mode": "hidden",
       "path": "/ain5py/frontend/audit_internal_urls.cfm",
       "safety": "boxwide",
@@ -1204,7 +1719,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 51,
+      "sort": 62,
       "explorer_mode": "hidden",
       "path": "/ain5py/manage/git/backupgit.cfm",
       "safety": "boxwide",
@@ -1216,7 +1731,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 52,
+      "sort": 63,
       "explorer_mode": "hidden",
       "path": "/ain5py/manage/sql/backup_mysql_tables.cfm",
       "safety": "boxwide",
@@ -1228,7 +1743,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 53,
+      "sort": 64,
       "explorer_mode": "hidden",
       "path": "/musicpipe/spotitata_player.html",
       "safety": "unknown",
@@ -1240,7 +1755,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 54,
+      "sort": 65,
       "explorer_mode": "hidden",
       "path": "/musicpipe/admin/admin_dashboard.cfm",
       "safety": "unknown",
@@ -1252,7 +1767,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 55,
+      "sort": 66,
       "explorer_mode": "hidden",
       "path": "/musicpipe/howitworks.cfm",
       "safety": "unknown",
@@ -1264,7 +1779,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 56,
+      "sort": 67,
       "path": "/ain5py/menucenter/code_assistant_center.cfm",
       "safety": "sandbox",
       "grp": "Code Assistant",
@@ -1274,7 +1789,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 57,
+      "sort": 68,
       "explorer_mode": "hidden",
       "path": "/ain5py/manage/services/manage_services.cfm",
       "safety": "boxwide",
@@ -1285,7 +1800,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 58,
+      "sort": 69,
       "path": "/ain5py/manage/updates/updates.cfm",
       "safety": "server",
       "grp": "System",
@@ -1295,7 +1810,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 59,
+      "sort": 70,
       "path": "/ain5py/manage/system/about.cfm",
       "safety": "server",
       "grp": "System",
@@ -1305,7 +1820,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 60,
+      "sort": 71,
       "path": "/ain5py/manage/system/addresses.cfm",
       "safety": "server",
       "grp": "System",
@@ -1315,7 +1830,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 61,
+      "sort": 72,
       "path": "/ain5py/manage/system/email.cfm",
       "safety": "server",
       "grp": "System",
@@ -1325,7 +1840,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 62,
+      "sort": 73,
       "path": "/ain5py/manage/system/llm_keys.cfm",
       "safety": "server",
       "grp": "System",
@@ -1335,7 +1850,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 63,
+      "sort": 74,
       "path": "/ain5py/manage/system/web_search.cfm",
       "safety": "server",
       "grp": "System",
@@ -1345,7 +1860,7 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 64,
+      "sort": 75,
       "path": "/ain5py/manage/system/custom_scripts.cfm",
       "safety": "server",
       "grp": "System",
@@ -1355,11 +1870,50 @@
     {
       "area": "manage",
       "source": "menu",
-      "sort": 65,
+      "sort": 76,
       "path": "/ain5py/manage/system/custom_database.cfm",
       "safety": "server",
       "grp": "System",
       "label": "Custom Database",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9000,
+      "explorer_mode": "open",
+      "path": "/ain5py/frontend/ragm_tables_grid.cfm",
+      "safety": "sandbox",
+      "label": "Rag Tables: records",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9001,
+      "explorer_mode": "open",
+      "path": "/ain5py/frontend/ragm_tables_detail.cfm",
+      "safety": "sandbox",
+      "label": "Rag Tables: one record",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9002,
+      "explorer_mode": "open",
+      "path": "/ain5py/frontend/api_lab_proxy.cfm",
+      "safety": "sandbox",
+      "label": "Quick Check (its API)",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
+      "path": "/ain5py/boty/agentsup.cfm",
+      "safety": "unknown",
+      "label": "agentsup.cfm",
       "readonly": 0
     },
     {
@@ -1375,6 +1929,33 @@
       "area": "other",
       "source": "seen",
       "sort": 9999,
+      "path": "/ain5py/lms_workshop/player/content.cfm",
+      "safety": "unknown",
+      "label": "content.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
+      "path": "/ain5py/lms_workshop/player/player.cfm",
+      "safety": "unknown",
+      "label": "player.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
+      "path": "/ain5py/manage/inst_access_denied.cfm",
+      "safety": "unknown",
+      "label": "inst_access_denied.cfm",
+      "readonly": 0
+    },
+    {
+      "area": "other",
+      "source": "seen",
+      "sort": 9999,
       "path": "/ain5py/manage/menu.cfm",
       "safety": "unknown",
       "label": "menu.cfm",
@@ -1384,18 +1965,18 @@
       "area": "other",
       "source": "seen",
       "sort": 9999,
-      "path": "/ain5py/manage/welcome.cfm",
+      "path": "/ain5py/manage/system/x.cfm",
       "safety": "unknown",
-      "label": "welcome.cfm",
+      "label": "x.cfm",
       "readonly": 0
     },
     {
       "area": "other",
       "source": "seen",
       "sort": 9999,
-      "path": "/ain5py/menucenter/live_bridge/live_bridge.cfm",
+      "path": "/ain5py/manage/welcome.cfm",
       "safety": "unknown",
-      "label": "live_bridge.cfm",
+      "label": "welcome.cfm",
       "readonly": 0
     },
     {
@@ -1422,7 +2003,6 @@
       "sort": 1,
       "path": "/ain5py/ai_docs/ugc/quickstart_steps.cfm",
       "safety": "sandbox",
-      "grp": "menu",
       "label": "Ecosystem Quick Start",
       "readonly": 0
     },
@@ -1432,7 +2012,7 @@
       "sort": 2,
       "path": "/ain5py/frontend/u_manage_sp.cfm",
       "safety": "boxwide",
-      "grp": "Smart Prompt",
+      "grp": "Chat Bot with RAG › Smart Prompt",
       "label": "Manage Prompts",
       "readonly": 0
     },
@@ -1442,7 +2022,7 @@
       "sort": 4,
       "path": "/ain5py/repgen/index.cfm",
       "safety": "boxwide",
-      "grp": "Report Generator",
+      "grp": "Apps & Agents › Report Generator",
       "label": "Report Agent Interface",
       "readonly": 0
     },
@@ -1452,7 +2032,7 @@
       "sort": 5,
       "path": "/ain5py/reports-examples/finrep_agent.html",
       "safety": "boxwide",
-      "grp": "Report Generator",
+      "grp": "Apps & Agents › Report Generator",
       "label": "Financial Planning Report Example",
       "readonly": 0
     },
@@ -1462,7 +2042,7 @@
       "sort": 6,
       "path": "/ain5py/reports-examples/salesrep.html",
       "safety": "boxwide",
-      "grp": "Report Generator",
+      "grp": "Apps & Agents › Report Generator",
       "label": "Sales Report Example",
       "readonly": 0
     },
@@ -1472,7 +2052,7 @@
       "sort": 7,
       "path": "/ain5py/reports-examples/music.html",
       "safety": "boxwide",
-      "grp": "Report Generator",
+      "grp": "Apps & Agents › Report Generator",
       "label": "Music Report Example",
       "readonly": 0
     },
@@ -1482,7 +2062,7 @@
       "sort": 8,
       "path": "/ain5py/reports-examples/arsenal.html",
       "safety": "boxwide",
-      "grp": "Report Generator",
+      "grp": "Apps & Agents › Report Generator",
       "label": "Soccer Report Example",
       "readonly": 0
     },
@@ -1492,7 +2072,7 @@
       "sort": 9,
       "path": "/ain5py/tips/faqm.cfm",
       "safety": "boxwide",
-      "grp": "Faq & Tips Generator",
+      "grp": "Apps & Agents › Faq & Tips Generator",
       "label": "View Faq & Tips",
       "readonly": 0
     },
@@ -1502,7 +2082,7 @@
       "sort": 10,
       "path": "/ain5py/tips/faq_a.cfm",
       "safety": "sandbox",
-      "grp": "Faq & Tips Generator",
+      "grp": "Apps & Agents › Faq & Tips Generator",
       "label": "Manage Faq & Tips",
       "readonly": 0
     },
@@ -1512,7 +2092,7 @@
       "sort": 11,
       "path": "/ain5py/tips/faq_auto_generate.cfm",
       "safety": "unknown",
-      "grp": "Faq & Tips Generator",
+      "grp": "Apps & Agents › Faq & Tips Generator",
       "label": "Generate in Bulk and Judge",
       "readonly": 0
     },
@@ -1522,7 +2102,7 @@
       "sort": 12,
       "path": "/ain5py/repgen/playbookwriter.cfm",
       "safety": "boxwide",
-      "grp": "SOP Writer",
+      "grp": "Apps & Agents › SOP Writer",
       "label": "View SOP Writer",
       "readonly": 0
     },
@@ -1532,7 +2112,7 @@
       "sort": 13,
       "path": "/ain5py/reports-examples/hr_sop.html",
       "safety": "boxwide",
-      "grp": "SOP Writer",
+      "grp": "Apps & Agents › SOP Writer",
       "label": "View SOP Example",
       "readonly": 0
     },
@@ -1542,7 +2122,7 @@
       "sort": 14,
       "path": "/ain5py/repgen/payloadview.cfm",
       "safety": "boxwide",
-      "grp": "SOP Writer",
+      "grp": "Apps & Agents › SOP Writer",
       "label": "View SOP Payload",
       "readonly": 0
     },
@@ -1552,7 +2132,7 @@
       "sort": 15,
       "path": "/ain5py/tips/ai_buzzwords_browser.cfm",
       "safety": "sandbox",
-      "grp": "Buzzwords",
+      "grp": "Apps & Agents › Buzzwords",
       "label": "Buzzwords Browser",
       "readonly": 0
     },
@@ -1562,7 +2142,7 @@
       "sort": 17,
       "path": "/ain5py/tips/ai_buzzwords_genall.cfm",
       "safety": "boxwide",
-      "grp": "Buzzwords",
+      "grp": "Apps & Agents › Buzzwords",
       "label": "Buzzwords Bulk Generator",
       "readonly": 0
     },
@@ -1572,7 +2152,7 @@
       "sort": 20,
       "path": "/ain5py/frontend/ragw_manualingest.cfm",
       "safety": "boxwide",
-      "grp": "Ingestion Process",
+      "grp": "RAG › Ingestion Process",
       "label": "Manual Record Injection",
       "readonly": 0
     },
@@ -1582,7 +2162,7 @@
       "sort": 22,
       "path": "/ain5py/frontend/u_payload.cfm",
       "safety": "boxwide",
-      "grp": "RAG Management",
+      "grp": "RAG › RAG Management",
       "label": "Payload",
       "readonly": 0
     },
@@ -1592,7 +2172,7 @@
       "sort": 38,
       "path": "/ain5py/ai_docs/ugc/about_endpoints.cfm",
       "safety": "sandbox",
-      "grp": "Endpoints",
+      "grp": "RAG › Endpoints",
       "label": "API Endpoints Strategy",
       "readonly": 0
     },
@@ -1612,7 +2192,7 @@
       "sort": 40,
       "path": "/ain5py/ai_docs/ugc/operational_doc_01_deployment_runbook.cfm",
       "safety": "sandbox",
-      "grp": "Guides and Playbooks",
+      "grp": "System › Guides and Playbooks",
       "label": "Deployment Runbook",
       "readonly": 0
     },
@@ -1622,7 +2202,7 @@
       "sort": 41,
       "path": "/ain5py/ai_docs/ugc/operational_doc_02_disaster_recovery.cfm",
       "safety": "sandbox",
-      "grp": "Guides and Playbooks",
+      "grp": "System › Guides and Playbooks",
       "label": "Disaster Recovery Procedures",
       "readonly": 0
     },
@@ -1632,7 +2212,7 @@
       "sort": 42,
       "path": "/ain5py/ai_docs/ugc/operational_doc_03_incident_response.cfm",
       "safety": "sandbox",
-      "grp": "Guides and Playbooks",
+      "grp": "System › Guides and Playbooks",
       "label": "Incident Response Playbook",
       "readonly": 0
     },
@@ -1642,7 +2222,7 @@
       "sort": 43,
       "path": "/ain5py/ai_docs/ugc/operational_doc_04_security_guidelines.cfm",
       "safety": "sandbox",
-      "grp": "Guides and Playbooks",
+      "grp": "System › Guides and Playbooks",
       "label": "Security Guidelines",
       "readonly": 0
     },
@@ -1652,7 +2232,7 @@
       "sort": 44,
       "path": "/ain5py/ai_docs/deprecated_auditrep/servers/workload_analysis_hostek4core.cfm",
       "safety": "server",
-      "grp": "Workloads",
+      "grp": "System › Workloads",
       "label": "Entry Level Server",
       "readonly": 0
     },
@@ -1662,7 +2242,7 @@
       "sort": 45,
       "path": "/ain5py/ai_docs/deprecated_auditrep/servers/workload_analysis_rtx3090.cfm",
       "safety": "server",
-      "grp": "Workloads",
+      "grp": "System › Workloads",
       "label": "Recomemnded Server",
       "readonly": 0
     },
@@ -1672,7 +2252,7 @@
       "sort": 46,
       "path": "/ain5py/ai_docs/deprecated_auditrep/servers/workload_analysis_b200.cfm",
       "safety": "server",
-      "grp": "Workloads",
+      "grp": "System › Workloads",
       "label": "Hyper Scale Server",
       "readonly": 0
     },
@@ -1682,7 +2262,7 @@
       "sort": 47,
       "path": "/ain5py/ai_docs/deprecated_auditrep/servers/orbitix_runpod_deployment_guide.cfm",
       "safety": "server",
-      "grp": "Workloads",
+      "grp": "System › Workloads",
       "label": "Server Deploymenet",
       "readonly": 0
     },
@@ -1692,7 +2272,7 @@
       "sort": 48,
       "path": "/ain5py/ai_docs/deprecated_auditrep/servers/docker_explained_beginners.cfm",
       "safety": "server",
-      "grp": "Workloads",
+      "grp": "System › Workloads",
       "label": "Docker Packaging",
       "readonly": 0
     },
@@ -1702,7 +2282,7 @@
       "sort": 49,
       "path": "/ain5py/ai_docs/ugc/llm_selector.cfm",
       "safety": "sandbox",
-      "grp": "Select LLM",
+      "grp": "Language Models › Select LLM",
       "label": "Large Language Models",
       "readonly": 0
     },
@@ -1712,7 +2292,7 @@
       "sort": 50,
       "path": "/ain5py/ai_docs/ugc/llm_cost_calc.cfm",
       "safety": "sandbox",
-      "grp": "Select LLM",
+      "grp": "Language Models › Select LLM",
       "label": "Cost Calculator",
       "readonly": 0
     },
@@ -1722,7 +2302,7 @@
       "sort": 51,
       "path": "/ain5py/ai_docs/ugc/llm_case_opensource.cfm",
       "safety": "sandbox",
-      "grp": "In-house LLM",
+      "grp": "Language Models › In-house LLM",
       "label": "In-house Dedicated Server",
       "readonly": 0
     },
@@ -1732,7 +2312,7 @@
       "sort": 52,
       "path": "/ain5py/ai_docs/ugc/llm_micro_case.cfm",
       "safety": "sandbox",
-      "grp": "Micro LLM",
+      "grp": "Language Models › Micro LLM",
       "label": "About MLLM",
       "readonly": 0
     },
@@ -1742,7 +2322,7 @@
       "sort": 53,
       "path": "/ain5py/mllm_api/chatmllm.cfm",
       "safety": "server",
-      "grp": "Micro LLM",
+      "grp": "Language Models › Micro LLM",
       "label": "Accessing MLLM",
       "readonly": 0
     },
@@ -1774,6 +2354,36 @@
       "safety": "sandbox",
       "grp": "Resource Hub",
       "label": "KB",
+      "readonly": 0
+    },
+    {
+      "area": "rag",
+      "source": "menu",
+      "sort": 5,
+      "path": "/ain5py/preproc/ragm_sql_extractor.cfm",
+      "safety": "unknown",
+      "grp": "Essential · Core workflow",
+      "label": "SQL Extractor",
+      "readonly": 0
+    },
+    {
+      "area": "rag",
+      "source": "menu",
+      "sort": 10,
+      "path": "/ain5py/ai_docs/ugc/answer_bank_concepts.html",
+      "safety": "unknown",
+      "grp": "Essential · Core workflow",
+      "label": "Answer Bank",
+      "readonly": 0
+    },
+    {
+      "area": "rag",
+      "source": "menu",
+      "sort": 16,
+      "path": "/ain5py/frontend/ragm_purge_scope.cfm",
+      "safety": "unknown",
+      "grp": "Frequent · Table management",
+      "label": "Purge by Group",
       "readonly": 0
     }
   ],

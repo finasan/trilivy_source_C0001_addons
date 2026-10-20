@@ -243,6 +243,2178 @@
     },
     {
       "verified_by": "",
+      "how_html": "<p>In the chat, the assistant calls its tools by itself. Your apps can ask a question and let tools run inside the answer, or ask the agent directly. External AI clients can call the agent through MCP.</p>",
+      "objections": [
+        {
+          "a": "No. Chat, REST and MCP all reach the same agents.",
+          "q": "Do we need a different agent for each channel?"
+        },
+        {
+          "a": "Live Bridge tools to outside systems are read-only; write tools cannot be enabled.",
+          "q": "Could an agent change things in our other systems?"
+        },
+        {
+          "a": "Every door applies the API key's knowledge bases, groups and confidentiality ceiling.",
+          "q": "Will apps and partners see everything?"
+        },
+        {
+          "a": "Every REST call is logged, including refused ones, and agent runs are logged with tokens and cost.",
+          "q": "Can we track usage?"
+        }
+      ],
+      "headline": "One place that explains what agents do and lets the same agent serve your chat, your apps and outside AI tools",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Agents",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Four doors to one agent: chat, REST /v1/ask, REST /v1/agent and MCP ask_agent.</p>",
+      "feature_key": "mg_agent_center",
+      "why_html": "<p>Agents are confusing until someone shows exactly where they act. Agent Center does that, for every way people reach Trilivy.</p><ul><li><strong>Clear explanation:</strong> what an agent is and how it works, written for each entry point.</li><li><strong>Build once, use everywhere:</strong> the same agent works in the chat, in your own apps via the REST API, and from outside AI clients via MCP.</li><li><strong>Many kinds of tools:</strong> seven tool types, from database queries and knowledge search to web calls.</li><li><strong>Safe connections:</strong> outside systems reached live are read-only, with each person's own identity.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Agents are defined once (Agent Factory) and exposed through all doors. REST keys define assistant, clearance ceiling, permissions (answer, evidence, agent), rate and monthly limits, expiry and on/off. Live Bridge calls to outside MCP servers, REST APIs or databases are read-only, per-user identity, HTTPS public addresses only, results treated as data not instructions, secrets in an encrypted vault and masked in the call log.</p>",
+      "objections": [
+        {
+          "a": "They are tool types an admin chooses to configure; Live Bridge connections to outside systems allow read-only tools only, and data tools from Agent Factory run read-only SQL.",
+          "q": "api_post and api_put sound like write access."
+        },
+        {
+          "a": "Outside results are treated as data, not instructions.",
+          "q": "How is prompt injection from outside results handled?"
+        },
+        {
+          "a": "Keys carry separate answer, evidence and agent permissions, plus rate limit, monthly limit and expiry.",
+          "q": "Can a key be limited to the agent permission only?"
+        },
+        {
+          "a": "Ready configs for Claude, OpenAI and generic MCP, plus kits for Copilot, Bedrock, Vertex, Agentforce, SAP Joule, ServiceNow, Oracle Fusion and watsonx.",
+          "q": "Which MCP clients are supported?"
+        }
+      ],
+      "headline": "One agent layer behind every interface: chat, /v1/ask, /v1/agent and MCP ask_agent, with seven tool types and scoped keys",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Agents",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Seven tool types (sql, api_get, api_post, api_put, rag, python, cfm) behind four doors, all bounded by the caller's key scope and confidentiality ceiling.</p>",
+      "feature_key": "mg_agent_center",
+      "why_html": "<ul><li><strong>Doors:</strong> chat (model calls tools itself), REST /v1/ask (tools run inside the answer), /v1/agent (direct), MCP ask_agent.</li><li><strong>Tool types:</strong> sql, api_get, api_post, api_put, rag, python, cfm.</li><li><strong>Scope enforcement:</strong> every door applies the key's knowledge bases, groups and confidentiality ceiling.</li><li><strong>Auth options:</strong> X-API-Key for REST; JWT scope tokens (expiring, revocable), OAuth profiles and client credentials for MCP.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Four steps: Describe, Review, Test, Publish. Trilivy turns your description into an agent definition, generates tests, grades them, and lets someone with the Management role publish. Earlier versions are kept.</p>",
+      "objections": [
+        {
+          "a": "Data queries run as read-only transactions on tables the admin ticks; they cannot write.",
+          "q": "What if the agent changes or deletes data?"
+        },
+        {
+          "a": "Tests are generated and graded automatically, and publishing needs at least 80% to pass.",
+          "q": "How do we know it works before people use it?"
+        },
+        {
+          "a": "Every run is logged with tokens and cost, and there is a default spend cap of $50 per assistant per month.",
+          "q": "Could costs spiral?"
+        },
+        {
+          "a": "No. Publishing needs the Management role on that assistant, and previous versions are kept.",
+          "q": "Can anyone publish an agent?"
+        }
+      ],
+      "headline": "Build an AI agent by describing it in plain words, and only go live once it has passed its own tests",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Agents",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Data tools are bounded: each query is read-only, limited to 5 seconds and 200 rows; publishing requires an 80% test pass rate.</p>",
+      "feature_key": "mg_agent_factory",
+      "why_html": "<p>Most companies want agents but fear unpredictable behaviour and runaway costs. Agent Factory makes building one a guided, safe process.</p><ul><li><strong>No coding:</strong> describe what you need, review, test, publish. Start from templates like Document Expert, Data Q&amp;A or Customer Helper.</li><li><strong>Quality gate:</strong> tests are generated and graded automatically, and an agent can only be published with at least 80% passing.</li><li><strong>Cost under control:</strong> every run is logged with tokens and cost, and spend is capped at $50 per assistant per month by default.</li><li><strong>Safe with your data:</strong> agents can only read the tables you tick, never change them.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Describe -&gt; Review -&gt; Test -&gt; Publish produces a spec, not a program. For heavier needs, the legacy Blueprint Catalogue offers markdown blueprints (e.g. Agentic RAG, read-only operational data agent) with effort, risk level and what they must prove; they are built in a fenced workspace, you review the diff and install it yourself, each runs as its own service, and a golden test is mandatory.</p>",
+      "objections": [
+        {
+          "a": "V2 generates no code; agents are JSON specs run by one shared engine you review once.",
+          "q": "Generated code is a security review nightmare."
+        },
+        {
+          "a": "Only SELECT queries on ticked tables, inside a read-only transaction, with a 5 s limit and 200 rows max.",
+          "q": "Can a SQL tool be abused for writes or heavy scans?"
+        },
+        {
+          "a": "The Blueprint Catalogue path builds a dedicated service in a fenced workspace; you review the diff and install it yourself, and a golden test is mandatory.",
+          "q": "What about cases a spec can't cover?"
+        },
+        {
+          "a": "Published versions are kept, and every run is logged with tokens and cost.",
+          "q": "How do we roll back a bad release?"
+        }
+      ],
+      "headline": "Agents as versioned JSON specs on one shared engine: no generated code, read-only bounded SQL, test-gated publishing and spend caps",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Agents",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Hard limits per query: read-only transaction, 5 seconds, 200 rows; publish gate 80%; default spend cap $50 per instance per month.</p>",
+      "feature_key": "mg_agent_factory",
+      "why_html": "<ul><li><strong>No code generation (V2):</strong> an agent is a JSON spec executed by one shared engine.</li><li><strong>Bounded data access:</strong> Claude proposes SELECT queries on admin-ticked tables; each runs in a read-only transaction, 5 s timeout, 200-row max.</li><li><strong>Gated release:</strong> auto-generated, auto-graded tests; publish needs &gt;= 80% pass and the Management role on the instance.</li><li><strong>Observability and cost:</strong> versions retained, every run logged with tokens and cost, default $50/instance/month cap.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Add a term (or let AI draft it), set its category, importance and pipeline step, and review. When ready, 'Add Buzzwords on RAG' exports all terms into a knowledge base so the assistant can use them.</p>",
+      "objections": [
+        {
+          "a": "'Generate with AI' only drafts; you review and edit before saving.",
+          "q": "Will the AI-written definitions be accurate?"
+        },
+        {
+          "a": "No. Exporting to a knowledge base means assistants can use the glossary when they answer.",
+          "q": "Is this just a static list?"
+        },
+        {
+          "a": "Yes. Metaphors, examples and a C-level relevance field are there precisely for non-technical readers.",
+          "q": "We aren't technical. Is this for us?"
+        }
+      ],
+      "headline": "Turn AI jargon into plain language your executives and staff actually understand, and let your assistants explain it too",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Knowledge",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Each term carries eight fields: term, definition, category, example, metaphor, importance, C-level relevance and pipeline step.</p>",
+      "feature_key": "mg_buzzwords",
+      "why_html": "<p>AI projects stall when people don't share a vocabulary. Buzzwords gives your organisation one glossary and puts it to work.</p><ul><li><strong>One shared language:</strong> each term has a definition, example and metaphor.</li><li><strong>Built for leaders:</strong> importance and C-level relevance per term help you focus on what matters.</li><li><strong>Less writing:</strong> 'Generate with AI' drafts the definition, example and metaphor for you to review.</li><li><strong>Assistants explain jargon:</strong> one click adds every term to a knowledge base so your assistants can answer 'what does this mean?'</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Terms are maintained in the glossary table. 'Add Buzzwords on RAG' writes each term as a chunk into the chosen knowledge base's fallback table (a knowledge base is a family of tables: doc, data, code, answer bank, fallback, summary), where normal retrieval can reach it.</p>",
+      "objections": [
+        {
+          "a": "No. Terms go into the knowledge base's fallback table, separate from the doc table.",
+          "q": "Does the export pollute our main document table?"
+        },
+        {
+          "a": "No. It drafts fields that an admin reviews.",
+          "q": "Is the AI drafting automatic publishing?"
+        },
+        {
+          "a": "Yes, each term has a pipeline step field.",
+          "q": "Can we tie terms to stages of the RAG pipeline?"
+        }
+      ],
+      "headline": "A structured AI glossary that exports into a knowledge base's fallback table, so assistants can resolve jargon from your own definitions",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Knowledge",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Mechanism: one chunk per term, written into the fallback table of the knowledge base you choose.</p>",
+      "feature_key": "mg_buzzwords",
+      "why_html": "<ul><li>Structured records: term, definition, category, example, metaphor, importance, C-level relevance, pipeline step.</li><li>LLM-assisted drafting of definition, example and metaphor.</li><li>One-click export: every term becomes a chunk in a knowledge base's fallback table.</li><li>Answers stay grounded in your curated definitions rather than model guesswork.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Write a brief, review the proposed blueprint, check the spreadsheet plan, then dry-run and generate all documents from the knowledge bases and source files you choose. Projects have categories, versions and a publish step; output is HTML in a magazine or sidebar layout.</p>",
+      "objections": [
+        {
+          "a": "The rule is 'ground or omit': a missing source is a hard error, and Revise checks every claim against sources.",
+          "q": "AI-written docs are full of invented facts."
+        },
+        {
+          "a": "Hot tip inserts one callout without rewriting anything.",
+          "q": "We just need one tip added, not a rewrite."
+        },
+        {
+          "a": "Yes. You review the blueprint and the plan, and can dry-run everything before generating.",
+          "q": "Can we review before anything is produced?"
+        },
+        {
+          "a": "Reface Batch updates many documents in place while structure guards keep their layout.",
+          "q": "We rebranded; do we redo all docs?"
+        }
+      ],
+      "headline": "Produce a whole documentation set from your own sources, where every claim is checked and nothing is made up",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Content",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>The Writer pipeline is Author (Markdown) -&gt; optional Revise (every claim checked against sources) -&gt; deterministic Format, under a 'ground or omit' rule.</p>",
+      "feature_key": "mg_content_studio",
+      "why_html": "<p>Writing and maintaining documentation eats weeks. Content Studio produces it from what you already have, with a strict rule against invention.</p><ul><li><strong>Whole sets, not single pages:</strong> DocFactory goes from a brief to a plan to a full set of documents.</li><li><strong>Ground or omit:</strong> if a claim has no source, it's a hard error, not a guess. An optional Revise step checks every claim against sources.</li><li><strong>Fix without rewriting:</strong> Reface corrects facts, rebrands or adjusts tone while keeping the structure, even across many documents at once.</li><li><strong>Feeds your assistants:</strong> finished documents can go back into the knowledge base as ready-to-use data.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Inputs are chosen knowledge bases plus source files. Writer runs Author (Markdown) -&gt; optional Revise -&gt; deterministic Format. Reface edits in place with guards for correctness vs facts, rebrand, tone and structure; Reface Batch scales it. Projects support categories, versioning and publish; HTML output in magazine or sidebar layouts.</p>",
+      "objections": [
+        {
+          "a": "No, the Format step is deterministic.",
+          "q": "Is formatting another LLM step that can drift?"
+        },
+        {
+          "a": "Yes, dry-run all before generate all, and the plan is an XLSX you can review.",
+          "q": "Can we preview a large run?"
+        },
+        {
+          "a": "Documents can be fed back into the knowledge base as RAG-ready data.",
+          "q": "How do updated docs reach the assistants?"
+        },
+        {
+          "a": "It edits in place with structure guards.",
+          "q": "Does Reface break document structure?"
+        }
+      ],
+      "headline": "A separate, source-grounded documentation pipeline with plan review, dry runs, versioning and deterministic formatting",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Content",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>'Ground or omit': an ungrounded claim stops the run as a hard error instead of being generated.</p>",
+      "feature_key": "mg_content_studio",
+      "why_html": "<ul><li><strong>Separate service:</strong> runs alongside the platform, not inside the chat path.</li><li><strong>Planned execution:</strong> brief -&gt; blueprint review -&gt; XLSX plan -&gt; import &amp; execute with dry-run all / generate all.</li><li><strong>Grounding enforced:</strong> missing source is a hard error; optional claim-by-claim Revise.</li><li><strong>Round trip:</strong> outputs can be fed back into the knowledge base as RAG-ready data.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Open Conversation Audit, set your filters and pick a conversation from the list to read the full transcript. Nothing can be changed from here.</p>",
+      "objections": [
+        {
+          "a": "No. It is read-only by design.",
+          "q": "Could someone use this to alter conversations?"
+        },
+        {
+          "a": "Every audit read is logged with the auditor's name, so access is traceable.",
+          "q": "Isn't reading conversations a privacy risk?"
+        },
+        {
+          "a": "The list shows up to 200 conversations per search; narrow with filters to find what you need.",
+          "q": "Can it show thousands of results at once?"
+        }
+      ],
+      "headline": "Know what people really ask your assistants and what it costs, while the auditors themselves stay accountable",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Instances",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Each row shows user, first message, knowledge base, messages, tokens, cost, start and last activity; up to 200 per query.</p>",
+      "feature_key": "mg_conv_audit",
+      "why_html": "<ul><li>Filter by assistant, user, text and period to find conversations fast.</li><li>See messages, tokens and cost per conversation, plus the full transcript.</li><li>Every audit read is logged with the auditor's name, so oversight is itself overseen.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rows expose user, first message, RAG table, message count, tokens, cost, started and last activity; drill into the full transcript. The access itself is written to a log with the auditor's name.</p>",
+      "objections": [
+        {
+          "a": "Each audit read is itself logged with the auditor's name.",
+          "q": "Who audits the auditors?"
+        },
+        {
+          "a": "Yes, the RAG table is a column in the list.",
+          "q": "Can we see which knowledge base served a conversation?"
+        }
+      ],
+      "headline": "Read-only conversation audit with per-read logging, token and cost visibility per session",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Instances",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Limit of 200 conversations per listing; full transcript on demand; every read logged.</p>",
+      "feature_key": "mg_conv_audit",
+      "why_html": "<ul><li>Read-only by design; no edit path.</li><li>Filters: instance, user, text, period; up to 200 rows.</li><li>Every audit read is logged with the auditor's identity.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Pick a connector, point it at the source, choose what to include (folders, date ranges, tables, paths), and the content is copied into a knowledge base where you set confidentiality and groups.</p>",
+      "objections": [
+        {
+          "a": "No. Copied content loses source permissions, so you set confidentiality and groups on the way in. SharePoint per-item permissions are not carried over.",
+          "q": "Will the copied content keep its original permissions?"
+        },
+        {
+          "a": "Cloud folders can be kept in sync on a schedule. The SharePoint connector pulls are manual, with a modified-since filter so you only take what changed.",
+          "q": "Does it update itself?"
+        },
+        {
+          "a": "IMAP, with presets for Gmail, Outlook 365, Yahoo and AOL.",
+          "q": "Which mail systems work?"
+        }
+      ],
+      "headline": "Pull knowledge straight out of your websites, mailboxes, databases, code and SharePoint, without exporting anything by hand",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Connectors include Rag Code, Code Auditor, Rag Html, Rag Sql, Rag Email, Web Crawler and SharePoint.</p>",
+      "feature_key": "mg_ing_connectors",
+      "why_html": "<ul><li><strong>Less manual work.</strong> Connectors fetch content from where it lives instead of someone exporting and uploading files.</li><li><strong>Live websites included.</strong> The Web Crawler handles page limits, login-protected sites and JavaScript pages.</li><li><strong>Even your code becomes searchable.</strong> Source code is turned into documentation-style text so people can ask how things work.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Each connector writes into the knowledge base's table family, so code goes to the code table and data to the data table, and retrieval routes accordingly. SharePoint uses Microsoft Graph with site/library/folder selection, modified-since and dry run. Rag Html scans a web folder and strips server code.</p>",
+      "objections": [
+        {
+          "a": "No, per-item permissions are not carried over and pulls are manual. Assign confidentiality and groups on ingest, or use Live Bridge › File stores for per-user live access.",
+          "q": "Are SharePoint item permissions enforced?"
+        },
+        {
+          "a": "Rag Sql stores passwords encrypted.",
+          "q": "Will DB credentials sit in plain text?"
+        },
+        {
+          "a": "Rag Code redacts secrets during conversion.",
+          "q": "Will secrets in code end up in the index?"
+        }
+      ],
+      "headline": "Copy-in connectors for code, SQL, IMAP, web and SharePoint, with secret redaction and encrypted credentials",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Rag Sql covers MySQL, PostgreSQL, SQL Server and Oracle; Rag Code covers six languages with per-function/class chunks.</p>",
+      "feature_key": "mg_ing_connectors",
+      "why_html": "<ul><li><strong>Rag Sql</strong>: MySQL, PostgreSQL, SQL Server, Oracle or a .sql dump; schema and/or data per table; passwords stored encrypted.</li><li><strong>Rag Code</strong>: CFML, Python, JS/TS, Java, PHP, Dart into per-function/class chunks with secrets redacted; Code Auditor scores embeddings, sizes and indexes including HNSW.</li><li><strong>Web and mail</strong>: Web Crawler (max pages/depth, delay, include/exclude paths, boilerplate stripping, browser mode for JS, form/cookie/token login); Rag Email over IMAP with folders, date range and redacted TXT option.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>A user connects their file store once with their own sign-in. When they ask a question, Trilivy reads the relevant files live and answers; nothing is stored.</p>",
+      "objections": [
+        {
+          "a": "No. Each person signs in with their own account and sees only their own files.",
+          "q": "Could someone see a colleague's files?"
+        },
+        {
+          "a": "No. Only read-only tools are allowed.",
+          "q": "Could the assistant edit or delete files?"
+        }
+      ],
+      "headline": "Ask questions about your own SharePoint, OneDrive, Google Drive, Dropbox or Box files, and see only what you're allowed to see",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Five file stores supported live: SharePoint, OneDrive, Google Drive, Dropbox and Box, with per-user identity and nothing stored.</p>",
+      "feature_key": "mg_ing_filestores",
+      "why_html": "<ul><li><strong>Personal and private.</strong> Each person signs in with their own account and the assistant sees only their own files.</li><li><strong>No migration.</strong> Files stay where they are; nothing is copied into Trilivy.</li><li><strong>Covers the common clouds.</strong> SharePoint, OneDrive, Google Drive, Dropbox and Box.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Live Bridge › File stores connects SharePoint, OneDrive, Google Drive, Dropbox and Box under each user's own identity. At question time the files are read live, used in the answer, and not persisted.</p>",
+      "objections": [
+        {
+          "a": "You can: cloud folders can be kept in sync on a schedule. But copied content loses source permissions, so live per-user access is the option when permissions matter.",
+          "q": "Why not just sync the folders?"
+        },
+        {
+          "a": "Secrets are kept in an encrypted vault, and the call log masks them.",
+          "q": "Where are tokens kept?"
+        }
+      ],
+      "headline": "Per-user delegated, read-only access to five cloud file stores, with source permissions respected by design",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Per-user identity, read-only tools only, confidentiality per source and nothing stored.</p>",
+      "feature_key": "mg_ing_filestores",
+      "why_html": "<ul><li><strong>Source permissions respected</strong> because each user authenticates with their own account, unlike copy-in, where permissions are lost.</li><li><strong>No data at rest in Trilivy</strong> for these reads.</li><li><strong>Governed like every other source</strong>: confidentiality per source, encrypted secrets, masked call log.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>When a user asks a question, Trilivy reads the outside system live: file stores like SharePoint, OneDrive, Google Drive, Dropbox and Box, or other systems through MCP, REST APIs or databases. The result is used in the answer and nothing is kept.</p>",
+      "objections": [
+        {
+          "a": "No. Only read-only tools are allowed; write tools cannot be enabled.",
+          "q": "Could the AI change or delete something in those systems?"
+        },
+        {
+          "a": "Connections are HTTPS public addresses only, secrets sit in an encrypted vault, and every call is logged with secrets masked.",
+          "q": "Is it safe to connect outside systems?"
+        },
+        {
+          "a": "Outside results are treated as data, not instructions.",
+          "q": "What if an outside system returns something malicious?"
+        }
+      ],
+      "headline": "Let your assistant look things up in your other systems the moment someone asks, without copying a single file",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Live Bridge rules: read-only tools only, per-user identity, confidentiality per source, HTTPS only, call log with secrets masked.</p>",
+      "feature_key": "mg_ing_livebridge",
+      "why_html": "<ul><li><strong>Always current.</strong> Answers come from the outside system at the time of the question.</li><li><strong>Nothing stored.</strong> Trilivy reads live and keeps no copy, which keeps your data footprint small.</li><li><strong>People see only what they're allowed to.</strong> Each person signs in with their own account, so the assistant sees what they see.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Two families: <strong>File stores</strong> (SharePoint, OneDrive, Google Drive, Dropbox, Box) with each user signing in under their own account, and <strong>MCP Out / Other systems</strong>, where Trilivy calls an outside MCP server, REST API or database live. Each source carries its own confidentiality level. Endpoints must be HTTPS public addresses; secrets live in an encrypted vault; calls are logged with secrets masked.</p>",
+      "objections": [
+        {
+          "a": "Only HTTPS public addresses are allowed.",
+          "q": "Can we point it at internal hosts?"
+        },
+        {
+          "a": "Per-user identity: for file stores each person signs in with their own account and sees only their own files.",
+          "q": "How is identity handled?"
+        },
+        {
+          "a": "Yes, there is a call log with secrets masked.",
+          "q": "Can we audit what was called?"
+        }
+      ],
+      "headline": "Live, read-only, per-user access to outside systems, with an encrypted vault and masked call logs",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Read-only tools only, per-user identity, confidentiality per source, HTTPS public only, encrypted secret vault, masked call log.</p>",
+      "feature_key": "mg_ing_livebridge",
+      "why_html": "<ul><li><strong>Zero-copy.</strong> Reads happen at question time; nothing is persisted.</li><li><strong>Hard read-only boundary.</strong> Write tools cannot be enabled.</li><li><strong>Prompt-injection posture.</strong> Outside results are treated as data, not instructions.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>RAG Maker takes single files or whole directories (uploaded in batches with retries), with sensible chunking defaults already chosen. You tag each document, and the queue shows progress. LMS course import is part of the same loaders area.</p>",
+      "objections": [
+        {
+          "a": "eml, mbox and pst files load, and PST import redacts emails, keys and passwords.",
+          "q": "What about old email archives?"
+        },
+        {
+          "a": "No. Chunk size and overlap defaults are already chosen; you can change them if you want.",
+          "q": "Do we need to tune chunk sizes?"
+        }
+      ],
+      "headline": "Drop in the files you already have, from PDFs to recorded meetings, and your assistant can answer from them",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Supported uploads include pdf, Word, PowerPoint, Excel, csv, html, eml/mbox/pst, json, xml, md, sql, code, audio, video and vtt.</p>",
+      "feature_key": "mg_ing_loaders",
+      "why_html": "<ul><li><strong>No reformatting.</strong> Office files, PDFs, email archives, web pages, code, audio and video all load as they are; scanned PDFs are read with OCR and recordings are transcribed.</li><li><strong>The right document for the right bot.</strong> Category, confidentiality and groups decide which assistants use each document.</li><li><strong>Policies that switch over on time.</strong> Dated versions take effect on a date and replace the previous one.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Files land in a knowledge base, which is a family of tables (doc, data, code, answer bank, fallback, summary). Dated versions take effect on a date and the same family replaces the prior version. LMS course import sits alongside RAG Maker in the loaders area.</p>",
+      "objections": [
+        {
+          "a": "Erase removes the chunks and vault records for a job; Delete/Purge works by ingestion, group, policy series or expired versions with impact preview and audit record.",
+          "q": "How do we remove a bad load cleanly?"
+        },
+        {
+          "a": "PST import redacts emails, keys and passwords. For other formats, confidentiality and groups control who can retrieve the content.",
+          "q": "Is PII handled?"
+        }
+      ],
+      "headline": "Batch file ingestion with OCR, Whisper transcription, redaction, metadata tagging and dated versioning",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Every load is tracked in the queue and Doc Vault per document and ingestion: status, chunks, retry and groups.</p>",
+      "feature_key": "mg_ing_loaders",
+      "why_html": "<ul><li><strong>Wide format support</strong> including eml/mbox/pst, sql, code, audio, video and vtt; OCR for scanned PDFs; Whisper for audio and video.</li><li><strong>Metadata that drives retrieval.</strong> Doc category, confidentiality and groups are stored per document and used as retrieval filters, along with as-of date.</li><li><strong>Controllable jobs.</strong> Directory upload in batches with retries; queue with retry (3), cancel, erase and pause/resume.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>MCP Out lets Trilivy call an outside MCP server, REST API or database live when a user asks. The result feeds the answer and nothing is stored.</p>",
+      "objections": [
+        {
+          "a": "No. Write tools cannot be enabled; only read-only tools are allowed.",
+          "q": "Could the AI trigger an action in our ERP or CRM?"
+        },
+        {
+          "a": "Outside results are treated as data, not instructions.",
+          "q": "Could a connected system trick the AI?"
+        }
+      ],
+      "headline": "Connect your assistant to the business systems you run today so it can look up live facts, safely and read-only",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>MCP Out calls outside MCP servers, REST APIs and databases live, with read-only tools only and a call log with secrets masked.</p>",
+      "feature_key": "mg_ing_mcpout",
+      "why_html": "<ul><li><strong>Live facts, not stale copies.</strong> The assistant fetches from your systems at the moment of the question.</li><li><strong>Safe by default.</strong> Only read-only tools can be enabled, so nothing in your systems can be changed.</li><li><strong>Accountable.</strong> Every call is logged.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>An admin registers the outside system and its credentials (stored in an encrypted vault), enables the read-only tools, and sets a confidentiality level for the source. At question time Trilivy calls the system live; each call is logged with secrets masked.</p>",
+      "objections": [
+        {
+          "a": "Only HTTPS public addresses are allowed.",
+          "q": "Can we reach systems on our private network?"
+        },
+        {
+          "a": "The call log records calls with secrets masked.",
+          "q": "How do we review what the AI called?"
+        },
+        {
+          "a": "No. Each source has its own confidentiality level.",
+          "q": "Do results bypass confidentiality?"
+        }
+      ],
+      "headline": "Trilivy as an MCP, REST and database client, with read-only enforcement, HTTPS-only endpoints and a vaulted secret store",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Read-only tools only, confidentiality per source, encrypted vault, masked call log.</p>",
+      "feature_key": "mg_ing_mcpout",
+      "why_html": "<ul><li><strong>Three integration styles</strong>: outside MCP servers, REST APIs and databases.</li><li><strong>Enforced read-only</strong>: write tools cannot be enabled.</li><li><strong>Defensive defaults</strong>: HTTPS public addresses only, per-user identity, outside results treated as data, not instructions.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Three steps. <strong>Bring in</strong>: upload with RAG Maker, copy in with Connectors, or read live with Live Bridge. <strong>Govern</strong>: see every document in the Doc Vault, set confidentiality and groups, curate weak content. <strong>Test</strong>: run the Quality Lab to see how well the assistant answers from that content.</p>",
+      "objections": [
+        {
+          "a": "Documents can have dated versions: a new version takes effect on a date and replaces the old one in the same family. You can also purge expired versions.",
+          "q": "Our policies change. Will the AI keep quoting the old one?"
+        },
+        {
+          "a": "Directory upload runs in batches with retries, and the queue shows every job with status, chunks and time, with retry, cancel and pause/resume.",
+          "q": "We have a lot of content. Is loading it a big project?"
+        },
+        {
+          "a": "No, and we want to be upfront about that: copied content loses its source permissions. You set confidentiality and groups when it comes in. If people must see only their own files, Live Bridge reads them live under each person's own account.",
+          "q": "Will SharePoint permissions come across?"
+        },
+        {
+          "a": "You can delete or purge by ingestion, group, policy series or expired versions, with an impact preview and an audit record.",
+          "q": "What if something goes in that shouldn't?"
+        }
+      ],
+      "headline": "Turn the documents, systems and folders you already have into trusted AI answers, with controls on who sees what",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>RAG Maker accepts pdf, Word, PowerPoint, Excel, csv, html, eml/mbox/pst, json, xml, md, sql, code, audio, video and vtt, with OCR for scanned PDFs and Whisper transcription for audio and video.</p>",
+      "feature_key": "mg_ingestion",
+      "why_html": "<p>Your AI is only as good as what you feed it. The Ingestion Center makes feeding it a managed process instead of a one-off upload.</p><ul><li><strong>Almost any source.</strong> Office files, PDFs (including scanned ones), email archives, web sites, databases, code, even audio and video, which are transcribed.</li><li><strong>Cloud folders that stay current.</strong> SharePoint, OneDrive, Google Drive, Dropbox and Box can be kept in sync on a schedule.</li><li><strong>Sensitive content handled with care.</strong> Confidentiality and groups are set on the way in, and email imports redact emails, keys and passwords.</li><li><strong>Tested before it goes live.</strong> The Quality Lab can generate test questions and score the results.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Bring in (RAG Maker upload, copy-in Connectors, Live Bridge live reads) → Govern (Doc Vault per document and ingestion, confidentiality, groups, curation) → Test (Quality Lab: Quick Check, Ground-Truth Eval, Response Grading, Health Audit). Storage and search run on PostgreSQL with pgvector.</p>",
+      "objections": [
+        {
+          "a": "Rag Code redacts secrets, PST import redacts emails, keys and passwords, Rag Email has a redacted TXT option, and Rag Sql stores database passwords encrypted.",
+          "q": "How are secrets in source material handled?"
+        },
+        {
+          "a": "No. Copied content loses source permissions, and SharePoint per-item permissions are not carried over. You assign confidentiality and groups on ingest, or use Live Bridge for per-user live access.",
+          "q": "Do source ACLs map across?"
+        },
+        {
+          "a": "Cloud folders (SharePoint, OneDrive, Google Drive, Dropbox, Box) can be kept in sync on a schedule. Note that the SharePoint connector itself pulls manually, with a modified-since filter and dry run.",
+          "q": "Is cloud folder sync automatic?"
+        },
+        {
+          "a": "Health Audit checks chunk lengths, duplicates, embeddings, boilerplate and index health; Code Auditor scores code knowledge bases including HNSW indexes.",
+          "q": "How do we check index health?"
+        }
+      ],
+      "headline": "A managed ingestion pipeline with job control, versioning, purge with audit, and quality gates built in",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Ingestion Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Every ingestion job is visible in the queue with status, chunks and time, and every purge produces an impact preview and an audit record.</p>",
+      "feature_key": "mg_ingestion",
+      "why_html": "<p>The Ingestion Center treats knowledge loading like an operational pipeline, not a script someone ran once.</p><ul><li><strong>Broad source coverage.</strong> Files, code (CFML, Python, JS/TS, Java, PHP, Dart), databases (MySQL, PostgreSQL, SQL Server, Oracle, .sql dumps), IMAP email, web crawling, SharePoint via Microsoft Graph.</li><li><strong>Operable queue.</strong> Per-job status, chunk counts and time; retry (3), cancel, delete, erase (chunks and vault records); pause/resume; job log viewer.</li><li><strong>Structured storage.</strong> A knowledge base is a family of tables (doc, data, code, answer bank, fallback, summary) so retrieval can route code questions to code and data questions to data.</li><li><strong>Governance on ingest.</strong> Confidentiality, groups and doc category per document; dated versions; purge with impact preview and audit record.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Open Instances › Instance Manager, find the card, and choose Control Panel to configure, Open Chat to try it, or activate/deactivate.</p>",
+      "objections": [
+        {
+          "a": "No. Delete drops the assistant's database and folder, so use deactivate if you may want it back.",
+          "q": "Is deleting reversible?"
+        },
+        {
+          "a": "Open Chat lets you try it straight from its card.",
+          "q": "Can I test an assistant before users see it?"
+        }
+      ],
+      "headline": "See all your assistants at a glance and open, pause or tune any of them in one click",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Instances",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Activate/deactivate keeps the configuration; delete removes the instance's database and folder.</p>",
+      "feature_key": "mg_instance_manager",
+      "why_html": "<ul><li>A card per assistant, with Control Panel and Open Chat buttons.</li><li>Switch an assistant off and on without losing its setup.</li><li>Remove assistants you no longer need.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The manager lists instances and exposes lifecycle actions; detailed settings (model, temperature, ceiling, group filter, language, knowledge bases) live in each Control Panel.</p>",
+      "objections": [
+        {
+          "a": "Delete drops the instance's database and its folder.",
+          "q": "Does delete leave orphaned data?"
+        },
+        {
+          "a": "Yes, deactivate it instead of deleting.",
+          "q": "Can I take an assistant offline without losing config?"
+        }
+      ],
+      "headline": "Central lifecycle control for every instance: configure, test, toggle and fully decommission",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Instances",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Decommissioning drops the instance database and folder rather than just hiding the card.</p>",
+      "feature_key": "mg_instance_manager",
+      "why_html": "<ul><li>Per-instance cards linking to the Control Panel and chat.</li><li>Activate/deactivate as a non-destructive switch.</li><li>Delete performs full teardown of the instance's database and folder.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The Instance Manager shows a card per assistant. From there you open its Control Panel to set look and feel, personas, guardrails and prompts, add agents, configure human handoff, or switch it on and off. Every chat answer shows its sources.</p>",
+      "objections": [
+        {
+          "a": "Each one is a card in the Instance Manager with its own Control Panel, and you can deactivate or delete any of them.",
+          "q": "If we create many assistants, won't it get messy?"
+        },
+        {
+          "a": "The assistant says 'I don't know' when the answer isn't in the documents, and 'Talk to a person' can hand the conversation to an operator.",
+          "q": "What happens when the AI doesn't know the answer?"
+        },
+        {
+          "a": "Yes, through Conversation Audit, which is read-only and logs who looked.",
+          "q": "Can we see what people asked?"
+        },
+        {
+          "a": "Trilivy is self-hosted on your own server; data stays there.",
+          "q": "Where does our data live?"
+        }
+      ],
+      "headline": "Run a separate, tailored AI assistant for each team, product or customer, without them ever mixing data",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Instances",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Each instance has its own database, its own knowledge base table and its own confidentiality ceiling; deleting an instance drops its database and folder.</p>",
+      "feature_key": "mg_instances",
+      "why_html": "<p>One generic chatbot rarely fits HR, support and engineering at once. Instances let you run many assistants side by side, each with its own data and personality.</p><ul><li><strong>Kept apart:</strong> each assistant has its own database and its own knowledge base, so one team's documents don't leak into another's answers.</li><li><strong>Fit for purpose:</strong> its own language, AI model, colours, title, personas and guardrails.</li><li><strong>Human backup:</strong> 'Talk to a person' with a handoff inbox and live support when the AI isn't enough.</li><li><strong>More than chat:</strong> agents, an Answer Bank and AI Learning (courses, quizzes, reports) can live inside the same assistant.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>An instance is a configuration plus its own data stores. The Control Panel groups Look&amp;Feel, Personas, Prompt Viewer, Guardrails, Prompt Library and Chat Summarize, then Agents, Action Registry, Chat Sessions, Talk to a Person (Configuration, Handoff Inbox, Live Support), Answer Bank and AI Learning. Platform-wide document categories and the confidentiality ladder are defined in Manage Triade (Groups replaced departments).</p>",
+      "objections": [
+        {
+          "a": "Each instance gets its own database and its own knowledge base table; delete drops that database and folder.",
+          "q": "Is isolation logical or physical?"
+        },
+        {
+          "a": "Only knowledge bases you attach as background knowledge bases; reach is further filtered by groups and the instance's confidentiality ceiling.",
+          "q": "Can one instance read another's knowledge?"
+        },
+        {
+          "a": "Yes, there is a Prompt Viewer in the Control Panel, alongside Guardrails and a Prompt Library.",
+          "q": "Can we inspect the prompt actually sent to the model?"
+        },
+        {
+          "a": "No. Model and temperature are set per instance from the central Manage LLM registry.",
+          "q": "Are we locked to one LLM?"
+        }
+      ],
+      "headline": "Multi-assistant isolation by design: a dedicated database, knowledge base and confidentiality ceiling per instance",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Instances",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Instance delete is destructive by design: it drops the instance's own database and folder, which shows the data really is separate.</p>",
+      "feature_key": "mg_instances",
+      "why_html": "<ul><li><strong>Isolation:</strong> own database, own RAG table, plus selectable background knowledge bases.</li><li><strong>Governance per instance:</strong> confidentiality ceiling, group filter, guardrails, prompt viewer.</li><li><strong>Model control:</strong> LLM model and temperature per instance.</li><li><strong>Extensible:</strong> Agents (Tools, Test, Factory, Live Bridge), Action Registry, Chat Sessions, Answer Bank, Talk to a Person, AI Learning.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The Integration Center has two halves. The <strong>Ingestion Center</strong> is how knowledge gets in: Bring in (RAG Maker, Connectors, Live Bridge), Govern (Doc Vault, confidentiality, curation) and Test (Quality Lab). The <strong>Retrieve Center</strong> is how answers get out: you choose who asks (people, REST answers, REST knowledge only, or MCP), test it, and see who is using it live. Every door applies the same knowledge bases, groups and confidentiality ceiling.</p>",
+      "objections": [
+        {
+          "a": "No. You can copy content in where that makes sense, or use Live Bridge to read outside systems live when a user asks, with nothing stored in Trilivy.",
+          "q": "We already have content everywhere. Do we have to move it all?"
+        },
+        {
+          "a": "Confidentiality levels and groups are set as content comes in, and every way of asking applies the same knowledge bases, groups and confidentiality ceiling. One honest caveat: copied content does not keep the source system's permissions, so you set them on the way in.",
+          "q": "How do we stop people seeing things they shouldn't?"
+        },
+        {
+          "a": "Testing is built into the same center. The Quality Lab scores answers out of 10 and flags weak results, and every chat answer shows its sources.",
+          "q": "How do we know the answers are any good?"
+        },
+        {
+          "a": "Trilivy is self-hosted on your own server, and your data stays there.",
+          "q": "Where does our data live?"
+        }
+      ],
+      "headline": "One place to decide what your AI knows, what it can look up live, and who is allowed to ask it",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Integration Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Ingestion is organised as Bring in, Govern and Test; retrieval is offered through four doors (people, REST answers, REST knowledge only, MCP), and all of them apply the key's knowledge bases, groups and confidentiality ceiling.</p>",
+      "feature_key": "mg_integration",
+      "why_html": "<p>Most AI projects stall on the same three questions: where the knowledge comes from, whether it can be trusted, and who gets to use it. The Integration Center answers all three on one screen.</p><ul><li><strong>Bring knowledge in your way.</strong> Upload files, copy content in through connectors, or let Trilivy read outside systems live without storing anything.</li><li><strong>Keep control of sensitive content.</strong> You set confidentiality and groups on the way in, so the right people see the right answers.</li><li><strong>Prove it works before people rely on it.</strong> The Quality Lab is part of the same flow, so testing is a step, not an afterthought.</li><li><strong>Serve everyone from one source.</strong> People in the chat, your own applications and outside AI agents all draw on the same governed knowledge.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Ingestion Center: Bring in (RAG Maker, Connectors, Live Bridge) → Govern (Doc Vault, confidentiality, curation) → Test (Quality Lab). Retrieval runs on PostgreSQL with pgvector cosine search, optional hybrid full-text, reciprocal rank fusion and reranking. Retrieve Center (Control Center): pick the consumer type (people, REST answers, REST knowledge only, MCP), test, and see live consumers (assistants, connected apps, MCP agents with usage).</p>",
+      "objections": [
+        {
+          "a": "Not for copied content. Copied content loses source permissions; you assign confidentiality and groups on ingest. For per-user access to file stores, Live Bridge has each person sign in with their own account so they see only their own files.",
+          "q": "Do source-system ACLs carry over?"
+        },
+        {
+          "a": "Live Bridge exposes read-only tools only (write tools cannot be enabled), and MCP In exposes read-only tools. Outside results are treated as data, not instructions.",
+          "q": "Can an outside system or MCP client change our data through this?"
+        },
+        {
+          "a": "REST keys decide assistant, clearance ceiling, permissions, rate and monthly limits, expiry and on/off. MCP uses a revocable scope token (JWT) with expiry for chosen knowledge bases.",
+          "q": "How is access scoped per consumer?"
+        },
+        {
+          "a": "Every REST call is logged including refused ones; Live Bridge keeps a call log with secrets masked; the Control Center shows live consumers with usage.",
+          "q": "What can we audit?"
+        }
+      ],
+      "headline": "A single governed pipeline in and a single policy-enforced surface out, self-hosted on your own server",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Integration Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>All four retrieval doors enforce the same key-scoped knowledge bases, groups and confidentiality ceiling, and Live Bridge secrets are kept in an encrypted vault.</p>",
+      "feature_key": "mg_integration",
+      "why_html": "<p>The Integration Center gives your team one control plane for data entering the AI and every interface reading from it.</p><ul><li><strong>Three ingestion modes.</strong> File upload through RAG Maker, copy-in connectors, and Live Bridge for live read-only access with nothing stored.</li><li><strong>One policy model on every door.</strong> Chat, REST answer, REST retrieve and MCP all apply the key's knowledge bases, groups and confidentiality ceiling.</li><li><strong>Quality as part of the pipeline.</strong> The Quality Lab sits in the Test stage of ingestion, with fingerprinted runs and baseline comparisons.</li><li><strong>Self-hosted.</strong> The platform runs on your server; data stays there.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Open the two teaching pages to walk through each case step by step. For structured training, Course Maker goes from a brief to an AI syllabus to lessons and quizzes you review and publish, with PDF export.</p>",
+      "objections": [
+        {
+          "a": "No. It is a teaching tool: a tiny transformer trained on ~50 Q&amp;A pairs to show how models work.",
+          "q": "Is the Micro-LLM a production model?"
+        },
+        {
+          "a": "The dedicated-hosting page explains the Ollama + Llama case, honestly including context limits and when vLLM is needed for long context.",
+          "q": "Can we really run our own model?"
+        },
+        {
+          "a": "The Micro-LLM runs on a laptop.",
+          "q": "Do we need special hardware to learn?"
+        }
+      ],
+      "headline": "Help your team truly understand AI, from running your own models to how a tiny model learns, with hands-on teaching pages",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Learning",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>The Micro-LLM demo trains on roughly 50 Q&amp;A pairs and runs on a laptop, showing tokenization, training and generation end to end.</p>",
+      "feature_key": "mg_learning_companion",
+      "why_html": "<p>Good AI decisions need people who understand what's under the hood. Learning Companion makes that concrete.</p><ul><li><strong>Own-hardware option explained:</strong> a teaching page on hosting open-source models (Ollama + Llama) on your own hardware, including its limits.</li><li><strong>AI demystified:</strong> a Micro-LLM trained on about 50 question-answer pairs runs on a laptop and shows tokenization, training and generation.</li><li><strong>Part of a bigger learning toolkit:</strong> the platform also has courses, quizzes, hands-on exercises, certificates and a Course Maker.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Two teaching pages walk through each case. The broader platform adds an LMS (courses, quizzes, hands-on, certificates, learner player) and Course Maker (brief -&gt; AI syllabus -&gt; lessons/quizzes -&gt; review &amp; publish, PDF export).</p>",
+      "objections": [
+        {
+          "a": "The page covers context limits with Ollama + Llama and points to vLLM for long context.",
+          "q": "What are the real limits of self-hosting?"
+        },
+        {
+          "a": "The Micro-LLM actually trains and generates on a laptop, step by step.",
+          "q": "Is this just theory?"
+        },
+        {
+          "a": "Ollama (local) is a provider in the Manage LLM registry.",
+          "q": "Can a local model be used by Trilivy itself?"
+        }
+      ],
+      "headline": "Practical briefings on self-hosted LLMs and a laptop-scale transformer that exposes tokenization, training and generation",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Learning",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Concrete scale: ~50 training pairs, laptop-runnable, covering tokenization, training and generation.</p>",
+      "feature_key": "mg_learning_companion",
+      "why_html": "<ul><li><strong>Dedicated LLM:</strong> Ollama + Llama on own hardware, with context-window limits and vLLM as the long-context path.</li><li><strong>Micro LLM:</strong> tiny transformer trained on ~50 Q&amp;A pairs, runnable on a laptop.</li><li><strong>Connected to the platform:</strong> Ollama is also a supported provider in Manage LLM.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Manage LLM holds the list of models you allow. LLM Agnostic lets you switch everything at once or route each task separately. Environment Vars keeps settings in one table, and Logging shows what happened in one viewer.</p>",
+      "objections": [
+        {
+          "a": "Quick Switch moves the whole platform to Anthropic, OpenAI or Cohere from one page.",
+          "q": "Switching AI vendors sounds like a project."
+        },
+        {
+          "a": "Ollama is supported for local models, and the platform itself is self-hosted on your server.",
+          "q": "Can we keep data off external AI services?"
+        },
+        {
+          "a": "Trilivy refuses to withdraw a model that is still in use.",
+          "q": "What if someone removes a model an assistant depends on?"
+        },
+        {
+          "a": "Sensitive values in Environment Vars are masked.",
+          "q": "Are passwords and keys visible to every admin?"
+        }
+      ],
+      "headline": "Never be locked into one AI vendor: switch providers or pick the best model per task from one control room",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Platform",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Model ids are checked against the provider's live list before they are accepted into the registry.</p>",
+      "feature_key": "mg_managers",
+      "why_html": "<p>AI vendors change prices, models and terms. Trilivy keeps you in control.</p><ul><li><strong>Freedom of choice:</strong> Anthropic, OpenAI and Cohere, plus local models through Ollama.</li><li><strong>One-click switch:</strong> Quick Switch moves the whole platform to another provider.</li><li><strong>Right model for each job:</strong> chat, quizzes, agents, learning and more can each use their own provider and model.</li><li><strong>Fewer surprises:</strong> Trilivy refuses to withdraw a model that's still in use, and settings and logs are in one place.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Instances pick models from the registry; tasks resolve their provider/model from routing. Config lives in one table and propagates live, so no per-service config files to hand-edit. Ollama provides a local-model option.</p>",
+      "objections": [
+        {
+          "a": "Changes are pushed live to the app and the Python services.",
+          "q": "Do config changes need restarts?"
+        },
+        {
+          "a": "Ids are checked against the provider's live model list.",
+          "q": "How do you prevent typos in model ids?"
+        },
+        {
+          "a": "Yes, each task (including rerank and ingestion metadata) has its own provider/model.",
+          "q": "Can we route reranking or ingestion to a cheaper model?"
+        },
+        {
+          "a": "No, one viewer covers both CF and Python sources.",
+          "q": "Are logs split across stacks?"
+        }
+      ],
+      "headline": "A single model registry, per-task LLM routing, masked central config pushed live, and one log viewer across CF and Python",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Platform",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Safety rule: the registry refuses to withdraw a model still in use by the platform.</p>",
+      "feature_key": "mg_managers",
+      "why_html": "<ul><li><strong>Manage LLM:</strong> registry with id, label, provider, tier, speed, picker visibility, default for new instances; ids validated against the provider's live list; in-use models cannot be withdrawn.</li><li><strong>LLM Agnostic:</strong> Quick Switch for the whole platform (Anthropic/OpenAI/Cohere) or per-task routing (chat, quiz, query rewriter, ingestion metadata, assessment, agent, LMS, rerank...).</li><li><strong>Environment Vars:</strong> central config table, sensitive values masked, changes pushed live to the app and Python services.</li><li><strong>Logging:</strong> one viewer with levels, source (CF/Python), category, search and date filters.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Start with Quick Check for a first score. Then build a test question set tied to your actual documents, drafted by AI, taken from real chats or written by hand, and reviewed like an inbox. Run Response Grading against the live assistant or the knowledge base. Real conversations show up in Production Logs; Curate puts thumbs-down answers first so you can fix the content behind them. Health Audit and Meta Analysis check the content itself.</p>",
+      "objections": [
+        {
+          "a": "Partly, so the lab is transparent about it: the judge comes from another vendor, it lists every claim and its support, and warnings appear when a judge is uncalibrated or from the same vendor. Ground-Truth Eval needs no AI at all: it checks whether the right document was found.",
+          "q": "Isn't it AI grading AI?"
+        },
+        {
+          "a": "Quick Check is a starting point. The lab shows a 95% range and warns when there are fewer than 30 questions, so build a larger set for decisions that matter.",
+          "q": "Is 24 questions enough to trust the score?"
+        },
+        {
+          "a": "Ground-Truth Eval has no LLM cost. Quick Check reruns reuse the same questions. AI-graded tests do use model calls.",
+          "q": "What does testing cost?"
+        },
+        {
+          "a": "Default targets include claims supported at 95% or more and correct answers at 85% or more. You can treat those as a starting bar.",
+          "q": "What target should we aim for?"
+        }
+      ],
+      "headline": "Know how good your assistant really is, with one score out of 10, before your customers find out for you",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Quality Lab",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Each run is fingerprinted, baselines are compared question by question (McNemar test), and every score shows a 95% range with warning flags for small samples, over 2% errors and same-vendor judges.</p>",
+      "feature_key": "mg_quality_lab",
+      "why_html": "<ul><li><strong>One honest number.</strong> Every score is out of 10, errors count against it, and it ranks from Excellent (9 and up) to Poor (under 5).</li><li><strong>Results in minutes.</strong> Quick Check is one click: AI writes 20 answerable and 4 unanswerable questions, and a second AI from another vendor grades them, in about 5-6 minutes the first time.</li><li><strong>Catches invented answers.</strong> Response Grading checks every claim against your documents and separates wrong, invented and wrongly declined answers.</li><li><strong>Proof that changes helped.</strong> Compare a new run with a baseline, question by question.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Test Question Sets bind each question to an exact document and chunk, with answer and answerable flag, and are marked stale when the source passage changes. Response Grading runs against the real bot or the knowledge base; a judge from another vendor lists claims and support and fills a grid (correct, wrong, wrongly declined, invented, correctly declined). Production Logs capture real questions with passages, scores, answers and thumbs. Health Audit covers chunk lengths, duplicates, embeddings, boilerplate and index health; Meta Analysis covers metadata coverage; Capacity Results show load-test trends (p95 latency, saturation point).</p>",
+      "objections": [
+        {
+          "a": "The judge is from another vendor by default, and a same-vendor or uncalibrated judge raises a warning flag. Judge errors are a separate failure cause.",
+          "q": "How do you avoid judge bias?"
+        },
+        {
+          "a": "Questions are tied to exact chunks and get a stale flag when the source passage changes.",
+          "q": "Our documents change. Do test sets rot?"
+        },
+        {
+          "a": "Yes, Ground-Truth Eval measures recall into the pool and through reranking with no LLM cost, including threshold curves and A/B settings.",
+          "q": "Can we tune retrieval without paying for LLM calls?"
+        },
+        {
+          "a": "Capacity Results show load-test trends such as p95 latency and the saturation point.",
+          "q": "Does it cover performance?"
+        }
+      ],
+      "headline": "Measure retrieval and generation separately, with cross-vendor judges, confidence ranges, significance tests and reproducible runs",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Quality Lab",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Default targets: claims supported at 95% or more, correct at 85% or more. Every run is fingerprinted; baselines are compared with McNemar.</p>",
+      "feature_key": "mg_quality_lab",
+      "why_html": "<ul><li><strong>Statistically honest scoring.</strong> Scores out of 10 over all questions (errors count), a 95% range, and baseline comparisons per question with McNemar.</li><li><strong>Failure attribution.</strong> Response Grading labels the cause: retrieval, answer or judge.</li><li><strong>Zero-cost retrieval eval.</strong> Ground-Truth Eval checks whether the right document reached the pool and survived reranking, plots a threshold curve and A/Bs settings, with no LLM cost.</li><li><strong>Reproducibility.</strong> Every run is fingerprinted; warnings for uncalibrated judges, under 30 questions, over 2% errors and same-vendor judges.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>You load content once: upload files (PDF, Word, PowerPoint, Excel, email archives, audio and video and more) or pull it in with connectors for code, databases, email, websites and SharePoint. Trilivy splits it into searchable passages, labels it with category, confidentiality and groups, and stores it in a knowledge base. When someone asks a question, it finds the best passages, ranks them, and writes the answer from them, with the sources attached. Old policy versions can be replaced on a set date, and a Quality Lab lets you measure how good the answers really are.</p>",
+      "objections": [
+        {
+          "a": "Answers are written from passages retrieved from your own content, and every answer shows its sources. When the documents don't cover a question, the assistant says it doesn't know. And you don't have to take that on faith: Quality Lab measures invented answers and wrongly declined questions.",
+          "q": "Won't the AI just make things up?"
+        },
+        {
+          "a": "Trilivy runs on your own server and your data stays there. Inside the platform, confidentiality levels and groups control which assistant can use which document.",
+          "q": "Our documents are confidential. Where do they go?"
+        },
+        {
+          "a": "Whole directories upload in batches with automatic retries, scanned PDFs go through OCR, and audio and video are transcribed. A queue shows every job, and failed jobs can be retried. The honest part: someone still needs to decide categories, confidentiality and groups, because that is what keeps the right people seeing the right content.",
+          "q": "We have years of content. How much work is it to load?"
+        },
+        {
+          "a": "Documents can carry dated versions: a new version takes effect on its date and replaces the older one in the same family. Expired versions can be purged with an impact preview first.",
+          "q": "Policies change. Will people get outdated answers?"
+        }
+      ],
+      "headline": "Turn every document, inbox, database and website you own into answers your people can trust, with the source shown every time",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Built in: pgvector search on PostgreSQL, optional hybrid full-text search, reranking with a confidence threshold, sources on every chat answer, and a Quality Lab that scores answers out of 10 with a second AI from another vendor acting as judge.</p>",
+      "feature_key": "mg_rag",
+      "why_html": "<p>Your knowledge is scattered across files, mailboxes, databases and intranet pages. RAG is the engine that brings it into one place and makes it answerable.</p><ul><li><strong>Less time hunting.</strong> People ask in plain words and get an answer built from your own documents, not from the internet.</li><li><strong>Trust you can check.</strong> Every chat answer shows its sources, so a manager can verify in seconds instead of taking the AI's word for it.</li><li><strong>The right people see the right things.</strong> Confidentiality levels and groups decide which documents each assistant may use.</li><li><strong>Your data stays home.</strong> Trilivy is self-hosted on your own server; your documents stay there.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Ingestion parses many formats (pdf, office, csv, html, eml/mbox/pst, json, xml, md, sql, source code, audio/video via Whisper, vtt), with OCR for scanned PDFs and redaction of emails, keys and passwords on PST import. Content is chunked using chosen size and overlap defaults, embedded and written to the table family with category, confidentiality, groups and optional effective date. At query time, variants of the question are searched, merged with RRF, reranked, filtered by the caller's scope and passed to the configured LLM. The same scope rules apply to the chat, REST (/v1/ask, /v1/retrieve) and MCP doors.</p>",
+      "objections": [
+        {
+          "a": "No. Retrieval runs on PostgreSQL with pgvector, and Code Auditor checks index health, HNSW included.",
+          "q": "Do we have to adopt a separate vector database?"
+        },
+        {
+          "a": "Hybrid full-text search (BM25-style) is available and can be switched on; it is off by default, so you decide based on your content. Quality Lab's Ground-Truth Eval lets you A/B the settings without LLM cost.",
+          "q": "Is pure vector search enough for part numbers and exact terms?"
+        },
+        {
+          "a": "Every chunk carries confidentiality, groups and category. Users have a clearance from the confidentiality ladder (each level sees levels at or below its own), instances have a ceiling, and API keys and MCP scope tokens carry their own knowledge bases, groups and ceiling. One limit to know: content copied from source systems does not carry the source's permissions; you set confidentiality and groups on the way in.",
+          "q": "How is access control enforced?"
+        },
+        {
+          "a": "No. Models are managed in one registry across Anthropic, OpenAI, Cohere and local Ollama, and per-task routing lets reranking, query rewriting and answering use different providers.",
+          "q": "Are we locked to one LLM vendor?"
+        }
+      ],
+      "headline": "A self-hosted retrieval engine on PostgreSQL and pgvector, with hybrid search, reranking, routing and access filters applied at query time",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Retrieval stack as implemented: pgvector cosine search, optional hybrid full-text, reciprocal rank fusion of query variants, LLM/Cohere reranking with a confidence threshold, and table routing for code and data questions.</p>",
+      "feature_key": "mg_rag",
+      "why_html": "<ul><li><strong>Runs on your infrastructure.</strong> Self-hosted on the customer's server; content and vectors stay there.</li><li><strong>Serious retrieval, not a toy.</strong> pgvector cosine search, optional BM25-style full-text hybrid (off by default), query variants merged with reciprocal rank fusion, and LLM or Cohere reranking with a confidence threshold.</li><li><strong>Governance in the query path.</strong> Filters for groups, confidentiality, category, as-of date and persona are applied at retrieval, not after the answer is written.</li><li><strong>Structured storage.</strong> A knowledge base is a family of tables (doc, data, code, answer bank, fallback, summary), and code or data questions are routed to the matching table.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Point Rag Code at your source code. It describes each function and class in readable text and stores it in the knowledge base, where code questions are routed automatically.</p>",
+      "objections": [
+        {
+          "a": "CFML, Python, JavaScript/TypeScript, Java, PHP and Dart.",
+          "q": "Which languages?"
+        },
+        {
+          "a": "Trilivy is self-hosted on your own server, and the data stays there.",
+          "q": "Does our code leave the company?"
+        }
+      ],
+      "headline": "Let anyone ask how your software works and get a plain answer, without interrupting your developers",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Rag Code chunks per function and class and redacts secrets; code questions are routed to the code table.</p>",
+      "feature_key": "mg_rag_conn_code",
+      "why_html": "<ul><li><strong>Fewer interruptions.</strong> Support, QA and new hires can ask about the code instead of booking a developer's time.</li><li><strong>Faster onboarding.</strong> Code is turned into documentation-style text people can read.</li><li><strong>Secrets stay out.</strong> Passwords and keys found in code are redacted.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rag Code parses CFML, Python, JS/TS, Java, PHP and Dart, produces documentation-style text per function/class, and writes it to the code table. Code Auditor can then score embeddings, sizes and indexes.</p>",
+      "objections": [
+        {
+          "a": "The supported list is CFML, Python, JS/TS, Java, PHP and Dart. Other languages are not listed.",
+          "q": "Other languages?"
+        },
+        {
+          "a": "Run Code Auditor on the knowledge base; it checks embeddings, sizes and indexes, HNSW included.",
+          "q": "How do we verify the code index quality?"
+        }
+      ],
+      "headline": "Source code converted to documentation-style chunks per function and class, secrets redacted, routed to a dedicated code table",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Per function/class chunking, secret redaction, and code-table routing as implemented.</p>",
+      "feature_key": "mg_rag_conn_code",
+      "why_html": "<ul><li><strong>Semantic units.</strong> Chunks follow functions and classes, not arbitrary character counts.</li><li><strong>Redaction.</strong> Secrets are removed before storage.</li><li><strong>Routing.</strong> Code questions are sent to the code table of the knowledge base.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Run Code Auditor on a code knowledge base. It checks its health and returns a score with suggestions.</p>",
+      "objections": [
+        {
+          "a": "The output includes suggestions. Acting on index advice is easier with someone technical.",
+          "q": "Do we need a data scientist to read it?"
+        },
+        {
+          "a": "No. It scores and suggests; your team decides what to change.",
+          "q": "Does it fix things itself?"
+        }
+      ],
+      "headline": "Get a clear score on whether your code knowledge base is healthy, and what to fix",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Code Auditor scores embeddings, sizes and indexes, including HNSW.</p>",
+      "feature_key": "mg_rag_conn_codeaudit",
+      "why_html": "<ul><li><strong>Confidence before rollout.</strong> A score tells you if the code knowledge is in good shape.</li><li><strong>Concrete next steps.</strong> It gives suggestions, not just numbers.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Code Auditor inspects a code knowledge base's tables and indexes and reports a score with suggestions.</p>",
+      "objections": [
+        {
+          "a": "It is built to score code knowledge bases. For general content, Quality Lab's Health Audit checks chunk lengths, duplicates, embeddings, boilerplate and index health.",
+          "q": "Does it cover non-code tables?"
+        },
+        {
+          "a": "No. It reports and suggests.",
+          "q": "Does it change indexes automatically?"
+        }
+      ],
+      "headline": "Audit code knowledge bases for embedding coverage, chunk sizes and index health, HNSW included",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Checks: embeddings, sizes, indexes including HNSW, with suggestions.</p>",
+      "feature_key": "mg_rag_conn_codeaudit",
+      "why_html": "<ul><li><strong>Embedding checks.</strong> Spot missing or unhealthy embeddings.</li><li><strong>Size and index review.</strong> Chunk sizes and indexes, including HNSW, are scored.</li><li><strong>Actionable output.</strong> Suggestions accompany the score.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Give the start address, set how many pages and how deep to go, choose sections to include or skip, and run. The text lands in the knowledge base with your labels.</p>",
+      "objections": [
+        {
+          "a": "You set a delay between requests and a maximum number of pages.",
+          "q": "Will it slow our website down?"
+        },
+        {
+          "a": "Boilerplate stripping removes repeated page furniture.",
+          "q": "Will it pick up junk like menus?"
+        }
+      ],
+      "headline": "Point it at your website or intranet and your assistant can answer from it, even pages behind a login",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Web Crawler controls: max pages/depth, delay, include/exclude paths, boilerplate stripping, browser mode, form/cookie/token login.</p>",
+      "feature_key": "mg_rag_conn_crawler",
+      "why_html": "<ul><li><strong>No copy-and-paste.</strong> The crawler reads the site for you.</li><li><strong>Only what matters.</strong> Include or exclude sections, limit pages and depth, and strip menus and footers.</li><li><strong>Modern sites work.</strong> Pages built with JavaScript and pages behind a login can be read.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The crawler fetches within the configured bounds, strips boilerplate and queues the text with category, confidentiality and groups.</p>",
+      "objections": [
+        {
+          "a": "It sees what its login sees. Content is then governed by the confidentiality and groups you assign, not by the site's own rules.",
+          "q": "Does it respect access controls on the site?"
+        },
+        {
+          "a": "Configure delay, depth and page limits.",
+          "q": "How do we avoid stressing the origin?"
+        }
+      ],
+      "headline": "A polite, scoped crawler with JS rendering and authenticated access, feeding the governed ingestion pipeline",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Browser mode for JS pages and form/cookie/token login as implemented.</p>",
+      "feature_key": "mg_rag_conn_crawler",
+      "why_html": "<ul><li><strong>Scope control.</strong> Max pages, depth, delay and include/exclude paths.</li><li><strong>Rendering.</strong> Browser mode for JavaScript pages.</li><li><strong>Auth.</strong> Form, cookie or token login.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Connect the mailbox, choose folders and a date range, and run the import. Messages go through the same queue and labels as any other content.</p>",
+      "objections": [
+        {
+          "a": "Use the redacted text option, and set confidentiality and groups so only the right assistants use it.",
+          "q": "Are personal details exposed?"
+        },
+        {
+          "a": "You choose a date range per import; new mail comes in when you run it again.",
+          "q": "Does it keep syncing new mail?"
+        }
+      ],
+      "headline": "Stop losing answers inside old email threads: make a shared mailbox searchable by your assistant",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Rag Email: IMAP with Gmail, Outlook 365, Yahoo and AOL presets, folders, date range and a redacted TXT option.</p>",
+      "feature_key": "mg_rag_conn_email",
+      "why_html": "<ul><li><strong>Recover buried know-how.</strong> Years of replies in a support or team mailbox become usable answers.</li><li><strong>Quick setup.</strong> Presets for Gmail, Outlook 365, Yahoo and AOL.</li><li><strong>Privacy option.</strong> Save email as redacted text.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rag Email connects over IMAP, fetches the chosen folders within the date range, optionally redacts, and queues the result with metadata.</p>",
+      "objections": [
+        {
+          "a": "The connector speaks IMAP; presets cover Gmail, Outlook 365, Yahoo and AOL. Other IMAP servers are a matter of settings, and exported PST files can go through Maker.",
+          "q": "Exchange on-premises?"
+        },
+        {
+          "a": "No. Imported mail is governed by the confidentiality and groups you assign.",
+          "q": "Are mailbox permissions preserved?"
+        }
+      ],
+      "headline": "IMAP ingestion with provider presets, folder and date-range scoping, and an optional redacted text output",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>IMAP presets: Gmail, Outlook 365, Yahoo, AOL; folders, date range, redacted TXT option.</p>",
+      "feature_key": "mg_rag_conn_email",
+      "why_html": "<ul><li><strong>Standard protocol.</strong> IMAP, with presets for Gmail, Outlook 365, Yahoo and AOL.</li><li><strong>Tight scope.</strong> Select folders and a date range.</li><li><strong>Redaction.</strong> Optional redacted TXT output; PST/mbox/eml files can also be uploaded via Maker, with redaction on PST.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Point Rag Html at a web folder; it scans the pages and keeps the readable content. For live websites, the Web Crawler is usually the better choice.</p>",
+      "objections": [
+        {
+          "a": "Then use the Web Crawler, which reads live sites directly.",
+          "q": "Our site is live, not a folder."
+        },
+        {
+          "a": "Server code is stripped during the scan.",
+          "q": "Will page code end up in answers?"
+        }
+      ],
+      "headline": "Turn an existing web folder or intranet export into answers, without rebuilding the content",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Rag Html scans a web folder and strips server code.</p>",
+      "feature_key": "mg_rag_conn_html",
+      "why_html": "<ul><li><strong>Reuse what you have.</strong> Old help pages and intranet files become searchable knowledge.</li><li><strong>Clean text.</strong> Server code in the pages is stripped out.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rag Html walks the folder, strips server code, and sends the text into the standard queue with your metadata. Live sites are better served by the Web Crawler (depth, path rules, JS rendering, login).</p>",
+      "objections": [
+        {
+          "a": "Not listed for Rag Html. For JS pages use the Web Crawler's browser mode.",
+          "q": "Does it render JavaScript?"
+        },
+        {
+          "a": "Yes, it goes through the same queue with category, confidentiality and groups.",
+          "q": "Is the output governed like other content?"
+        }
+      ],
+      "headline": "Ingest a web folder from disk with server-side code stripped, or switch to the crawler for live sites",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Rag Html: scan a web folder, strip server code; Web Crawler recommended for live sites.</p>",
+      "feature_key": "mg_rag_conn_html",
+      "why_html": "<ul><li><strong>Filesystem source.</strong> Works on a folder of web files, no HTTP needed.</li><li><strong>Sanitised content.</strong> Server code is stripped before ingestion.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Connect through Microsoft Graph, choose the site, library or folder, run a dry run, then pull. You set confidentiality and groups as content comes in.</p>",
+      "objections": [
+        {
+          "a": "No. Per-item permissions are not carried over, so you decide confidentiality and groups during import. If each person must see only their own files, Live Bridge reads SharePoint live with each person's own sign-in and stores nothing.",
+          "q": "Will our SharePoint permissions still apply?"
+        },
+        {
+          "a": "Pulls through this connector are manual; use modified-since to fetch only changes.",
+          "q": "Does it sync automatically?"
+        }
+      ],
+      "headline": "Bring the SharePoint libraries your teams already use into your assistant, with a dry run before anything loads",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>SharePoint via Microsoft Graph: site/library/folder, modified-since, dry run.</p>",
+      "feature_key": "mg_rag_conn_sharepoint",
+      "why_html": "<ul><li><strong>Use what is already there.</strong> Pick a site, library or folder; no manual exports.</li><li><strong>Only what changed.</strong> A modified-since option fetches recent updates.</li><li><strong>Try first.</strong> A dry run shows what would be pulled.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The connector lists items in the chosen scope via Graph, optionally filters by modification date, and queues the content with the confidentiality and groups you assign.</p>",
+      "objections": [
+        {
+          "a": "No. Per-item permissions are not carried over. Copied content is governed by Trilivy confidentiality and groups. For per-user enforcement, Live Bridge reads SharePoint live under each user's own account and stores nothing.",
+          "q": "Are item-level ACLs enforced?"
+        },
+        {
+          "a": "Pulls via this connector are manual. Plan a routine for re-running with modified-since.",
+          "q": "Scheduled sync?"
+        }
+      ],
+      "headline": "Microsoft Graph ingestion scoped by site, library and folder, with incremental pulls and a dry run; ACLs not mirrored",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Microsoft Graph; site/library/folder; modified-since; dry run; permissions per item not carried over.</p>",
+      "feature_key": "mg_rag_conn_sharepoint",
+      "why_html": "<ul><li><strong>Graph-based.</strong> Uses Microsoft Graph.</li><li><strong>Incremental.</strong> Modified-since filter.</li><li><strong>Safe preview.</strong> Dry run before ingestion.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Connect a database or upload a .sql dump, pick the tables, and choose whether to bring in the structure, the data, or both. Data questions are then routed to that content.</p>",
+      "objections": [
+        {
+          "a": "No, it is a copy taken when you run the import. For live reads, Live Bridge can query a database when a user asks, read-only and storing nothing.",
+          "q": "Is this live data?"
+        },
+        {
+          "a": "Yes, you choose per table, and you set confidentiality on what you bring in.",
+          "q": "Can we leave out sensitive tables?"
+        }
+      ],
+      "headline": "Let people ask questions about what is in your databases, in plain words, without writing reports",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Rag Sql supports MySQL, PostgreSQL, SQL Server, Oracle and .sql dumps, schema and/or data per table.</p>",
+      "feature_key": "mg_rag_conn_sql",
+      "why_html": "<ul><li><strong>Fewer report requests.</strong> Answers about your data and its structure without a ticket to IT.</li><li><strong>Works with the databases you run.</strong> MySQL, PostgreSQL, SQL Server, Oracle, or a database export file.</li><li><strong>Safe credentials.</strong> Database passwords are stored encrypted.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rag Sql connects to the source (or reads a dump), extracts the selected tables and writes them to the knowledge base's data table, where data questions are routed.</p>",
+      "objections": [
+        {
+          "a": "Rag Sql reads to ingest; give it an account limited to the tables you want.",
+          "q": "Do we need write access?"
+        },
+        {
+          "a": "Re-run the import. For live queries, Live Bridge reads databases at question time under read-only rules, or Agent Factory data tools run read-only SELECTs (5 s, 200 rows max).",
+          "q": "How do we keep it current?"
+        }
+      ],
+      "headline": "Ingest schema and/or data per table from MySQL, PostgreSQL, SQL Server, Oracle or a dump, with credentials encrypted at rest",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Sources: MySQL, PostgreSQL, SQL Server, Oracle, .sql dump; passwords stored encrypted.</p>",
+      "feature_key": "mg_rag_conn_sql",
+      "why_html": "<ul><li><strong>Granular scope.</strong> Per-table choice of schema, data or both.</li><li><strong>Credential handling.</strong> Passwords are stored encrypted.</li><li><strong>Offline option.</strong> A .sql dump works when a live connection is not allowed.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>You pick a connector, point it at the source (a site address, a mailbox, a database, a code folder, a SharePoint library), choose what to include, and run it. The content lands in the same queue as uploaded files, with the same category, confidentiality and group labels, so it is governed the same way.</p>",
+      "objections": [
+        {
+          "a": "No, and it is important to say so plainly. Per-item SharePoint permissions are not carried over. You set confidentiality and groups as content comes in. If people must see only their own files, Live Bridge reads file stores live with each person's own account and stores nothing.",
+          "q": "Will SharePoint permissions carry over?"
+        },
+        {
+          "a": "SharePoint pulls through the connector are manual, with a modified-since option so you only fetch what changed. Re-running a crawl or import is a deliberate step.",
+          "q": "Do connectors keep content up to date automatically?"
+        },
+        {
+          "a": "Database passwords are stored encrypted, email can be saved as redacted text, and secrets in code are redacted. Everything still goes through confidentiality and groups.",
+          "q": "Is it safe to connect our mailboxes and databases?"
+        },
+        {
+          "a": "Email has presets for the common providers and the crawler has simple controls (pages, depth, include and exclude paths). Database and code connectors are easier with someone who knows those systems.",
+          "q": "Do we need developers to set this up?"
+        }
+      ],
+      "headline": "Bring in your code, databases, mailboxes, websites and SharePoint without exporting files by hand",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Seven connectors today: Rag Code, Code Auditor, Rag Html, Rag Sql, Rag Email, Web Crawler and SharePoint (via Microsoft Graph, with dry run).</p>",
+      "feature_key": "mg_rag_connectors",
+      "why_html": "<p>Much of what your company knows never lives in a neat PDF. Connectors pull it straight from where it sits.</p><ul><li><strong>Websites and intranets.</strong> The Web Crawler reads live sites, including pages behind a login.</li><li><strong>Mailboxes.</strong> Rag Email reads Gmail, Outlook 365, Yahoo and AOL folders over a date range you choose.</li><li><strong>Databases.</strong> Rag Sql turns MySQL, PostgreSQL, SQL Server or Oracle tables into answerable knowledge.</li><li><strong>Code and SharePoint.</strong> Rag Code explains source code in documentation-style text, and SharePoint pulls from sites, libraries or folders.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Each connector extracts and normalises content, then hands it to the same queue and table family as Maker uploads, with category, confidentiality and groups applied. That means one place for job status, retry and erase, and one set of retrieval filters, whatever the source.</p>",
+      "objections": [
+        {
+          "a": "No. Per-item permissions are not carried over, and pulls are manual. Copied content is governed by the confidentiality and groups you assign. Where per-user permissions must hold, Live Bridge reads file stores live under each user's own sign-in and stores nothing.",
+          "q": "Does the SharePoint connector enforce item-level ACLs?"
+        },
+        {
+          "a": "Rag Sql stores passwords encrypted. You choose per table whether to ingest schema, data or both.",
+          "q": "How are database credentials handled?"
+        },
+        {
+          "a": "Yes: form, cookie or token login, plus browser mode for JavaScript-rendered pages, with include/exclude paths, depth and delay limits.",
+          "q": "Can the crawler reach authenticated intranet pages?"
+        },
+        {
+          "a": "Code Auditor scores code knowledge bases on embeddings, sizes and indexes (including HNSW) and gives suggestions.",
+          "q": "How do we know code ingestion is healthy?"
+        }
+      ],
+      "headline": "Source connectors for code, SQL, IMAP, web and Microsoft Graph that feed one governed ingestion pipeline",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Connectors",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Supported sources as implemented: CFML, Python, JS/TS, Java, PHP, Dart; MySQL, PostgreSQL, SQL Server, Oracle, .sql dumps; IMAP presets for Gmail, Outlook 365, Yahoo, AOL; Microsoft Graph for SharePoint.</p>",
+      "feature_key": "mg_rag_connectors",
+      "why_html": "<ul><li><strong>Code.</strong> Rag Code converts CFML, Python, JS/TS, Java, PHP and Dart into documentation-style text, chunked per function/class, with secrets redacted; Code Auditor scores the result.</li><li><strong>Data.</strong> Rag Sql reads MySQL, PostgreSQL, SQL Server, Oracle or a .sql dump, schema and/or data per table, with passwords stored encrypted.</li><li><strong>Mail and web.</strong> IMAP with provider presets; a crawler with depth, delay, path rules, boilerplate stripping, browser mode for JS pages and form/cookie/token login.</li><li><strong>Microsoft 365.</strong> SharePoint via Microsoft Graph, scoped to site/library/folder, with modified-since and dry run.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>In Maker you pick the files or a folder, choose the knowledge base, and set the category, confidentiality and groups. You can add a date so a new policy version takes over from the old one on the day it becomes valid. Then the Queue takes over: it processes each job, retries failures up to three times, and shows a log for each one. If you need to stop, you can pause ingestion and resume later.</p>",
+      "objections": [
+        {
+          "a": "Scanned PDFs go through OCR, and audio and video are transcribed automatically (Whisper).",
+          "q": "What about scanned paper documents and recordings?"
+        },
+        {
+          "a": "Folder uploads go in batches with retries, and the Queue shows exactly which job failed. You can retry it, or erase it completely and start again.",
+          "q": "What happens if a big upload fails halfway?"
+        },
+        {
+          "a": "PST import redacts email addresses, keys and passwords. You still decide confidentiality and groups for what you load, so it is worth agreeing those rules before a large import.",
+          "q": "We worry about loading email archives with personal data."
+        }
+      ],
+      "headline": "Drop in your files, see every job finish, and fix the ones that didn't: knowledge loading your team can run without IT",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Core Workflow",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Maker plus Queue: many file formats in, OCR and transcription built in, dated versions, and per-job status with retry (3), cancel, delete and erase.</p>",
+      "feature_key": "mg_rag_core",
+      "why_html": "<ul><li><strong>One place to load everything.</strong> Maker takes PDFs, Word, PowerPoint, Excel, email archives, audio, video and more, including whole folders.</li><li><strong>No black box.</strong> Queue shows every job with its status, number of passages and time, so you know when a document is really ready.</li><li><strong>Mistakes are reversible.</strong> Retry, cancel, or erase a job, which removes its passages and records cleanly.</li><li><strong>Control from day one.</strong> Each document gets a category, a confidentiality level and groups that decide which assistants may use it.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Maker accepts single files or directory uploads (sent in batches with retries), applies OCR to scanned PDFs, Whisper transcription to audio and video, and redaction on PST import. Content is chunked with chosen size and overlap defaults and written to the knowledge base's table family (doc, data, code, answer bank, fallback, summary). Dated versions take effect on a date, and a newer member of the same family replaces the older one. The Queue manages execution: retry up to 3 times, cancel, delete, erase, global pause/resume, and a job log.</p>",
+      "objections": [
+        {
+          "a": "Ingestion can be paused and resumed from the Queue, so large loads can be stopped and restarted when it suits you.",
+          "q": "Can ingestion overload the server during business hours?"
+        },
+        {
+          "a": "Each job is listed with status, chunks and time, with its own log, and Doc Vault gives one view per document and ingestion.",
+          "q": "How do we audit what went in?"
+        },
+        {
+          "a": "PST import redacts emails, keys and passwords, and Rag Code redacts secrets. For other formats, review sensitive content and set confidentiality before loading.",
+          "q": "Are secrets protected during ingestion?"
+        }
+      ],
+      "headline": "A controlled ingestion pipeline: format parsing, OCR, transcription and redaction in, an observable job queue with retry, pause and clean erase",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Core Workflow",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Pipeline as implemented: OCR, Whisper transcription, PST redaction, batched directory upload with retries, dated version families, and a queue with retry (3), cancel, delete, erase and pause/resume.</p>",
+      "feature_key": "mg_rag_core",
+      "why_html": "<ul><li><strong>Broad parsing.</strong> pdf, word, ppt, excel, csv, html, eml/mbox/pst, json, xml, md, sql, code, audio, video and vtt.</li><li><strong>Observable jobs.</strong> Every ingestion is a job with status, chunk count and duration, plus a per-job log viewer.</li><li><strong>Clean rollback.</strong> Erase removes a job's chunks and its Doc Vault records together, so there are no orphaned vectors.</li><li><strong>Metadata at write time.</strong> Category, confidentiality, groups and effective date are stored with each chunk and used as retrieval filters.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Pick files or a whole folder, choose the knowledge base, set the labels, and upload. Trilivy reads the text (using OCR for scans and transcription for audio and video), splits it into passages and stores it ready for questions.</p>",
+      "objections": [
+        {
+          "a": "No. Chunk size and overlap come with chosen defaults.",
+          "q": "Do we have to tune technical settings?"
+        },
+        {
+          "a": "Yes. Directory upload sends files in batches with automatic retries.",
+          "q": "Can we load a whole shared drive folder?"
+        }
+      ],
+      "headline": "Upload your manuals, policies, recordings and email archives once, and your assistants can answer from them",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Supported in Maker: pdf, word, ppt, excel, csv, html, eml/mbox/pst, json, xml, md, sql, code, audio, video and vtt, with OCR and Whisper transcription.</p>",
+      "feature_key": "mg_rag_maker",
+      "why_html": "<ul><li><strong>Almost any format.</strong> PDF, Word, PowerPoint, Excel, CSV, email archives, audio, video and more; scanned PDFs and recordings included.</li><li><strong>Who sees what, decided up front.</strong> Set category, confidentiality and groups as you upload.</li><li><strong>New policy, right day.</strong> Give a document a date and it replaces its older version when that date comes.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Uploads are parsed, OCR'd or transcribed as needed, chunked with chosen size and overlap defaults and written into the knowledge base's table family (doc, data, code, answer bank, fallback, summary) with category, confidentiality, groups and effective date. Directory uploads are batched with retries.</p>",
+      "objections": [
+        {
+          "a": "Yes. Groups decide which bots use a document, and confidentiality, category and as-of date are applied as filters at retrieval.",
+          "q": "Does the metadata actually restrict anything?"
+        },
+        {
+          "a": "Directory uploads run in batches with retries, and each job is tracked in the Queue where it can be retried or erased.",
+          "q": "What about very large uploads?"
+        },
+        {
+          "a": "Automatic redaction is on PST import (and secrets in Rag Code). Other formats are loaded as they are, so sensitive content should get the right confidentiality level.",
+          "q": "Is everything redacted automatically?"
+        }
+      ],
+      "headline": "Multi-format ingestion with OCR, Whisper, PST redaction and metadata that becomes retrieval filters",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Maker writes to a knowledge base made of a family of tables (doc, data, code, answer bank, fallback, summary).</p>",
+      "feature_key": "mg_rag_maker",
+      "why_html": "<ul><li><strong>Format coverage.</strong> Office, PDF, mail (eml/mbox/pst), structured (json, xml, csv, sql), markup, code, audio, video and vtt.</li><li><strong>Built-in redaction.</strong> PST import redacts email addresses, keys and passwords.</li><li><strong>Version families.</strong> Dated versions take effect on a date; a newer member of the same family replaces the older one in retrieval.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rag Tables shows how much content each knowledge base holds and lets you correct a record. Explore runs a test search; Generate adds the AI answer, and its 'RAG only' mode shows exactly what context was given to the AI. When content must go, Delete/Purge previews the impact before you confirm, and keeps a record of it.</p>",
+      "objections": [
+        {
+          "a": "Every delete or purge shows an impact preview first and leaves an audit record. Be clear: it is a removal, so the preview is the moment to check.",
+          "q": "What if someone deletes the wrong thing?"
+        },
+        {
+          "a": "Use Generate in 'RAG only' mode to see the exact passages the AI received, then fix or remove the source in Doc Vault or Rag Tables.",
+          "q": "How do we explain a bad answer?"
+        },
+        {
+          "a": "Yes, purge by policy series or by expired versions.",
+          "q": "Can we retire old policies in bulk?"
+        },
+        {
+          "a": "Content owners can use Explore, Generate and Doc Vault. Merging tables and bulk purges are better handled by an administrator.",
+          "q": "Is this for IT only?"
+        }
+      ],
+      "headline": "See what your assistant knows, test it before users do, and remove outdated content safely with a preview first",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Management",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Management tools: Rag Tables, Explore (top_k/final_n), Generate with 'RAG only' mode, Delete/Purge with impact preview and audit record, Merge, Doc Vault and Ingestion Control.</p>",
+      "feature_key": "mg_rag_mgmt",
+      "why_html": "<ul><li><strong>Test before you trust.</strong> Explore and Generate let you ask a question and see which passages come back and what answer they produce.</li><li><strong>Clean up without fear.</strong> Delete or purge by upload, group, policy series or expired versions, with an impact preview and an audit record.</li><li><strong>One view per document.</strong> Doc Vault shows each document's status, passages and groups, with retry.</li><li><strong>Reorganise freely.</strong> Merge several knowledge bases into a new one.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Rag Tables reports counts per table family (doc, data, code, answer bank, fallback, summary) with a grid and record editor. Explore runs retrieval only; Generate runs retrieval plus the LLM. Delete/Purge computes impact before execution and writes an audit record. Merge creates a new table rather than altering the sources.</p>",
+      "objections": [
+        {
+          "a": "No undo is listed. The safeguard is the impact preview plus the audit record, and Merge creates a new table, leaving the sources as they are.",
+          "q": "Is purge reversible?"
+        },
+        {
+          "a": "Explore lets you test with top_k and final_n. For measured comparisons, use Quality Lab Ground-Truth Eval A/B settings.",
+          "q": "Can we tune retrieval parameters here?"
+        },
+        {
+          "a": "Purge by expired versions; Quality Lab's Health Audit flags duplicates, boilerplate and chunk-length problems.",
+          "q": "How do we find stale content?"
+        },
+        {
+          "a": "Access depends on user area permissions (RAG is one of seven areas) and on which instances the user may use.",
+          "q": "Who can do this?"
+        }
+      ],
+      "headline": "Inspect, test, edit, merge and purge knowledge bases with retrieval debugging, impact previews and an audit trail",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG › Management",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Delete/Purge with impact preview and audit record; Generate 'RAG only' mode shows injected context; Merge creates a new table from several.</p>",
+      "feature_key": "mg_rag_mgmt",
+      "why_html": "<ul><li><strong>Retrieval debugging.</strong> Explore exposes top_k/final_n; Generate's 'RAG only' mode shows the injected context.</li><li><strong>Governed deletion.</strong> Delete/Purge by ingestion, group, policy series or expired versions, with impact preview and audit record.</li><li><strong>Data operations.</strong> Per-family counts, grid view and record edit in Rag Tables; Merge builds a new table from several.</li><li><strong>Document-level control.</strong> Doc Vault per document and ingestion (status, chunks, retry, groups) plus Ingestion Control.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Every upload becomes a job in the Queue. Failed jobs retry automatically up to three times; if one still fails, open its log, fix the cause and retry. Erase removes everything the job added.</p>",
+      "objections": [
+        {
+          "a": "Erase removes the job's passages and its vault records, so it no longer feeds answers.",
+          "q": "If we erase a document, is it really gone from answers?"
+        },
+        {
+          "a": "Each job has a log viewer in the Queue.",
+          "q": "Who can see why a job failed?"
+        }
+      ],
+      "headline": "Know exactly which documents are live, which failed, and fix them with one click",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Queue actions: retry (3), cancel, delete, erase, pause/resume ingestion and a job log viewer.</p>",
+      "feature_key": "mg_rag_queue",
+      "why_html": "<ul><li><strong>No guessing.</strong> Every upload job shows status, number of passages and time taken.</li><li><strong>Easy recovery.</strong> Retry, cancel, delete, or erase a job completely.</li><li><strong>You're in charge of timing.</strong> Pause all loading and resume later.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Each Maker or connector ingestion is queued as a job. Operators can retry, cancel, delete or erase it, pause or resume ingestion as a whole, and read the job log for diagnosis.</p>",
+      "objections": [
+        {
+          "a": "Erase is the full removal: it takes out the job's chunks and its vault records. Use it when the content must leave the knowledge base.",
+          "q": "What is the difference between delete and erase?"
+        },
+        {
+          "a": "You can pause and resume ingestion. Finer-grained throttling is not listed as a feature.",
+          "q": "Can we throttle ingestion?"
+        }
+      ],
+      "headline": "An observable ingestion queue with bounded retries, pause/resume and an erase that leaves no orphaned chunks",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · RAG",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Queue as implemented: status, chunks, time; retry (3), cancel, delete, erase; pause/resume; job log viewer.</p>",
+      "feature_key": "mg_rag_queue",
+      "why_html": "<ul><li><strong>Per-job telemetry.</strong> Status, chunk count, duration and a log per job.</li><li><strong>Bounded retries.</strong> Up to 3 retries, then the job waits for a human.</li><li><strong>Consistent cleanup.</strong> Erase deletes chunks and Doc Vault records together.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Choose who asks (people, REST answers, REST knowledge only, or MCP), test it, then monitor live consumers.</p>",
+      "objections": [
+        {
+          "a": "The Control Center lists live consumers with usage, so you always see who is connected.",
+          "q": "Will we lose track as more teams connect?"
+        },
+        {
+          "a": "Yes. Each key or token carries its own knowledge bases, groups and confidentiality ceiling.",
+          "q": "Can different apps get different access?"
+        }
+      ],
+      "headline": "See and control everyone and everything that asks your AI questions, from one screen",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Live consumers shown: assistants, connected apps and MCP agents, with usage.</p>",
+      "feature_key": "mg_ret_control",
+      "why_html": "<ul><li><strong>Clear visibility.</strong> See live which assistants, connected apps and AI agents are using your knowledge, with usage.</li><li><strong>Test before you open the door.</strong> Try each access route before anyone relies on it.</li><li><strong>One set of rules.</strong> Every route applies the same knowledge, groups and confidentiality ceiling.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Pick the consumer type (people, REST answers, REST knowledge only, MCP), configure its scope, test, and watch live usage. REST keys and MCP scope tokens are both managed here.</p>",
+      "objections": [
+        {
+          "a": "REST keys have an on/off switch and expiry; MCP scope tokens are revocable with expiry.",
+          "q": "Can we revoke access fast?"
+        },
+        {
+          "a": "Every REST call is logged including refused ones, and the console shows usage per consumer.",
+          "q": "Is there an audit trail?"
+        }
+      ],
+      "headline": "A single operator console for every retrieval consumer: provision, test and monitor chat, REST and MCP access",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>All doors apply the key's knowledge bases, groups and confidentiality ceiling.</p>",
+      "feature_key": "mg_ret_control",
+      "why_html": "<ul><li><strong>Unified consumer inventory</strong> across assistants, connected apps and MCP agents.</li><li><strong>Built-in testing</strong> per access route.</li><li><strong>Uniform policy</strong>: knowledge bases, groups and confidentiality ceiling enforced at every door.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Each assistant is configured with personas and guardrails, and admins can inspect the prompt. People simply chat; answers come from the knowledge bases that assistant is allowed to use.</p>",
+      "objections": [
+        {
+          "a": "It answers from your documents, shows sources, and says \"I don't know\" when the answer is not there.",
+          "q": "Won't it invent answers?"
+        },
+        {
+          "a": "Talk to a person routes them to operators, who answer tickets and live chat and get an email per ticket.",
+          "q": "What if a customer needs a real person?"
+        },
+        {
+          "a": "Conversation Audit gives a read-only view of transcripts, and every audit read is itself logged.",
+          "q": "Can we review conversations?"
+        }
+      ],
+      "headline": "A chat assistant your staff can trust: it shows its sources, admits when it doesn't know, and hands over to a person",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Every chat answer shows its sources; operators get an email per \"Talk to a person\" ticket.</p>",
+      "feature_key": "mg_ret_conversational",
+      "why_html": "<ul><li><strong>Answers you can check.</strong> Every answer shows its sources.</li><li><strong>Honest when it doesn't know.</strong> It says \"I don't know\" when the answer is not in your documents.</li><li><strong>A human when needed.</strong> \"Talk to a person\" hands the conversation to an operator.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Users chat with an instance; retrieval applies that user's clearance (with optional per-instance override) under the instance's own ceiling. Answers carry citations; out-of-scope questions get \"I don't know\". Talk to a person routes to operators via Handoff Inbox and Live Support.</p>",
+      "objections": [
+        {
+          "a": "No. Per-user clearance applies, but the instance's own ceiling still applies.",
+          "q": "Can a user's clearance exceed the instance?"
+        },
+        {
+          "a": "Conversation Audit lists tokens and cost per conversation.",
+          "q": "Can we see cost?"
+        }
+      ],
+      "headline": "Governed chat per isolated instance, with personas, guardrails, prompt inspection, cited answers and human handoff",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Each level sees levels at or below its own; the instance ceiling always applies.</p>",
+      "feature_key": "mg_ret_conversational",
+      "why_html": "<ul><li><strong>Isolation</strong>: each instance has its own database, knowledge base, confidentiality ceiling, group filter, language and LLM model.</li><li><strong>Controls</strong>: personas, guardrails, prompt inspector.</li><li><strong>Auditability</strong>: read-only Conversation Audit with tokens and cost per conversation; audit reads are logged with the auditor's name.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Trilivy acts as an MCP server. You issue an access token for chosen knowledge bases with an expiry, plug it into the outside AI tool using a ready config or kit, and run the built-in self-test.</p>",
+      "objections": [
+        {
+          "a": "No. The tools are read-only: search, get_by_source, get_scope_metadata and ask_agent.",
+          "q": "Could an outside AI change our data?"
+        },
+        {
+          "a": "Tokens have an expiry and can be revoked.",
+          "q": "What if we want to cut access?"
+        }
+      ],
+      "headline": "Let the AI tools your teams already use, like Claude, Copilot or ServiceNow, answer from your governed knowledge",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Ready configs for Claude, OpenAI and generic MCP; kits for eight enterprise platforms.</p>",
+      "feature_key": "mg_ret_mcp_in",
+      "why_html": "<ul><li><strong>Meet people where they work.</strong> Outside AI clients can search your knowledge and ask your agents.</li><li><strong>Wide reach.</strong> Kits exist for Copilot, Bedrock, Vertex, Agentforce, SAP Joule, ServiceNow, Oracle Fusion and watsonx.</li><li><strong>Safe access.</strong> Read-only tools only, scoped to the knowledge bases you choose.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Issue a scope token or configure an OAuth/client-credentials profile, connect the client, run the self-test. The client sees only the knowledge bases in scope, and the token's groups and confidentiality ceiling apply. Usage appears under live consumers in the Control Center.</p>",
+      "objections": [
+        {
+          "a": "ask_agent asks an agent you have published; the MCP tools exposed are read-only.",
+          "q": "Does ask_agent let clients run arbitrary tools?"
+        },
+        {
+          "a": "Revoke its scope token; tokens also expire.",
+          "q": "How do we offboard a client?"
+        },
+        {
+          "a": "JWT scope tokens, OAuth profiles and client-credentials.",
+          "q": "Which auth flows are supported?"
+        }
+      ],
+      "headline": "Trilivy as an MCP server: read-only tools, revocable JWT scope tokens, OAuth and client-credentials, with self-test",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Four read-only MCP tools, revocable JWT scope tokens with expiry, built-in self-test.</p>",
+      "feature_key": "mg_ret_mcp_in",
+      "why_html": "<ul><li><strong>Minimal surface</strong>: read-only tools search, get_by_source, get_scope_metadata, ask_agent.</li><li><strong>Scoped auth</strong>: JWT scope token for chosen knowledge bases with expiry, revocable; OAuth profiles (e.g. claude.ai); client-credentials (Salesforce, Amazon Quick).</li><li><strong>Fast onboarding</strong>: self-test, ready configs for Claude, OpenAI and generic MCP, kits for Copilot, Bedrock, Vertex, Agentforce, SAP Joule, ServiceNow, Oracle Fusion, watsonx.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Your app sends a question to Trilivy with its key and gets back an answer with citations, links and usage. The key decides which assistant answers and how much it may see.</p>",
+      "objections": [
+        {
+          "a": "Switch it off; keys also have expiry and limits. Every call is logged, including refused ones.",
+          "q": "What if a key leaks?"
+        },
+        {
+          "a": "Code samples are ready in curl, Python, JS, Node, Java, C#, PHP, CFML and Go.",
+          "q": "Do our developers need special skills?"
+        }
+      ],
+      "headline": "Put cited, governed AI answers inside your own apps and portals with one API call",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Every call is logged, including refused ones.</p>",
+      "feature_key": "mg_ret_rest_answer",
+      "why_html": "<ul><li><strong>Reuse what you built.</strong> The same trusted answers from the chat, inside your website, intranet or app.</li><li><strong>Costs under control.</strong> Each key has a rate limit, a monthly limit and an expiry.</li><li><strong>Answers you can show.</strong> Responses include citations and links.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Call POST /v1/ask with X-API-Key. The response contains answer, citations, links and usage. GET /v1/scope lists what the key can reach. Samples in curl, Python, JS, Node, Java, C#, PHP, CFML and Go.</p>",
+      "objections": [
+        {
+          "a": "Call /v1/scope, which lists it.",
+          "q": "How do we verify a key's reach?"
+        },
+        {
+          "a": "Yes, every call is logged including refused ones.",
+          "q": "Are refused requests visible?"
+        },
+        {
+          "a": "Use streaming (SSE) or async with callback.",
+          "q": "Long answers block our UI."
+        }
+      ],
+      "headline": "POST /v1/ask: key-scoped answers with citations, sync, SSE streaming or async callback, every call logged",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Response includes answer, citations, links and usage; every call is logged.</p>",
+      "feature_key": "mg_ret_rest_answer",
+      "why_html": "<ul><li><strong>Key-level policy</strong>: assistant, clearance ceiling, permissions (answer, evidence, agent), rate limit, monthly limit, expiry, on/off.</li><li><strong>Flexible delivery</strong>: sync, streaming (SSE) or async with callback; markdown, text or JSON.</li><li><strong>Agent-capable</strong>: with the agent permission, tools run inside the answer.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Your system asks a question and gets back the matching passages, context and links, not a written answer.</p>",
+      "objections": [
+        {
+          "a": "Use this when your own application or AI writes the final answer and only needs trusted source material.",
+          "q": "Why not just use the answer API?"
+        },
+        {
+          "a": "No. Every door applies the key's knowledge bases, groups and confidentiality ceiling.",
+          "q": "Does it bypass permissions?"
+        }
+      ],
+      "headline": "Give your own AI projects clean, governed passages from your knowledge, without paying for generated text you don't need",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>/v1/retrieve returns status found/not_found, context and links, with no generated text.</p>",
+      "feature_key": "mg_ret_rest_rag",
+      "why_html": "<ul><li><strong>Building blocks for your team.</strong> Get the relevant passages and links and use them in your own tools.</li><li><strong>Clear yes or no.</strong> Each call says whether something was found.</li><li><strong>Same protections.</strong> The key's knowledge bases, groups and confidentiality ceiling still apply.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Call /v1/retrieve with a key. The older /retrieve endpoint remains, with top_k, final_n, groups and as-of date parameters. Key scope (knowledge bases, groups, confidentiality ceiling) is applied.</p>",
+      "objections": [
+        {
+          "a": "The older /retrieve endpoint exposes top_k and final_n, plus groups and as-of date.",
+          "q": "Can we tune result counts?"
+        },
+        {
+          "a": "Ground-Truth Eval checks whether the right document reached the pool and survived reranking, at no LLM cost.",
+          "q": "How do we know retrieval is good?"
+        }
+      ],
+      "headline": "/v1/retrieve: passages-only retrieval over pgvector with reranking, filters and an explicit found/not_found status",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Status found/not_found on every response; as-of date filtering on /retrieve.</p>",
+      "feature_key": "mg_ret_rest_rag",
+      "why_html": "<ul><li><strong>Retrieval only</strong>: no generated text, so you control the downstream model.</li><li><strong>Quality pipeline behind it</strong>: pgvector cosine search, optional hybrid full-text, RRF over query variants, LLM/Cohere reranking with a confidence threshold.</li><li><strong>Deterministic contract</strong>: found/not_found status, context and links.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>In the Control Center you choose who is asking (people, REST answers, REST knowledge only, or MCP), test it, and then watch live who is using it: assistants, connected apps and MCP agents, with usage.</p>",
+      "objections": [
+        {
+          "a": "Each key decides which assistant it reaches, its clearance ceiling, permissions, rate limit, monthly limit and expiry, and can be switched off. Every call is logged, including refused ones.",
+          "q": "Opening an API sounds risky."
+        },
+        {
+          "a": "The chat answers from your documents, shows its sources and says \"I don't know\" when the answer is not there.",
+          "q": "Will the AI make things up?"
+        },
+        {
+          "a": "MCP In comes with kits for Copilot, Bedrock, Vertex, Agentforce, SAP Joule, ServiceNow, Oracle Fusion and watsonx, plus ready configs for Claude, OpenAI and generic MCP.",
+          "q": "Can we use it from tools like Copilot or ServiceNow?"
+        },
+        {
+          "a": "The Control Center shows live consumers with usage.",
+          "q": "How do we know who's using it?"
+        }
+      ],
+      "headline": "One trusted knowledge source, served to your people, your apps and outside AI agents, with the same rules for all",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Four doors (Conversational, REST Answer, REST RAG, MCP In), one policy: every door applies the key's knowledge bases, groups and confidentiality ceiling.</p>",
+      "feature_key": "mg_retrieve",
+      "why_html": "<p>Once your knowledge is in, the value comes from getting it to everyone who needs it, without opening a back door.</p><ul><li><strong>For people</strong>: a chat that shows its sources and says \"I don't know\" when the answer is not in your documents.</li><li><strong>For your applications</strong>: ready answers, or just the passages, through a simple API.</li><li><strong>For AI tools you already use</strong>: outside AI clients can search your knowledge through MCP.</li><li><strong>Same rules everywhere</strong>: every door applies the same knowledge bases, groups and confidentiality ceiling.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The Control Center is the operator view: pick the consumer type, test, and see live consumers. REST keys (X-API-Key) carry assistant, clearance ceiling, permissions (answer, evidence, agent), rate and monthly limits, expiry and on/off; /v1/scope lists a key's reach. MCP In issues revocable JWT scope tokens with expiry and supports OAuth profiles and client-credentials.</p>",
+      "objections": [
+        {
+          "a": "No. The key decides the assistant and clearance ceiling, and /v1/scope lets you verify its reach.",
+          "q": "Can a key see more than intended?"
+        },
+        {
+          "a": "Sync, streaming (SSE) or async with callback; markdown, text or JSON.",
+          "q": "Which response modes are supported?"
+        },
+        {
+          "a": "MCP In exposes read-only tools only: search, get_by_source, get_scope_metadata, ask_agent.",
+          "q": "Can external agents write data?"
+        },
+        {
+          "a": "Code samples exist in curl, Python, JS, Node, Java, C#, PHP, CFML and Go, and MCP has ready configs and a self-test.",
+          "q": "How do we integrate quickly?"
+        }
+      ],
+      "headline": "Chat, REST and MCP access to one retrieval engine, each door key-scoped, rate-limited and fully logged",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Retrieve Center",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>REST calls are logged including refused ones, and MCP scope tokens are revocable with expiry.</p>",
+      "feature_key": "mg_retrieve",
+      "why_html": "<ul><li><strong>Choose the contract</strong>: generated answers with citations (POST /v1/ask), passages only (/v1/retrieve), or MCP tools for external agents.</li><li><strong>Consistent enforcement</strong>: knowledge bases, groups and confidentiality ceiling applied at every door.</li><li><strong>Serious retrieval</strong>: pgvector cosine search, optional hybrid full-text, query variants merged with reciprocal rank fusion, LLM/Cohere reranking with a confidence threshold, routing to code/data tables.</li><li><strong>Observability</strong>: every REST call logged including refused ones; live consumer view with usage.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>An admin creates a user, chooses admin or user, sets or generates a password (optionally forcing a reset at first login), ticks the areas they may use, and picks which assistants they can open and which one is their default. Clearance is set once from the ladder, with an optional per-assistant override.</p>",
+      "objections": [
+        {
+          "a": "It is one page per user: account type, areas, assistants and clearance. Passwords can be generated and a reset forced at first login, so onboarding is a few clicks.",
+          "q": "Will this take my team a lot of admin time?"
+        },
+        {
+          "a": "No. Each assistant has its own confidentiality ceiling, and that ceiling still applies on top of the person's clearance.",
+          "q": "Can a person with high clearance see secret documents in any assistant?"
+        },
+        {
+          "a": "Area permissions don't only hide menus; they also block the page by URL.",
+          "q": "What if someone just types the address of a page they aren't allowed to use?"
+        },
+        {
+          "a": "Yes. Each user has a login history with date and IP, plus the pages they visited.",
+          "q": "Can we see who has been using the system?"
+        }
+      ],
+      "headline": "Give every person exactly the access they need, and nothing they shouldn't see, from one screen",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Users",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>Clearance works as a ladder: each level sees levels equal to or below its own, and each assistant's own ceiling still caps what anyone can see there.</p>",
+      "feature_key": "mg_users",
+      "why_html": "<p>Rolling AI out to a whole company fails when everyone sees everything, or when IT becomes a bottleneck for every access request. Trilivy puts people, permissions and confidentiality in one place.</p><ul><li><strong>Right people, right areas:</strong> seven area permissions (JumpStart, Panel, RAG, Manage, Chat, Workshop, Resources) decide what each person even sees in the menu.</li><li><strong>Sensitive knowledge stays protected:</strong> a confidentiality ladder means each person only sees documents at or below their own level.</li><li><strong>Faster customer help:</strong> mark people as Operators on an assistant and they answer 'Talk to a person' tickets and live chat, with an email for every new ticket.</li><li><strong>Accountability built in:</strong> login history (date, IP) and pages visited per user are recorded.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Effective visibility for a user in an instance = min(user clearance or per-instance override, instance ceiling), combined with groups. Account type (admin/user) and area flags gate the management surfaces. Credentials can be set or generated, with a forced reset on next login. Operators are a per-instance role that routes 'Talk to a person' tickets and live chat to them, with an email per ticket.</p>",
+      "objections": [
+        {
+          "a": "No. Area permissions also block access by URL, not just by hiding menu entries.",
+          "q": "Is the restriction only UI-level?"
+        },
+        {
+          "a": "No. The instance's own ceiling still applies after any override.",
+          "q": "Can a per-instance override escalate someone beyond what the instance allows?"
+        },
+        {
+          "a": "Not for copied content: it loses source permissions, and you set confidentiality and groups on the way in. Live Bridge file stores are different: each person signs in with their own account and sees only their own files.",
+          "q": "Do you carry over permissions from our document sources?"
+        },
+        {
+          "a": "Login history with date and IP, and the pages each user visited.",
+          "q": "What logging exists per user?"
+        }
+      ],
+      "headline": "Layered, enforceable access control: area permissions, per-instance grants and a confidentiality ladder capped by instance ceilings",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Users",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Mechanism: seven URL-enforced area flags + per-instance Access/Default/Operator grants + clearance ladder (level sees &lt;= own) capped by the instance confidentiality ceiling.</p>",
+      "feature_key": "mg_users",
+      "why_html": "<p>Access in Trilivy is enforced in layers rather than by menu cosmetics.</p><ul><li><strong>Area permissions:</strong> seven areas (JumpStart, Panel, RAG, Manage, Chat, Workshop, Resources) are hidden in the UI and blocked by URL.</li><li><strong>Per-instance access table:</strong> Access, Default instance and Operator flags per user per instance.</li><li><strong>Confidentiality:</strong> a default clearance from a ladder (level sees &lt;= own), optional per-instance override, always bounded by the instance's ceiling.</li><li><strong>Audit trail:</strong> login history (date, IP) and pages visited per user.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>Open Users › Manage, pick or create a person, choose admin or user, tick their areas and assistants, set their clearance, save.</p>",
+      "objections": [
+        {
+          "a": "Deactivate the user from the same list; their access ends without deleting their history.",
+          "q": "How do we remove someone who leaves?"
+        },
+        {
+          "a": "No. You can generate one and force the person to set their own at first login.",
+          "q": "Do we have to invent passwords?"
+        }
+      ],
+      "headline": "Onboard, adjust and offboard people in minutes, with passwords and access handled on one page",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Users",
+      "lang": "en",
+      "audience": "business",
+      "proof_html": "<p>One page covers account type, password with forced reset, seven area permissions, per-assistant access and clearance.</p>",
+      "feature_key": "mg_users_manage",
+      "why_html": "<p>Day-to-day user work should be quick and safe.</p><ul><li>Create, edit, activate or deactivate users from one list.</li><li>Set or generate a password and force a reset on next login.</li><li>Choose which assistants each person can use and which opens by default.</li></ul>"
+    },
+    {
+      "verified_by": "",
+      "how_html": "<p>The form writes area flags (enforced by URL), per-instance grants and clearance. Instance ceilings still bound the result. Login history (date, IP) and pages visited are viewable per user.</p>",
+      "objections": [
+        {
+          "a": "No, the instance's own ceiling still applies.",
+          "q": "Can an override exceed the instance ceiling?"
+        },
+        {
+          "a": "Yes: login history with date and IP, and pages visited.",
+          "q": "Is there an audit trail of user activity?"
+        }
+      ],
+      "headline": "User lifecycle, credential reset and per-instance grants in a single admin form, with login and page history per user",
+      "cta": [
+        "talk"
+      ],
+      "status": "draft",
+      "kicker": "Part of the full platform · Users",
+      "lang": "en",
+      "audience": "it",
+      "proof_html": "<p>Forced reset on next login, URL-level blocking of areas, and ceiling-bounded clearance are all handled from this page.</p>",
+      "feature_key": "mg_users_manage",
+      "why_html": "<ul><li>Account type admin or user; activate/deactivate.</li><li>Set or generate password; force reset on next login.</li><li>Per-instance table: Access, Default instance, Operator; default clearance plus optional per-instance override.</li></ul>"
+    },
+    {
+      "verified_by": "",
       "how_html": "",
       "objections": [],
       "headline": "Want to see this on your own data?",
