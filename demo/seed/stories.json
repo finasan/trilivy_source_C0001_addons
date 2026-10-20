@@ -13,7 +13,7 @@
           ],
           "kicker": "Quick Start · about 10 minutes",
           "kind": "slide",
-          "title": "From nothing to a working AI answer, in about ten minutes"
+          "title": "From nothing to a working AI platform in about ten minutes"
         },
         {
           "body_html": "<p>A good assistant starts with good documents, not with many documents. Pick the ones people ask about every week: policies, procedures, FAQs, product sheets, price lists, manuals.</p><ul><li><b>Quality beats quantity.</b> Twenty current, well-written documents give better answers than two thousand old ones.</li><li><b>Skip the shared drive.</b> Old versions and drafts confuse an assistant just as they confuse a new colleague.</li><li><b>In this demo</b>, please no personal data or secrets.</li></ul><p>No files at hand? Download our sample pack: fifteen short documents of a fictional logistics company, Brightwater Logistics, with a list of good test questions inside.</p>",
@@ -67,6 +67,9 @@
         {
           "target_path": "/ain5py/frontend/ragm_explorer.cfm",
           "task_html": "<p>Type a question whose answer you know is in your documents (sample pack: <i>How many days of annual leave after five years?</i>). Check the top passages and their scores.</p>",
+          "allow_paths": [
+            "/ain5py/preproc/code_doc_extractor.cfm"
+          ],
           "status": "live",
           "kicker": "Step 3 · Test",
           "kind": "live",
