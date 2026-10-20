@@ -1,98 +1,35 @@
 {
   "name": "demo",
-  "version": "0.6.0-dev.20261019.c0002work",
+  "version": "0.6.0",
   "hook_api": 1,
   "title": "Trilivy Demo Box",
   "database": true,
-  "hooks": [
-    "login_check",
-    "session_init",
-    "request_gate",
-    "nav_items",
-    "menu_filter",
-    "page_top",
-    "chat_pre",
-    "event"
-  ],
+  "hooks": ["login_check", "session_init", "request_gate", "nav_items", "menu_filter", "page_top", "chat_pre", "event"],
   "pages": {
-    "console": {
-      "access": "operator"
-    },
-    "new": {
-      "access": "operator"
-    },
-    "prospect": {
-      "access": "operator"
-    },
-    "handoffs": {
-      "access": "operator"
-    },
-    "library": {
-      "access": "operator"
-    },
-    "access": {
-      "access": "operator"
-    },
-    "codes": {
-      "access": "operator"
-    },
-    "stories": {
-      "access": "operator"
-    },
-    "reports": {
-      "access": "operator"
-    },
-    "operators": {
-      "access": "operator"
-    },
-    "package": {
-      "access": "operator"
-    },
-    "cron": {
-      "access": "operator",
-      "api": true
-    },
-    "welcome": {
-      "access": "signed_in"
-    },
-    "consent": {
-      "access": "signed_in"
-    },
-    "switch": {
-      "access": "signed_in"
-    },
-    "ended": {
-      "access": "signed_in"
-    },
-    "my_docs": {
-      "access": "signed_in"
-    },
-    "pitch_page": {
-      "access": "signed_in"
-    },
-    "story": {
-      "access": "signed_in"
-    },
-    "pitch_api": {
-      "access": "signed_in",
-      "api": true
-    },
-    "beacon": {
-      "access": "signed_in",
-      "api": true
-    },
-    "docs_api": {
-      "access": "signed_in",
-      "api": true
-    },
-    "asset": {
-      "access": "signed_in",
-      "api": true
-    }
+    "console":    { "access": "operator" },
+    "new":        { "access": "operator" },
+    "prospect":   { "access": "operator" },
+    "handoffs":   { "access": "operator" },
+    "library":    { "access": "operator" },
+    "access":     { "access": "operator" },
+    "codes":      { "access": "operator" },
+    "stories":    { "access": "operator" },
+    "reports":    { "access": "operator" },
+    "operators":  { "access": "operator" },
+    "package":    { "access": "operator" },
+    "cron":       { "access": "operator", "api": true },
+
+    "welcome":    { "access": "signed_in" },
+    "consent":    { "access": "signed_in" },
+    "switch":     { "access": "signed_in" },
+    "ended":      { "access": "signed_in" },
+    "my_docs":    { "access": "signed_in" },
+    "pitch_page": { "access": "signed_in" },
+    "story":      { "access": "signed_in" },
+    "pitch_api":  { "access": "signed_in", "api": true },
+    "beacon":     { "access": "signed_in", "api": true },
+    "docs_api":   { "access": "signed_in", "api": true },
+    "asset":      { "access": "signed_in", "api": true }
   },
-  "claims": {
-    "account_types": [
-      "demo_user"
-    ]
-  }
+  "claims": { "account_types": ["demo_user"] }
 }
