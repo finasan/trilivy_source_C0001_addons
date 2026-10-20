@@ -203,7 +203,24 @@
             <label>Buttons on the slide (Label | address | _blank), one per line</label><textarea name="buttons" rows="2">#encodeForHTML(arrayToList(btTxt, chr(10)))#</textarea>
             <h3>Live step</h3>
             <label>Page it opens (target)</label><input type="text" name="target_path" value="#encodeForHTMLAttribute(e.target_path ?: '')#" placeholder="/ain5py/boty/boty_full.cfm?wsDsn={wsDsn}">
-            <label>Other pages the step may open (one per line, * = anything)</label><textarea name="allow_paths" rows="2">#encodeForHTML(arrayToList(ap, chr(10)))#</textarea>
+            <label>Extra pages the prospect can open during this step (one per line)</label>
+            <div class="small muted" style="margin:-2px 0 4px">They are not opened by themselves: each one is shown as a link under the task in the coach panel
+                ("Also on this step: …"), and the prospect may open it from there or from a link inside the step's page. A line with * (e.g. <span class="mono">/ain5py/frontend/ragw_*</span>)
+                only gives permission, without a link. A page labelled box-wide or server in the Access map never opens.</div>
+            <textarea name="allow_paths" rows="2">#encodeForHTML(arrayToList(ap, chr(10)))#</textarea>
+            <cfif arrayLen(ap)>
+                <div class="small" style="margin-top:4px">
+                <cfloop array="#ap#" item="x">
+                    <cfif isSimpleValue(x) AND len(trim(x))>
+                        <cfif find("*", x)><div class="muted">· <span class="mono">#encodeForHTML(x)#</span>: permission only (no link)</div>
+                        <cfelse><cfset xi = demo.storyExtraInfo(trim(x))>
+                            <cfif xi.opens><div style="color:##11845b">✓ <b>#encodeForHTML(xi.label)#</b> <span class="mono muted">#encodeForHTML(x)#</span>: shown as a link</div>
+                            <cfelse><div style="color:##b26a00">⚠ <b>#encodeForHTML(xi.label)#</b> <span class="mono">#encodeForHTML(x)#</span>: #encodeForHTML(xi.why)#</div></cfif>
+                        </cfif>
+                    </cfif>
+                </cfloop>
+                </div>
+            </cfif>
             <label>The task, in the coach panel (HTML)</label><textarea name="task_html" rows="3">#encodeForHTML(e.task_html ?: "")#</textarea>
             <div class="grid">
                 <div><label>Done when (lights up Next)</label><select name="done_event"><option value="">— never (the prospect presses Next)</option>

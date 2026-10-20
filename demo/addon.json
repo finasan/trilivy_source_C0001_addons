@@ -1,6 +1,6 @@
 {
   "name": "demo",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "hook_api": 1,
   "title": "Trilivy Demo Box",
   "database": true,

@@ -829,6 +829,7 @@ component output="false" {
         var dots = [];
         for (var x in s.steps) arrayAppend(dots, x.title);
         return {
+            extras: storyExtras(step, d),
             key: st.key, title: s.title, n: st.n, total: arrayLen(s.steps), kind: step.kind,
             kicker: step.kicker ?: "", heading: step.title, task: storyText(step.task_html ?: "", d),
             card: step.card_key ?: "", target: storyStepUrl(st.key, step, d, st.n),
@@ -836,6 +837,36 @@ component output="false" {
             next: base & "&step=" & (st.n + 1), prev: st.n GT 1 ? base & "&step=" & (st.n - 1) : "",
             exit: base & "&go=exit", watch: structKeyExists(step.done_when, "event") ? 1 : 0, dots: dots
         };
+    }
+
+    /**
+     * The step's extra pages (allow_paths) a prospect can really open, as links for the
+     * coach panel: [{label, url}]. Patterns with * are permissions only (no link); a
+     * box-wide or server page never opens, so it gets no link either (2026-10-20).
+     */
+    public array function storyExtras(required struct step, required struct d) {
+        var out = [];
+        for (var a in arguments.step.allow_paths) {
+            if (!isSimpleValue(a) || !len(trim(a)) || find("*", a)) continue;
+            var info = storyExtraInfo(trim(a), arguments.d.mode ?: "guided");
+            if (info.opens) arrayAppend(out, {label: info.label, url: storyText(trim(a), arguments.d)});
+        }
+        return out;
+    }
+
+    /** {label, opens, why} of one extra page of a story step (the Stories editor shows why it cannot open). */
+    public struct function storyExtraInfo(required string path, string experience = "guided") {
+        var key = lCase(listFirst(arguments.path, "?"));
+        var row = pageRow(key);
+        var lbl = row.label ?: "";
+        if (!len(lbl)) {
+            var cp = codeForPath(key);
+            lbl = cp.label ?: reReplace(listLast(key, "/"), "\.cfm$", "");
+        }
+        var safety = row.safety ?: "";
+        var opens = !listFind("boxwide,server", safety);
+        return {label: lbl, opens: opens, safety: len(safety) ? safety : "not audited",
+                why: opens ? "" : "labelled " & safety & " in the Access map: a story never opens it"};
     }
 
     /** Has the prospect done the running step's task (done_when) since the step began? */

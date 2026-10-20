@@ -519,7 +519,9 @@
     var S = C.story;
     if (!S || !S.key || C.where === "frame" || document.querySelector("[data-demo-story]")) return;
     var here = location.pathname.toLowerCase();
-    var onStep = S.kind === "live" && S.target_path && here === S.target_path;
+    // the step's page, or one of its extra pages (opened from the coach panel's links)
+    var onStep = S.kind === "live" && ((S.target_path && here === S.target_path)
+      || (S.extras || []).some(function (x) { return String(x.url).split("?")[0].toLowerCase() === here; }));
     var MIN = "trlvCoachMin";
     var box = document.createElement("aside");
     box.id = "demoCoach"; box.className = "demo-coach";
@@ -534,6 +536,10 @@
       body = (S.kicker ? '<div class="dc-kick">' + esc(S.kicker) + '</div>' : "")
         + '<div class="dc-h">' + esc(S.heading) + '</div>'
         + (S.task ? '<div class="dc-task">' + S.task + '</div>' : "")   // written by operators (Stories)
+        // the step's extra pages (Stories: "Extra pages the prospect can open during this step")
+        + (S.extras && S.extras.length ? '<div class="dc-extra">Also on this step: ' + S.extras.map(function (x) {
+            return '<a href="' + esc(x.url) + '">' + esc(x.label) + '</a>';
+          }).join(" · ") + '</div>' : "")
         + '<div class="dc-ok" hidden>✓ Done. Well done — go on when you are ready.</div>';
     } else {
       body = '<div class="dc-h">' + esc(S.heading) + '</div><p class="dc-p">Your tour is waiting on this step.</p>';

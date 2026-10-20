@@ -72,6 +72,8 @@
 .demo-coach .dc-task p{margin:0 0 6px}.demo-coach .dc-task p:last-child{margin:0}
 .demo-coach .dc-task ol,.demo-coach .dc-task ul{margin:4px 0 0;padding-left:18px}
 .demo-coach .dc-p{margin:0;color:#5d6779}
+.demo-coach .dc-extra{margin-top:8px;font-size:13px;color:#5d6779}
+.demo-coach .dc-extra a{color:#2457d6;font-weight:600}
 .demo-coach .dc-ok{background:#e3f5ee;color:#0b5e40;border-radius:8px;padding:7px 10px;margin-top:8px;font-weight:600}
 .demo-coach .dc-ok[hidden]{display:none}
 .demo-coach .dc-nav{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 4px}
