@@ -65,5 +65,14 @@
     <a href="/ain5py/addon.cfm?a=demo&p=package" class="#activeTab EQ 'package' ? 'on' : ''#">Package &amp; settings</a>
     <span class="muted small" style="margin-left:auto;align-self:center">#encodeForHTML(op.name ?: "")# · #encodeForHTML(op.role ?: "")#</span>
 </div>
+<!--- TESTING ONLY (2026-10-20): came here from a test prospect (pages/test_switch.cfm) - the way back --->
+<cfif len(session.demo_test_back ?: "")>
+    <cfif NOT len(session.demo_testtok ?: "")><cfset session.demo_testtok = lCase(replace(createUUID(), "-", "", "all"))></cfif>
+    <form method="post" action="/ain5py/addon.cfm?a=demo&p=test_switch" class="note warn" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input type="hidden" name="t" value="#session.demo_testtok#"><input type="hidden" name="go" value="back">
+        <b>TEST BOX</b> You are the demo admin, switched from test prospect #encodeForHTML(session.demo_test_back)#.
+        <button class="btn primary">↩ Back to prospect #encodeForHTML(session.demo_test_back)#</button>
+    </form>
+</cfif>
 <cfif demo.paused()><div class="note warn"><b>The demo is paused.</b> Prospects see "back in a few minutes". Resume it under Package &amp; settings.</div></cfif>
 </cfoutput>

@@ -38,6 +38,15 @@
 .dw .qdone{background:##e3f5ee;border-radius:12px;padding:12px 16px;margin-bottom:14px}
 </style>
 <div class="dw">
+    <!--- TESTING ONLY (2026-10-20): a test prospect (setting test_switch_pids) opens the Demo Console as the demo admin --->
+    <cfif arrayFind(listToArray(replace(demo.setting("test_switch_pids", ""), " ", "", "all")), d.pid)>
+        <cfif NOT len(session.demo_testtok ?: "")><cfset session.demo_testtok = lCase(replace(createUUID(), "-", "", "all"))></cfif>
+        <form method="post" action="/ain5py/addon.cfm?a=demo&p=test_switch" style="margin:0 0 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:##fff3df;border:1px dashed ##b26a00;border-radius:10px;padding:8px 12px;font-size:13.5px">
+            <input type="hidden" name="t" value="#session.demo_testtok#"><input type="hidden" name="go" value="admin">
+            <b style="color:##b26a00">TEST BOX</b> You are test prospect #encodeForHTML(d.pid)#.
+            <button style="background:##b26a00;color:##fff;border:0;border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer">🔧 TEST: open the Demo Console as admin</button>
+        </form>
+    </cfif>
     <div class="hero">
         <h1>Welcome#len(d.fname) ? ", " & encodeForHTML(d.fname) : ""#</h1>
         <p>This is your private Trilivy demo#len(d.company) ? " for " & encodeForHTML(d.company) : ""#. Everything you do here stays in your own sandbox. #d.daysLeft# days left.</p>
