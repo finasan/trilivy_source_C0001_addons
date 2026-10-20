@@ -90,7 +90,7 @@
             <div class="grid" style="margin-bottom:6px"><input type="text" name="oq#i#" placeholder="Objection #i#" value="#encodeForHTMLAttribute(arrayLen(objs) GTE i ? objs[i].q : "")#">
             <input type="text" name="oa#i#" placeholder="Answer" value="#encodeForHTMLAttribute(arrayLen(objs) GTE i ? objs[i].a : "")#"></div>
         </cfloop>
-        <label>Proof (HTML, only verifiable claims)</label><textarea name="proof_html" rows="2">#encodeForHTML(c.proof_html ?: "")#</textarea>
+        <label>See for yourself (HTML): facts a buyer can check - a number, a hard limit, something to try in the demo, a customer result. Empty = the tab is not shown</label><textarea name="proof_html" rows="2">#encodeForHTML(c.proof_html ?: "")#</textarea>
         <p class="small muted" style="margin-top:10px">Cards have no Contact us button: prospects use the one in the DEMO bar (it opens a ticket in the platform's Talk to a Person).</p>
         <label style="font-weight:400;margin-top:12px"><input type="checkbox" name="checked" value="1"> Every claim on this card has been checked (needed for verified / live)</label>
         <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary">Save</button><a class="btn" href="/ain5py/addon.cfm?a=demo&p=library">Back to the list</a></div>
@@ -102,7 +102,7 @@
             <div style="background:##2457d6;color:##fff;padding:12px 16px;border-radius:10px 10px 0 0;margin:-14px -16px 12px"><div class="small" style="opacity:.85;text-transform:uppercase;letter-spacing:.1em">#encodeForHTML(c.kicker ?: "")#</div><b style="font-size:18px">#encodeForHTML(c.headline)#</b></div>
             #c.why_html ?: ""#<cfif len(c.how_html ?: "")><h3>How it works</h3>#c.how_html#</cfif>
             <cfif arrayLen(objs)><h3>You might be wondering…</h3><cfloop array="#objs#" item="o"><details><summary><b>#encodeForHTML(o.q)#</b></summary>#encodeForHTML(o.a)#</details></cfloop></cfif>
-            <cfif len(c.proof_html ?: "")><div class="note">#c.proof_html#</div></cfif>
+            <cfif len(c.proof_html ?: "")><h3>See for yourself</h3><div class="note">#c.proof_html#</div></cfif>
         </div>
     </cfif>
 <cfelse>

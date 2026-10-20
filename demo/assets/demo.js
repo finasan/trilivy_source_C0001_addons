@@ -92,7 +92,8 @@
       var tabs = [["why", "Why it matters", c.why, it && it.why]];
       if (c.how || (it && it.how)) tabs.push(["how", "How it works", c.how, it && it.how]);
       if (objs.length) tabs.push(["obj", "You might be wondering…", null, null]);
-      if (c.proof || (it && it.proof)) tabs.push(["proof", "Proof", c.proof, it && it.proof]);
+      // the card's proof_html, shown as "See for yourself" (2026-10-20, was "Proof")
+      if (c.proof || (it && it.proof)) tabs.push(["proof", "See for yourself", c.proof, it && it.proof]);
       var tabBar = ov.querySelector(".dp-tabs"), body = ov.querySelector(".dp-body");
       tabBar.style.display = tabs.length > 1 ? "" : "none";
       function itHead() {

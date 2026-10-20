@@ -22,7 +22,7 @@
             <cfif arrayLen(c.objections)><h3 style="font-size:15px;margin:14px 0 4px">You might be wondering…</h3>
                 <cfloop array="#c.objections#" item="o"><details style="border:1px solid ##e3e7ef;border-radius:8px;padding:8px 12px;margin:6px 0"><summary><b>#encodeForHTML(o.q)#</b></summary><p style="margin:6px 0 0">#encodeForHTML(o.a)#</p></details></cfloop>
             </cfif>
-            <cfif len(c.proof_html ?: "")><div style="background:##f6f7fb;border-radius:8px;padding:8px 12px;margin-top:12px">#c.proof_html#</div></cfif>
+            <cfif len(c.proof_html ?: "")><h3 style="font-size:15px;margin:14px 0 4px">See for yourself</h3><div style="background:##f6f7fb;border-radius:8px;padding:8px 12px">#c.proof_html#</div></cfif>
             <cfif structKeyExists(c, "it")><cfset t = c.it>
                 <div style="margin-top:16px;padding:12px 14px;border-left:3px solid ##2457d6;background:##f4f7fd;border-radius:0 8px 8px 0">
                     <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:##2457d6">For IT teams#t.isDraft ? " · DRAFT" : ""#</div>
@@ -32,7 +32,7 @@
                     <cfif arrayLen(t.objections)><h3 style="font-size:15px;margin:14px 0 4px">You might be wondering…</h3>
                         <cfloop array="#t.objections#" item="o"><details style="border:1px solid ##e3e7ef;border-radius:8px;padding:8px 12px;margin:6px 0;background:##fff"><summary><b>#encodeForHTML(o.q)#</b></summary><p style="margin:6px 0 0">#encodeForHTML(o.a)#</p></details></cfloop>
                     </cfif>
-                    <cfif len(t.proof_html ?: "")><div style="background:##fff;border-radius:8px;padding:8px 12px;margin-top:12px">#t.proof_html#</div></cfif>
+                    <cfif len(t.proof_html ?: "")><h3 style="font-size:15px;margin:14px 0 4px">See for yourself</h3><div style="background:##fff;border-radius:8px;padding:8px 12px">#t.proof_html#</div></cfif>
                 </div>
             </cfif>
         </div>
