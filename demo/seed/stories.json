@@ -163,10 +163,6 @@
             {
               "href": "/ain5py/addon.cfm?a=demo&p=welcome",
               "label": "Back to my demo home"
-            },
-            {
-              "href": "talk",
-              "label": "Contact us"
             }
           ],
           "status": "live",

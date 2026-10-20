@@ -2036,12 +2036,12 @@
           "q": "Can we review conversations?"
         }
       ],
-      "headline": "A chat assistant your staff can trust: it shows its sources, admits when it doesn't know, and hands over to a person",
+      "headline": "A chat assistant your staff can trust",
       "cta": [
         "talk"
       ],
       "status": "draft",
-      "kicker": "Part of the full platform · Retrieve Center",
+      "kicker": "Retrieve Center - Conversational",
       "lang": "en",
       "audience": "business",
       "proof_html": "<p>Every chat answer shows its sources; operators get an email per \"Talk to a person\" ticket.</p>",
