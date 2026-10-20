@@ -29,9 +29,15 @@
     return fetch(API + "&op=" + op, { method: "POST", body: fd, credentials: "same-origin" })
       .then(function (r) { return r.json(); }).catch(function () { return { ok: false }; });
   }
+  // the session ended (a reply that is not JSON, or 401/403): stop the timed calls
+  var sessionGone = false;
   function get(op, q) {
-    return fetch(API + "&op=" + op + (q || ""), { credentials: "same-origin" })
-      .then(function (r) { return r.json(); }).catch(function () { return { ok: false }; });
+    if (sessionGone) return Promise.resolve({ ok: false });
+    return fetch(API + "&op=" + op + (q || ""), { credentials: "same-origin", redirect: "manual" })
+      .then(function (r) {
+        if (r.type === "opaqueredirect" || r.status === 401 || r.status === 403 || r.status === 302) { sessionGone = true; return { ok: false }; }
+        return r.json();
+      }).catch(function () { return { ok: false }; });
   }
   function beacon(events) {
     try {
@@ -488,7 +494,16 @@
     if (document.hidden) { if (visibleSince) visibleMs += Date.now() - visibleSince; visibleSince = 0; flush(); }
     else visibleSince = Date.now();
   });
+  // Signing out ends the session before this page closes: a beacon sent then was
+  // remembered by the platform as "the page to return to" and the next sign-in
+  // landed on {"ok": false} (2026-10-20). No beacon after a sign-out click.
+  var signingOut = false;
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest("a[href]") : null;
+    if (a && /logout|signout|sign_out/i.test(a.getAttribute("href") || "")) signingOut = true;
+  }, true);
   function flush() {
+    if (signingOut) return;
     var ms = visibleMs + (visibleSince ? Date.now() - visibleSince : 0);
     if (ms < 3000) return;
     beacon([{ type: "page_time", page: location.pathname + location.search, ms: ms }]);
