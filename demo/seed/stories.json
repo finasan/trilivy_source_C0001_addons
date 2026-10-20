@@ -118,6 +118,13 @@
         {
           "target_path": "/ain5py/menucenter/retrieve_center_V2.cfm",
           "task_html": "<p>Look at the four doors: people, REST answers, REST knowledge only, and MCP. Open the one your team would use first.</p>",
+          "allow_paths": [
+            "/ain5py/menucenter/agent_center.cfm",
+            "/ain5py/botinstances/manage_instances_v2.cfm",
+            "/ain5py/menucenter/one_click.cfm",
+            "/ain5py/menucenter/examples_center.cfm",
+            "/ain5py/menucenter/index_v2.cfm"
+          ],
           "status": "live",
           "kicker": "Step 5 · Connect",
           "kind": "live",
@@ -140,6 +147,10 @@
         {
           "target_path": "/ain5py/menucenter/agent_center.cfm",
           "task_html": "<p>See what an agent is, where it meets the Retrieve Center, and the agents already running. Then go on.</p>",
+          "allow_paths": [
+            "/ain5py/menucenter/retrieve_center_v2.cfm",
+            "/ain5py/menucenter/index_v2.cfm"
+          ],
           "status": "live",
           "kicker": "Step 6 · Act",
           "kind": "live",
