@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deployment Guides Plan</title>
+<style>
+:root{
+  --bg:#f6f9fc; --paper:#ffffff; --ink:#1b2733; --muted:#5b6b7b; --line:#dbe4ee;
+  --accent:#1f6fd1; --accent-soft:#e6f0fb; --ok:#1d8a4e; --ok-soft:#e5f5ec;
+  --warn:#b26a00; --warn-soft:#fff3df; --bad:#b3261e; --bad-soft:#fdeceb; --code:#f1f5f9;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1720; --paper:#16212c; --ink:#e3eaf1; --muted:#9aabbb; --line:#2a3a4a;
+    --accent:#6aa8f0; --accent-soft:#1a2c42; --ok:#5cc58a; --ok-soft:#14301f;
+    --warn:#f0b355; --warn-soft:#33270f; --bad:#f08079; --bad-soft:#361715; --code:#1d2a37;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1720; --paper:#16212c; --ink:#e3eaf1; --muted:#9aabbb; --line:#2a3a4a;
+  --accent:#6aa8f0; --accent-soft:#1a2c42; --ok:#5cc58a; --ok-soft:#14301f;
+  --warn:#f0b355; --warn-soft:#33270f; --bad:#f08079; --bad-soft:#361715; --code:#1d2a37;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 80px}
+header.cover{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px 24px;margin-bottom:22px}
+.kick{color:var(--accent);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px}
+h1{margin:6px 0 8px;font-size:30px;line-height:1.2}
+h2{font-size:22px;margin:0 0 12px;display:flex;gap:10px;align-items:baseline}
+h2 .n{color:var(--accent);font-variant-numeric:tabular-nums}
+h3{font-size:17px;margin:20px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:3px 0}
+.sub{color:var(--muted)}
+section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:18px}
+nav.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 18px;margin-top:14px;font-size:14px}
+nav.toc a{color:var(--accent);text-decoration:none}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--code);padding:1px 5px;border-radius:4px;word-break:break-word}
+pre{background:var(--code);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:13px;line-height:1.5;margin:0 0 12px}
+pre code{background:none;padding:0}
+.callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.callout.warn{border-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-color:var(--ok);background:var(--ok-soft)}
+.tbl{overflow-x:auto;margin:0 0 12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.case{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--bg)}
+.case h3{margin:4px 0 6px}
+.case .meta{font-size:13px;color:var(--muted);margin-bottom:8px}
+.case ol{font-size:14px}
+.case .chk{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;margin-top:8px}
+.mock{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg);font-size:14px}
+.mock .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:10px}
+.mock .tile{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="cover">
+  <div class="kick">Trilivy · plan only, no code · 2026-10-20</div>
+  <h1>Deployment Guides: a control panel of step-by-step deployment cases</h1>
+  <p class="sub">A new add-on, <b>guides</b>, for the people who deploy Trilivy at a client: a splash page with one tile per case (for example "Knowledge assistant from documents" or "Connect an app"), each a step-by-step guide that opens the real pages, says exactly what to do, and checks that it worked.</p>
+  <p class="sub">Your answers: <b>every client gets it</b>, launched on <b>c0002</b> first, I draft the cases, steps are <b>checked automatically</b>.</p>
+  <nav class="toc">
+    <a href="#s1">1. Short answer</a>
+    <a href="#s2">2. What the user sees</a>
+    <a href="#s3">3. c0002 next to the Demo</a>
+    <a href="#s4">4. Getting it to every client</a>
+    <a href="#s5">5. Engine: reused from the Demo</a>
+    <a href="#s6">6. Tables</a>
+    <a href="#s7">7. Automatic checks</a>
+    <a href="#s8">8. The drafted cases</a>
+    <a href="#s9">9. Phases and tests</a>
+    <a href="#s10">10. Risks</a>
+    <a href="#s11">11. Decisions for you</a>
+  </nav>
+</header>
+
+<section id="s1">
+  <h2><span class="n">1.</span> Short answer</h2>
+  <ul>
+    <li><b>Yes, on c0002, and the Demo stays on.</b> The Demo add-on only acts on prospect accounts (<code>account_type = 'demo_user'</code>, see <code>lib/Demo.cfc</code> <code>sessionDemo()</code>). Staff and admin accounts on c0002 already see the plain platform. The guides are for those accounts, so the two never meet.</li>
+    <li><b>Separate add-on, not a Demo mode.</b> The Demo locks and sells; the guides open everything and instruct. Mixing them would make every change to one a risk for the other. Same isolation idea as AgentFactory_V2: own folder <code>/home/trlv_addons/guides</code>, own tables <code>cx_guide_*</code>, own database <code>addon_guides</code>.</li>
+    <li><b>The story engine is copied, not shared.</b> Slides, live steps with a coach panel, Back/Next and progress already work in the Demo (Quick Start). The guides start from a copy of that code and extend it with checks, run variables and team progress.</li>
+    <li><b>"To all clients" is new for add-ons.</b> Today add-ons are internal-only (the header of <code>trlv_addon.py</code> says so) and are installed one client at a time. Section 4 lists the small fleet changes: an "every client" flag, install on all, and auto-install on new boxes.</li>
+  </ul>
+</section>
+
+<section id="s2">
+  <h2><span class="n">2.</span> What the user sees</h2>
+  <h3>The control panel (splash page)</h3>
+  <p>Opened from a new <b>Deployment Guides</b> entry in the Manage menu (and the System menu), at <code>/ain5py/addon.cfm?a=guides&amp;p=home</code>. It is a page of tiles, grouped by phase of a deployment:</p>
+  <div class="mock">
+    <b>Deployment Guides</b> <span class="sub">· box c0007 · 3 guides in progress</span>
+    <div class="tiles">
+      <div class="tile"><span class="tag">Set up</span><br><b>First day on a new box</b><div class="sub" style="font-size:12px">20 min · 6 steps · Ana, 4/6</div><div class="bar"><i style="width:66%"></i></div></div>
+      <div class="tile"><span class="tag">Build</span><br><b>Knowledge assistant from documents</b><div class="sub" style="font-size:12px">45 min · 9 steps · not started</div><div class="bar"><i style="width:0"></i></div></div>
+      <div class="tile"><span class="tag">Build</span><br><b>Keep it in sync with SharePoint</b><div class="sub" style="font-size:12px">30 min · 7 steps · done ✓</div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="tile"><span class="tag">Go live</span><br><b>Quality check before go-live</b><div class="sub" style="font-size:12px">60 min · 8 steps · not started</div><div class="bar"><i style="width:0"></i></div></div>
+    </div>
+  </div>
+  <p style="margin-top:12px">Each tile opens a <b>guide overview</b> with what you get at the end, what you need first (prerequisites, each with its own check), roughly how long it takes, and who started it. Then <b>Start</b> or <b>Continue</b>.</p>
+
+  <h3>Inside a guide: three step kinds</h3>
+  <div class="tbl"><table>
+    <tr><th>Kind</th><th>What happens</th><th>Comes from</th></tr>
+    <tr><td><span class="tag">Explain</span></td><td>A full page: what this step is for, the choices and the recommended one, pitfalls.</td><td>Demo "slide"</td></tr>
+    <tr><td><span class="tag">Do it</span></td><td>The real platform page opens, with a docked coach panel saying exactly what to fill in. Values gathered at the start of the run are filled in for you, e.g. "Instance code: <code>ACME_HR</code>".</td><td>Demo "live" + run variables</td></tr>
+    <tr><td><span class="tag ok">Check</span></td><td>The box checks that it worked ("Knowledge base ACME_HR has 312 passages ✓"). Green lets you continue. Red explains the likely cause and links to the page that fixes it. A step with no automatic check gets an "I confirm" tick, recorded with your name.</td><td>New</td></tr>
+  </table></div>
+  <p>A check can also be attached to a "Do it" step. The coach panel then shows the result live, with a <b>Check now</b> button.</p>
+
+  <h3>Runs: progress per deployment, not per person</h3>
+  <p>Starting a guide creates a <b>run</b>: a name ("ACME HR assistant"), the values it needs (instance, knowledge base, client contact…), the person in charge, and a status for every step. Anyone with access can open the run and carry on. The run page doubles as a <b>deployment record</b>: who did what, when, every check result, and a printable summary to hand to the client.</p>
+</section>
+
+<section id="s3">
+  <h2><span class="n">3.</span> c0002: launched next to the Demo</h2>
+  <ul>
+    <li><b>Who sees what on c0002.</b> Prospects (<code>demo_user</code>) never see the guides; the Demo's menu filter hides the Deployment Guides entry like any other non-demo item. Staff and client admins see the guides; the Demo does nothing to them.</li>
+    <li><b>Turning the Demo off is possible but not needed.</b> Removing it on the fleet Add-ons page drops its hooks and keeps <code>addon_demo</code>. Nothing in the guides depends on it.</li>
+    <li><b>Optional: a public showroom.</b> Since c0002 is where prospects arrive, the guides' catalogue (tiles and overviews only, read-only, no runs) can be offered to prospects as a Demo story step or DEMO-bar link: "See how a deployment works". That shows a buyer the rollout is organised. See decision D3.</li>
+  </ul>
+  <div class="callout warn"><b>One caution.</b> c0002 is also the Demo's dev box: edited live, snapshotted to <code>c0002-work</code>, Demo data in its instances. Guides written and tested there create real instances and knowledge bases. Rule: test runs use the prefix <code>GTEST_</code>, and the guide console has a <b>Clean up this test run</b> button that removes exactly what that run created (it knows from the run's values). Real customer deployments run on the customer's own box, never on c0002.</div>
+</section>
+
+<section id="s4">
+  <h2><span class="n">4.</span> Getting it to every client</h2>
+  <p>Today an add-on goes to one client at a time: <code>trlv_addon.py install &lt;name&gt; &lt;version&gt; &lt;client&gt;</code> → playbook 19, recorded in <code>flt_company_addon</code>. To make "every client" safe and automatic:</p>
+  <ol>
+    <li><b><code>addon.json</code> gets <code>"scope": "all_clients"</code></b> (the Demo stays <code>"internal"</code>). The build refuses an all-clients add-on that contains anything internal. The secret scan already runs.</li>
+    <li><b><code>"requires_platform": "1.01.0021"</code></b>: playbook 19 refuses to install on an older box, and the fleet Add-ons page shows "needs upgrade first". The guides point at real pages, so they must match the platform they run on.</li>
+    <li><b>Fleet Add-ons page: "Install on all clients"</b>, one box after another with stop-on-first-failure. It uses the same playbook and the same live-vs-installed column you already have.</li>
+    <li><b>New boxes get it automatically.</b> The provisioning run calls playbook 19 for every <code>all_clients</code> add-on after the platform is in. That's playbook 17's path, so per the fresh-install lesson it gets tested on a never-touched box.</li>
+    <li><b>Upgrades.</b> After a platform upgrade (trlv-upgrade), the box re-checks <code>requires_platform</code> and the guides' page list (section 10), and flags guides that need a new version.</li>
+  </ol>
+  <p><b>Content flow:</b> written in the guide console on c0002 → <b>Export</b> → <code>seed-pull guides c0002</code> commits it to <code>/home/trlv_addons/guides/seed/</code> → build → install on all. This is the same loop as the Demo. <b>Runs (progress, check results) are box data</b>: they stay on each client and are never exported or overwritten by an install.</p>
+  <p><b>Should it be in the core release instead?</b> I advise against it. As an add-on, guide content can be fixed the same day without a platform release, and you keep cutting releases only for platform changes.</p>
+</section>
+
+<section id="s5">
+  <h2><span class="n">5.</span> Engine: what is reused, what is new</h2>
+  <div class="tbl"><table>
+    <tr><th>Piece</th><th>Demo today</th><th>Guides</th></tr>
+    <tr><td>Slides / live pages / coach panel / Back-Next</td><td><code>pages/story.cfm</code>, <code>assets/demo.js</code> (coach part), <code>pages/stories.cfm</code> editor</td><td>Copied into <code>guides/</code> and renamed. The demo.js parts about locks, cards and Manage codes are not copied.</td></tr>
+    <tr><td>Where the coach panel appears</td><td><code>page_top</code> hook, demo users only</td><td><code>page_top</code> hook, for a signed-in user with an open run on that page</td></tr>
+    <tr><td>"Story pass" (open locked pages)</td><td>Needed, because the Demo locks pages</td><td><b>Not needed</b>: implementers have full access. The guide follows the platform's own permissions.</td></tr>
+    <tr><td><code>{wsDsn}</code> token in addresses</td><td>The prospect's sandbox</td><td>Any run variable: <code>{instance}</code>, <code>{wsDsn}</code>, <code>{kb}</code>, <code>{client_name}</code>…</td></tr>
+    <tr><td><code>done_when</code> (event → Next lights up)</td><td>Chat answer, upload</td><td>Kept, plus <b>checks</b> (section 7)</td></tr>
+    <tr><td>Progress</td><td>Per prospect</td><td>Per run, shared by a team, with step history</td></tr>
+    <tr><td>Prerequisites, durations, the "Check" kind, printable record</td><td>-</td><td>New</td></tr>
+  </table></div>
+  <p>Hooks needed: <code>nav_items</code> (menu entry), <code>page_top</code> (coach panel), <code>event</code> (done_when). No <code>request_gate</code> and no <code>menu_filter</code>: the guides never block anything.</p>
+  <p>Access: <b>admin and operator roles</b> of the box (the people allowed to change the platform) can run guides. Only Trilivy staff edit guide content, in the guide console on c0002. On client boxes, content is read-only: it is replaced by the next install.</p>
+</section>
+
+<section id="s6">
+  <h2><span class="n">6.</span> Tables (database <code>addon_guides</code>)</h2>
+<pre><code>cx_guide             guide_key, title, subtitle, phase (setup|build|connect|golive|operate),
+                     minutes, outcome_html, audience (it|admin|both), status, sort, version
+cx_guide_var         guide_key, var_key, label, help, kind (text|instance|kb|email|choice),
+                     pattern, default_val           -- asked once when a run starts
+cx_guide_prereq      guide_key, sort, label, check_key, check_args (JSON), fix_path
+cx_guide_step        guide_key, step_no, kind (explain|do|check), kicker, title, body_html,
+                     task_html, target_path, allow_paths, check_key, check_args (JSON),
+                     confirm_text, done_when (JSON), buttons (JSON), status
+cx_guide_run         run_id, guide_key, guide_version, name, owner_oid, vars (JSON),
+                     status (open|done|abandoned|test), started_at, done_at
+cx_guide_run_step    run_id, step_no, state (todo|done|failed|skipped), result (JSON),
+                     by_oid, at                    -- full history, not just the last state
+cx_guide_settings    key, value</code></pre>
+  <p><code>cx_guide*</code>, <code>_var</code>, <code>_prereq</code> and <code>_step</code> are <b>content</b> (seed, replaced on install). <code>_run</code> and <code>_run_step</code> are <b>box data</b> (never touched by an install). The split matches the Demo's Export/seed rules.</p>
+</section>
+
+<section id="s7">
+  <h2><span class="n">7.</span> Automatic checks</h2>
+  <p><b>Rule: a guide never contains SQL or code.</b> It names a check from a fixed library, written in <code>guides/lib/Checks.cfc</code> and reviewed like any code, with arguments taken from the run (<code>{"instance":"{instance}","min":50}</code>). Every check is <b>read-only</b>, returns <code>ok / fail / unknown</code> + a sentence + a "fix it here" link, and times out after 10 s. A content editor cannot make a box run anything new.</p>
+  <div class="tbl"><table>
+    <tr><th>Check</th><th>What it confirms</th><th>Source</th></tr>
+    <tr><td><code>llm_key_ok</code></td><td>An LLM key is set and a 1-token test call answers</td><td>System › LLM Keys / gateway</td></tr>
+    <tr><td><code>email_ok</code></td><td>Mail settings exist and the last test mail was accepted</td><td>System › Email</td></tr>
+    <tr><td><code>address_ok</code></td><td>The box's web addresses resolve and the certificate is valid</td><td>System › Web Addresses</td></tr>
+    <tr><td><code>user_exists</code> / <code>user_has_grant</code></td><td>An account exists and can reach an instance</td><td><code>ai_orbitix_users</code> + grants</td></tr>
+    <tr><td><code>instance_exists</code></td><td>The instance is created, active and has its knowledge table</td><td><code>ai_instance</code></td></tr>
+    <tr><td><code>kb_has_passages</code></td><td>The knowledge base holds at least N passages with embeddings</td><td>PostgreSQL <code>ragt_*</code></td></tr>
+    <tr><td><code>queue_clear</code></td><td>No files waiting or failed in the ingestion queue for that instance</td><td>RAG queue</td></tr>
+    <tr><td><code>retrieval_hits</code></td><td>A sample question returns at least one passage above a score</td><td>Quick Check API</td></tr>
+    <tr><td><code>chat_answers</code></td><td>The assistant answered with a source at least once in this run</td><td>chat sessions / <code>event</code> hook</td></tr>
+    <tr><td><code>connection_ok</code></td><td>A cloud or app connection exists and its last call succeeded</td><td><code>ai_connections</code>, <code>ai_connection_calls</code></td></tr>
+    <tr><td><code>folder_synced</code></td><td>A cloud folder ran a sync in the last 24 h without errors</td><td>Cloud folders (folder_copy)</td></tr>
+    <tr><td><code>api_called</code></td><td>The REST / MCP key was used at least once from outside</td><td><code>ai_connection_calls</code>, MCP log</td></tr>
+    <tr><td><code>handoff_ready</code></td><td>Talk to a Person is configured, its templates exist, and a test ticket reached the inbox</td><td>handoff config + inbox</td></tr>
+    <tr><td><code>agent_ready</code></td><td>An Agent Factory V2 agent exists, is enabled and passed a test</td><td><code>ai_af_*</code></td></tr>
+    <tr><td><code>eval_score</code></td><td>A ground-truth evaluation ran and scored at least X</td><td>Quality Lab</td></tr>
+    <tr><td><code>course_published</code></td><td>A course is published and has an enrolment</td><td>LMS <code>ws_*</code></td></tr>
+    <tr><td><code>page_reachable</code></td><td>A page answers for this user (used by the guide self-test, section 10)</td><td>HTTP on the box itself</td></tr>
+  </table></div>
+  <p class="sub">The exact tables behind each check are confirmed in Phase 1. I only listed what I could see quickly. A check whose source can't be read reliably ships as "I confirm" instead, never as a guess. A check that answers "unknown" never shows green.</p>
+</section>
+
+<section id="s8">
+  <h2><span class="n">8.</span> The drafted cases (the platform's main uses)</h2>
+  <p>Eight guides, in the order a real deployment meets them. <b>Wave 1</b> (built first) is marked. Step texts are written in Phase 2 from the Trilivy knowledge base and the real pages; you approve each guide in the console before it goes live.</p>
+  <div class="cases">
+
+    <div class="case"><span class="tag">Set up</span> <span class="tag ok">Wave 1</span>
+      <h3>G1 · First day on a new box</h3>
+      <div class="meta">~20 min · for the client's IT / box admin</div>
+      <ol>
+        <li>Explain: what the box is, what Trilivy runs for you, the System menu</li>
+        <li>Do: System › About + Updates: confirm version and update channel</li>
+        <li>Do: System › LLM Keys (gateway or own key)</li>
+        <li>Do: System › Email: sender, test mail</li>
+        <li>Do: System › Web Addresses: check the client's names</li>
+        <li>Do: Users: create the admins, set their access</li>
+      </ol>
+      <div class="chk">Checks: <code>llm_key_ok</code>, <code>email_ok</code>, <code>address_ok</code>, <code>user_exists</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Build</span> <span class="tag ok">Wave 1</span>
+      <h3>G2 · Knowledge assistant from documents</h3>
+      <div class="meta">~45 min · the core use case · vars: instance, KB name, sample question</div>
+      <ol>
+        <li>Explain: picking documents (quality beats quantity)</li>
+        <li>Do: Instance Manager: create <code>{instance}</code></li>
+        <li>Do: RAG Maker: upload files / a directory</li>
+        <li>Check: Queue clear, passages in the KB</li>
+        <li>Do: Explore: is the right passage found?</li>
+        <li>Do: Quick Check with the client's own questions</li>
+        <li>Do: Conversational: ask, see sources</li>
+        <li>Do: Users: grant the team access to the instance</li>
+        <li>Check: a real answer with a source</li>
+      </ol>
+      <div class="chk">Checks: <code>instance_exists</code>, <code>queue_clear</code>, <code>kb_has_passages</code>, <code>retrieval_hits</code>, <code>chat_answers</code>, <code>user_has_grant</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Build</span> <span class="tag ok">Wave 1</span>
+      <h3>G3 · Keep it in sync with SharePoint / OneDrive / Google Drive</h3>
+      <div class="meta">~30 min · needs G2's instance · vars: provider, folder</div>
+      <ol>
+        <li>Explain: copy vs live sync; what is re-read and when</li>
+        <li>Do: Connections: sign in to the provider (client's admin consent)</li>
+        <li>Do: Cloud folders: pick the folder, point it at <code>{instance}</code></li>
+        <li>Check: first sync ran</li>
+        <li>Do: change a file in the folder, see it updated</li>
+        <li>Explain: deletions, permissions, schedule</li>
+      </ol>
+      <div class="chk">Checks: <code>connection_ok</code>, <code>folder_synced</code>, <code>kb_has_passages</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Go live</span> <span class="tag ok">Wave 1</span>
+      <h3>G4 · Quality check before go-live</h3>
+      <div class="meta">~60 min · needs a built KB · vars: instance, pass mark</div>
+      <ol>
+        <li>Explain: why test before launch; what "good" means</li>
+        <li>Do: Test Question Sets: 20–50 real questions with expected answers</li>
+        <li>Do: Ground-Truth Eval: run it</li>
+        <li>Check: score above the pass mark</li>
+        <li>Do: Response Grading: read the weakest answers</li>
+        <li>Do: fix content (Doc Vault / re-upload) or settings, run again</li>
+        <li>Do: Health Audit</li>
+        <li>Explain: Production Logs after launch; the weekly routine</li>
+      </ol>
+      <div class="chk">Checks: <code>eval_score</code>, <code>retrieval_hits</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Connect</span>
+      <h3>G5 · Website or support-desk assistant with a human fallback</h3>
+      <div class="meta">~40 min · vars: instance, site address, support e-mail</div>
+      <ol>
+        <li>Explain: public assistant vs internal; what visitors can and can't see</li>
+        <li>Do: Look &amp; Feel, Persona, Guardrails</li>
+        <li>Do: One Click: copy the embed code into the site</li>
+        <li>Do: Talk to a Person › Configuration + e-mail templates</li>
+        <li>Do: ask for a person from the site</li>
+        <li>Check: the ticket reached the Handoff Inbox</li>
+      </ol>
+      <div class="chk">Checks: <code>handoff_ready</code>, <code>chat_answers</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Connect</span>
+      <h3>G6 · Connect an app or AI assistant (REST / MCP)</h3>
+      <div class="meta">~30 min · for the client's developers · vars: instance, app name</div>
+      <ol>
+        <li>Explain: REST Answer vs MCP vs Model App</li>
+        <li>Do: Connect an app: create the connection + key, narrow the scope</li>
+        <li>Do: Integration Guide / Working call example</li>
+        <li>Do: call it from the app (or Claude / ChatGPT via MCP)</li>
+        <li>Check: the first outside call is logged</li>
+        <li>Explain: rotating keys, Connected apps, call logs</li>
+      </ol>
+      <div class="chk">Checks: <code>connection_ok</code>, <code>api_called</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Build</span>
+      <h3>G7 · An agent that uses tools</h3>
+      <div class="meta">~45 min · vars: instance, agent name</div>
+      <ol>
+        <li>Explain: assistant vs agent; when tools make sense</li>
+        <li>Do: Agent Center: pick a blueprint</li>
+        <li>Do: Agent Factory V2: build it, attach the KB and tools</li>
+        <li>Do: Install, then Try it</li>
+        <li>Check: the agent is enabled and passed its test</li>
+        <li>Explain: Prompt Viewer, logs, limits</li>
+      </ol>
+      <div class="chk">Checks: <code>agent_ready</code></div>
+    </div>
+
+    <div class="case"><span class="tag">Build</span>
+      <h3>G8 · A training course from your documents</h3>
+      <div class="meta">~40 min · vars: instance, course code</div>
+      <ol>
+        <li>Explain: Learning Center, learn.&lt;box&gt;, who sees what</li>
+        <li>Do: Course Maker: from a KB to a draft course</li>
+        <li>Do: review, assessments, certificate</li>
+        <li>Do: publish; Enrollments / Course access</li>
+        <li>Check: published and one learner enrolled</li>
+      </ol>
+      <div class="chk">Checks: <code>course_published</code></div>
+    </div>
+  </div>
+  <p style="margin-top:14px" class="sub">Later candidates: "Operate: backups, services, updates" (box upkeep), "Answer Bank: fixed answers for sensitive questions", "Reports and SOP writer". Your existing static pages (Deployment Runbook, Disaster Recovery, Incident Response, Security Guidelines under Guides &amp; Playbooks) get linked from the relevant steps; they aren't rewritten.</p>
+</section>
+
+<section id="s9">
+  <h2><span class="n">9.</span> Phases and tests</h2>
+  <div class="tbl"><table>
+    <tr><th>Phase</th><th>Work</th><th>Where</th><th>Test</th></tr>
+    <tr><td><b>0</b> Fleet</td><td><code>scope</code> + <code>requires_platform</code> in <code>addon.json</code>, build rule, "Install on all clients", auto-install in provisioning</td><td>manager (<code>trlv_addon.py</code>, Add-ons page), controller (playbooks 17/19)</td><td>Dry run against c0002; never-touched-box check of the provisioning path</td></tr>
+    <tr><td><b>1</b> Engine</td><td><code>/home/trlv_addons/guides</code>: <code>addon.json</code>, <code>sql/001_init.sql</code>, Hooks, engine copied from the Demo, run variables, Check kind, <code>lib/Checks.cfc</code> (all 17), splash page, run page, console editor, Export</td><td>source → dev-push to c0002</td><td>Playwright as a c0002 admin: start a run, every step kind, Back/Next, two users on one run; each check made green and red on purpose; a demo user must not see the menu entry or open any guides page</td></tr>
+    <tr><td><b>2</b> Wave 1 content</td><td>G1–G4 written from the KB and the real pages; approved by you</td><td>console on c0002 → seed-pull</td><td>Each guide run end to end with <code>GTEST_</code> values, then <b>Clean up this test run</b>; the self-test (section 10) all green</td></tr>
+    <tr><td><b>3</b> First client</td><td>Release build of guides 1.0.0, install on one real client</td><td>fleet</td><td>Run G1 on that box with you watching; printable record checked</td></tr>
+    <tr><td><b>4</b> All clients</td><td>Install on all; new boxes automatic</td><td>fleet</td><td>Live-vs-installed column all green</td></tr>
+    <tr><td><b>5</b> Wave 2</td><td>G5–G8</td><td>c0002</td><td>As phase 2</td></tr>
+  </table></div>
+  <p>As always: c0002 snapshot after each round, nothing built on c0001 (playbook 19 refuses the SSOT), and you cut the platform release that the guides require.</p>
+</section>
+
+<section id="s10">
+  <h2><span class="n">10.</span> Risks and how the plan handles them</h2>
+  <ul>
+    <li><b>Guides go stale when pages move.</b> This is the biggest risk. Every step stores its page address. A <b>self-test</b> in the console (and after every platform upgrade) runs <code>page_reachable</code> on every address and the check library's own probes, and lists broken steps by guide. A broken step shows "this step needs an update" instead of a dead link.</li>
+    <li><b>A check that lies is worse than no check.</b> Checks are read-only, never green on "unknown", and covered by a test that makes each one fail on purpose (Phase 1).</li>
+    <li><b>Test data on c0002.</b> <code>GTEST_</code> prefix plus a clean-up limited to what the run itself created. It never touches Demo instances.</li>
+    <li><b>The first all-clients add-on.</b> Install on all stops on the first failure. Removing it keeps runs (<code>remove</code> without <code>--purge-data</code>), so a client never loses its deployment record.</li>
+    <li><b>Language.</b> English first. The tables carry no language column yet; if you want more languages later, it's added like the Demo's <code>lang</code>. See D4.</li>
+  </ul>
+</section>
+
+<section id="s11">
+  <h2><span class="n">11.</span> Decisions for you</h2>
+  <ol>
+    <li><b>D1 · Name in the menu.</b> "Deployment Guides" (recommended), "Setup Guides", or "Go-Live Center".</li>
+    <li><b>D2 · Who may run guides on a client box.</b> Admin and operator roles (recommended), or every signed-in staff user.</li>
+    <li><b>D3 · Public showroom on c0002.</b> Show prospects the read-only catalogue from the Demo ("See how a deployment works")? I recommend yes, after Wave 1.</li>
+    <li><b>D4 · Languages.</b> English only for now (recommended), or build the language column in from day one.</li>
+    <li><b>D5 · Wave 1 order.</b> G1 First day, G2 Knowledge assistant, G3 SharePoint sync, G4 Quality before go-live (recommended). Change or swap in G5–G8?</li>
+    <li><b>D6 · Client edits.</b> Content is read-only on client boxes (recommended). Or may a client add its own local steps or notes to a guide (kept apart from ours so an install never overwrites them)?</li>
+  </ol>
+  <div class="callout ok">Once these are answered, Phase 0 + 1 can start. Nothing has been coded or changed for this plan.</div>
+</section>
+
+</div>
+</body>
+</html>
